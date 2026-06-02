@@ -194,13 +194,18 @@ select.reminder-select{width:auto;padding:5px 9px;font-size:12px;border-radius:7
   <div class="bus-header">
     <div>
       <div class="bus-station-label">Haltestelle</div>
-      <div class="bus-station-name" id="active-station-name">Mögglingen (Gmünd)</div>
+      <div class="bus-station-name" id="active-station-name">Mögglingen Bahnhof</div>
     </div>
-    <button class="refresh-btn" onclick="loadDepartures()">↻ Aktualisieren</button>
+    <button class="refresh-btn" onclick="reloadBusFrame()">↻ Neu laden</button>
   </div>
   <div class="station-tabs" id="station-tabs"></div>
   <div id="dep-container">
-    <div class="loading-state"><div class="loading-spinner">⏳</div><div>Lade Abfahrten…</div></div>
+    <iframe id="bus-frame"
+      src="https://abfahrtsmonitor.softsolutions.de/abfahrten.html#name_dm=M%C3%B6gglingen%20Bahnhof&type_dm=any"
+      style="width:100%;height:calc(100vh - 200px);border:none;background:#1a1a1a"
+      loading="lazy"
+      title="Abfahrtsmonitor Mögglingen">
+    </iframe>
   </div>
 </div>
 
@@ -348,13 +353,6 @@ const TYPES = {
 
 const GOA_TERMINE = [{"type":"bio","date":"2026-03-07"},{"type":"bio","date":"2026-03-20"},{"type":"papier","date":"2026-03-20"},{"type":"gelb","date":"2026-03-20"},{"type":"gartentonne","date":"2026-03-20"},{"type":"gartentonne","date":"2026-04-04"},{"type":"bio","date":"2026-04-07"},{"type":"restmuell","date":"2026-04-14"},{"type":"gartentonne","date":"2026-04-17"},{"type":"bio","date":"2026-04-20"},{"type":"papier","date":"2026-04-23"},{"type":"gelb","date":"2026-04-23"},{"type":"restmuell","date":"2026-04-28"},{"type":"gartentonne","date":"2026-05-02"},{"type":"bio","date":"2026-05-04"},{"type":"gruenabfuhr","date":"2026-05-04"},{"type":"bio","date":"2026-05-11"},{"type":"restmuell","date":"2026-05-12"},{"type":"gartentonne","date":"2026-05-16"},{"type":"bio","date":"2026-05-18"},{"type":"papier","date":"2026-05-21"},{"type":"gelb","date":"2026-05-21"},{"type":"bio","date":"2026-05-26"},{"type":"restmuell","date":"2026-05-27"},{"type":"gartentonne","date":"2026-05-30"},{"type":"bio","date":"2026-06-01"},{"type":"bio","date":"2026-06-08"},{"type":"restmuell","date":"2026-06-09"},{"type":"gartentonne","date":"2026-06-12"},{"type":"altpapier_verein","date":"2026-06-13"},{"type":"bio","date":"2026-06-15"},{"type":"papier","date":"2026-06-16"},{"type":"papier","date":"2026-06-18"},{"type":"gelb","date":"2026-06-18"},{"type":"bio","date":"2026-06-22"},{"type":"restmuell","date":"2026-06-23"},{"type":"gartentonne","date":"2026-06-26"},{"type":"bio","date":"2026-06-29"},{"type":"bio","date":"2026-07-06"},{"type":"restmuell","date":"2026-07-07"},{"type":"gartentonne","date":"2026-07-10"},{"type":"bio","date":"2026-07-13"},{"type":"papier","date":"2026-07-16"},{"type":"gelb","date":"2026-07-16"},{"type":"bio","date":"2026-07-20"},{"type":"restmuell","date":"2026-07-21"},{"type":"gartentonne","date":"2026-07-24"},{"type":"bio","date":"2026-07-27"},{"type":"bio","date":"2026-08-03"},{"type":"restmuell","date":"2026-08-04"},{"type":"gartentonne","date":"2026-08-07"},{"type":"bio","date":"2026-08-10"},{"type":"papier","date":"2026-08-13"},{"type":"gelb","date":"2026-08-13"},{"type":"bio","date":"2026-08-17"},{"type":"restmuell","date":"2026-08-18"},{"type":"gartentonne","date":"2026-08-21"},{"type":"bio","date":"2026-08-24"},{"type":"bio","date":"2026-08-31"},{"type":"restmuell","date":"2026-09-01"},{"type":"gartentonne","date":"2026-09-04"},{"type":"altpapier_verein","date":"2026-09-05"},{"type":"bio","date":"2026-09-07"},{"type":"papier","date":"2026-09-10"},{"type":"gelb","date":"2026-09-10"},{"type":"bio","date":"2026-09-14"},{"type":"restmuell","date":"2026-09-15"},{"type":"gartentonne","date":"2026-09-18"},{"type":"bio","date":"2026-09-21"},{"type":"bio","date":"2026-09-28"},{"type":"restmuell","date":"2026-09-29"},{"type":"gartentonne","date":"2026-10-02"},{"type":"bio","date":"2026-10-05"},{"type":"papier","date":"2026-10-08"},{"type":"gelb","date":"2026-10-08"},{"type":"bio","date":"2026-10-12"},{"type":"restmuell","date":"2026-10-13"},{"type":"gartentonne","date":"2026-10-16"},{"type":"bio","date":"2026-10-19"},{"type":"bio","date":"2026-10-26"},{"type":"restmuell","date":"2026-10-27"},{"type":"gartentonne","date":"2026-10-30"},{"type":"bio","date":"2026-11-02"},{"type":"papier","date":"2026-11-05"},{"type":"gelb","date":"2026-11-05"},{"type":"bio","date":"2026-11-09"},{"type":"restmuell","date":"2026-11-10"},{"type":"gartentonne","date":"2026-11-13"},{"type":"bio","date":"2026-11-16"},{"type":"gruenabfuhr","date":"2026-11-20"},{"type":"bio","date":"2026-11-23"},{"type":"restmuell","date":"2026-11-24"},{"type":"gartentonne","date":"2026-11-27"},{"type":"bio","date":"2026-11-30"},{"type":"bio","date":"2026-12-02"},{"type":"papier","date":"2026-12-03"},{"type":"gelb","date":"2026-12-03"},{"type":"restmuell","date":"2026-12-08"},{"type":"gartentonne","date":"2026-12-11"},{"type":"bio","date":"2026-12-14"},{"type":"bio","date":"2026-12-21"},{"type":"restmuell","date":"2026-12-22"},{"type":"bio","date":"2026-12-29"},{"type":"papier","date":"2027-01-02"},{"type":"gelb","date":"2027-01-02"},{"type":"bio","date":"2027-01-05"},{"type":"restmuell","date":"2027-01-07"},{"type":"christbaum","date":"2027-01-11"},{"type":"bio","date":"2027-01-12"},{"type":"bio","date":"2027-01-18"},{"type":"restmuell","date":"2027-01-19"},{"type":"bio","date":"2027-01-25"},{"type":"papier","date":"2027-01-28"},{"type":"gelb","date":"2027-01-28"},{"type":"bio","date":"2027-02-01"},{"type":"restmuell","date":"2027-02-02"},{"type":"bio","date":"2027-02-08"},{"type":"bio","date":"2027-02-15"},{"type":"restmuell","date":"2027-02-16"},{"type":"bio","date":"2027-02-22"},{"type":"papier","date":"2027-02-25"},{"type":"gelb","date":"2027-02-25"},{"type":"bio","date":"2027-03-01"},{"type":"restmuell","date":"2027-03-02"},{"type":"altpapier_verein","date":"2027-03-06"},{"type":"bio","date":"2027-03-08"},{"type":"bio","date":"2027-03-15"},{"type":"restmuell","date":"2027-03-16"},{"type":"bio","date":"2027-03-22"},{"type":"papier","date":"2027-03-25"},{"type":"gelb","date":"2027-03-25"},{"type":"bio","date":"2027-03-30"},{"type":"restmuell","date":"2027-03-31"}];
 
-// Haltestellen Mögglingen
-const STATIONS = [
-  {id:'de:08136:5210', name:'Mögglingen (Gmünd)', short:'Bahnhof'},
-  {id:'de:08136:5211', name:'Mögglingen Bahnhof Bus', short:'Bahnhof Bus'},
-  {id:'de:08136:5213', name:'Mögglingen Mitte', short:'Mitte'},
-];
-
 let pickups = JSON.parse(localStorage.getItem('pickups') || '[]');
 let settings = JSON.parse(localStorage.getItem('settings') || '{"reminderDays":2,"reminderTime":"08:00","notificationsEnabled":false}');
 let hiddenTypes = JSON.parse(localStorage.getItem('hiddenTypes') || '[]');
@@ -470,6 +468,12 @@ function loadGOAData(){
 // ══════════════════════════════════════════
 // BUS & BAHN
 // ══════════════════════════════════════════
+const STATIONS = [
+  {name:'Mögglingen Bahnhof', short:'Bahnhof', url:'https://abfahrtsmonitor.softsolutions.de/abfahrten.html#name_dm=M%C3%B6gglingen%20Bahnhof&type_dm=any'},
+  {name:'Mögglingen Mitte', short:'Mitte', url:'https://abfahrtsmonitor.softsolutions.de/abfahrten.html#name_dm=M%C3%B6gglingen%20Mitte&type_dm=any'},
+  {name:'Mögglingen (Gmünd)', short:'Bf Zug', url:'https://abfahrtsmonitor.softsolutions.de/abfahrten.html#name_dm=M%C3%B6gglingen%20(Gm%C3%BCnd)&type_dm=any'},
+];
+
 function renderStationTabs(){
   document.getElementById('station-tabs').innerHTML = STATIONS.map((s,i)=>
     `<div class="station-chip ${i===activeStation?'active':''}" onclick="selectStation(${i})">${s.short}</div>`
@@ -483,89 +487,16 @@ function selectStation(i){
   loadDepartures();
 }
 
-async function loadDepartures(){
-  const container=document.getElementById('dep-container');
-  container.innerHTML='<div class="loading-state"><div class="loading-spinner">⏳</div><div style="font-size:13px;color:var(--text3);margin-top:6px">Lade Abfahrten…</div></div>';
+function loadDepartures(){
   const station=STATIONS[activeStation];
-  try {
-    // Use DB Timetables API via a CORS proxy
-    const url = `https://v6.db.transport.rest/stops/${encodeURIComponent(station.id)}/departures?results=12&duration=90&language=de`;
-    const res = await fetch(url);
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const data = await res.json();
-    const deps = data.departures || data;
-    if(!deps || !deps.length){
-      container.innerHTML='<div class="loading-state" style="color:var(--text3)"><div style="font-size:28px;margin-bottom:8px">🚌</div><div style="font-size:13px">Keine Abfahrten gefunden</div></div>';
-      return;
-    }
-    renderDepartures(deps);
-  } catch(e) {
-    // Fallback: try hafas-client based endpoint
-    try {
-      const fallbackUrl = `https://v5.db.transport.rest/stops/${encodeURIComponent(station.id)}/departures?results=12&duration=90`;
-      const res2 = await fetch(fallbackUrl);
-      if(!res2.ok) throw new Error('Fallback failed');
-      const data2 = await res2.json();
-      renderDepartures(data2);
-    } catch(e2) {
-      container.innerHTML=`<div class="error-state">⚠️ Verbindung fehlgeschlagen.<br><small style="opacity:0.7">Bitte Internetverbindung prüfen und erneut versuchen.</small><br><br><button class="btn-sm" onclick="loadDepartures()" style="margin-top:4px">Nochmal versuchen</button></div>`;
-    }
-  }
+  const frame=document.getElementById('bus-frame');
+  if(frame) frame.src=station.url;
 }
 
-function renderDepartures(deps){
-  const container=document.getElementById('dep-container');
-  const now=new Date();
-  const lines = deps.map(dep=>{
-    const line=dep.line||{};
-    const name=line.name||line.fahrtNr||'?';
-    const dest=dep.destination?.name||dep.direction||'–';
-    const planned=new Date(dep.plannedWhen||dep.when);
-    const actual=dep.when ? new Date(dep.when) : planned;
-    const delayMin=dep.delay ? Math.round(dep.delay/60) : 0;
-    const diffMin=Math.round((actual-now)/60000);
-    const hhmm=planned.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
-    const product=line.product||'bus';
-    const colors=getLineColor(name,product);
-    const platform=dep.platform||dep.stop?.platform||'';
-    return {name,dest,hhmm,delayMin,diffMin,colors,platform,product};
-  }).filter(d=>d.diffMin>=-1);
-
-  if(!lines.length){
-    container.innerHTML='<div class="loading-state" style="color:var(--text3)"><div style="font-size:28px;margin-bottom:8px">🚌</div><div>Keine Abfahrten in den nächsten 90 Min.</div></div>';
-    return;
-  }
-
-  container.innerHTML=`<div class="dep-list">${lines.map(d=>{
-    const delayHtml = d.delayMin>0
-      ? `<div class="dep-time-delay" style="color:#c44a4a">+${d.delayMin} min</div>`
-      : d.delayMin<0
-      ? `<div class="dep-time-delay" style="color:#4a9e6b">${d.delayMin} min</div>`
-      : `<div class="dep-time-delay" style="color:var(--text3)">pünktlich</div>`;
-    const diffHtml = d.diffMin<=0 ? `<div class="dep-min" style="color:#4a9e6b;font-weight:600">jetzt</div>`
-      : d.diffMin<=2 ? `<div class="dep-min" style="color:#d4a820;font-weight:600">in ${d.diffMin} Min</div>`
-      : `<div class="dep-min">in ${d.diffMin} Min</div>`;
-    const platformHtml = d.platform ? `<div class="dep-platform">Gleis/Steig ${d.platform}</div>` : '';
-    return`<div class="dep-card">
-      <div class="dep-line" style="background:${d.colors.bg};color:${d.colors.text}">${d.name}</div>
-      <div class="dep-info"><div class="dep-dest">${d.dest}</div>${platformHtml}</div>
-      <div class="dep-time"><div class="dep-time-main">${d.hhmm}</div>${delayHtml}${diffHtml}</div>
-    </div>`;
-  }).join('')}</div>`;
-}
-
-function getLineColor(name,product){
-  if(product==='nationalExpress'||product==='national') return {bg:'rgba(255,50,50,0.15)',text:'#ff5555'};
-  if(product==='regionalExp'||product==='regional') return {bg:'rgba(255,100,50,0.15)',text:'#ff7744'};
-  if(product==='suburban') return {bg:'rgba(80,160,80,0.15)',text:'#50c850'};
-  if(product==='subway') return {bg:'rgba(74,123,196,0.15)',text:'#4a9ee8'};
-  if(product==='tram') return {bg:'rgba(212,100,50,0.15)',text:'#d46432'};
-  // Bus — color by line number
-  const num=parseInt(name.replace(/\D/g,''))||0;
-  if(num<100) return {bg:'rgba(74,123,196,0.15)',text:'#4a7bc4'};
-  if(num<200) return {bg:'rgba(74,158,107,0.15)',text:'#4a9e6b'};
-  if(num<300) return {bg:'rgba(212,168,32,0.15)',text:'#d4a820'};
-  return {bg:'rgba(136,136,136,0.15)',text:'#999'};
+function reloadBusFrame(){
+  const frame=document.getElementById('bus-frame');
+  if(frame){ const s=frame.src; frame.src=''; frame.src=s; }
+  showToast('Abfahrten aktualisiert');
 }
 
 // ══════════════════════════════════════════
