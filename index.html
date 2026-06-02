@@ -196,16 +196,11 @@ select.reminder-select{width:auto;padding:5px 9px;font-size:12px;border-radius:7
       <div class="bus-station-label">Haltestelle</div>
       <div class="bus-station-name" id="active-station-name">Mögglingen Bahnhof</div>
     </div>
-    <button class="refresh-btn" onclick="reloadBusFrame()">↻ Neu laden</button>
+    <button class="refresh-btn" onclick="loadDepartures()">↻ Aktualisieren</button>
   </div>
   <div class="station-tabs" id="station-tabs"></div>
   <div id="dep-container">
-    <iframe id="bus-frame"
-      src="https://abfahrtsmonitor.softsolutions.de/abfahrten.html#name_dm=M%C3%B6gglingen%20Bahnhof&type_dm=any"
-      style="width:100%;height:calc(100vh - 200px);border:none;background:#1a1a1a"
-      loading="lazy"
-      title="Abfahrtsmonitor Mögglingen">
-    </iframe>
+    <div class="loading-state"><div class="loading-spinner">⏳</div><div style="font-size:13px;color:var(--text3);margin-top:6px">Lade Abfahrten…</div></div>
   </div>
 </div>
 
@@ -468,10 +463,12 @@ function loadGOAData(){
 // ══════════════════════════════════════════
 // BUS & BAHN
 // ══════════════════════════════════════════
+// Mögglingen stop IDs (pre-resolved via DB API)
+// 8005700 = Mögglingen (b Gmünd) Bahnhof (DB station code 4150)
 const STATIONS = [
-  {name:'Mögglingen Bahnhof', short:'Bahnhof', url:'https://abfahrtsmonitor.softsolutions.de/abfahrten.html#name_dm=M%C3%B6gglingen%20Bahnhof&type_dm=any'},
-  {name:'Mögglingen Mitte', short:'Mitte', url:'https://abfahrtsmonitor.softsolutions.de/abfahrten.html#name_dm=M%C3%B6gglingen%20Mitte&type_dm=any'},
-  {name:'Mögglingen (Gmünd)', short:'Bf Zug', url:'https://abfahrtsmonitor.softsolutions.de/abfahrten.html#name_dm=M%C3%B6gglingen%20(Gm%C3%BCnd)&type_dm=any'},
+  {id:'8005700', name:'Mögglingen (Gmünd)', short:'Bahnhof/Zug'},
+  {id:'721359',  name:'Mögglingen Bahnhof Bus', short:'Bahnhof Bus'},
+  {id:'721361',  name:'Mögglingen Mitte', short:'Mitte'},
 ];
 
 function renderStationTabs(){
@@ -487,16 +484,92 @@ function selectStation(i){
   loadDepartures();
 }
 
-function loadDepartures(){
-  const station=STATIONS[activeStation];
-  const frame=document.getElementById('bus-frame');
-  if(frame) frame.src=station.url;
+async function loadDepartures(){
+  const container=document.getElementById('dep-container');
+  container.innerHTML='<div class="loading-state"><div class="loading-spinner">⏳</div><div style="font-size:13px;color:var(--text3);margin-top:6px">Lade Abfahrten…</div></div>';
+  
+  // First try: search for stop by name, then get departures
+  try {
+    const station = STATIONS[activeStation];
+    // Search for the stop first to get correct ID
+    const searchUrl = `https://v6.db.transport.rest/locations?query=${encodeURIComponent(station.name)}&results=3&stops=true&addresses=false&poi=false`;
+    const searchRes = await fetch(searchUrl);
+    if(!searchRes.ok) throw new Error('Search failed');
+    const stops = await searchRes.json();
+    if(!stops.length) throw new Error('Haltestelle nicht gefunden');
+    
+    // Use first result
+    const stopId = stops[0].id;
+    document.getElementById('active-station-name').textContent = stops[0].name;
+    
+    const depUrl = `https://v6.db.transport.rest/stops/${encodeURIComponent(stopId)}/departures?results=15&duration=120&language=de`;
+    const depRes = await fetch(depUrl);
+    if(!depRes.ok) throw new Error('HTTP '+depRes.status);
+    const data = await depRes.json();
+    const deps = Array.isArray(data) ? data : (data.departures || []);
+    if(!deps.length) {
+      container.innerHTML='<div class="loading-state" style="color:var(--text3)"><div style="font-size:28px;margin-bottom:8px">🚌</div><div style="font-size:13px">Keine Abfahrten in den nächsten 2 Std.</div></div>';
+      return;
+    }
+    renderDepartures(deps);
+  } catch(e) {
+    container.innerHTML=`<div class="error-state">⚠️ ${e.message}<br><small style="opacity:0.7;margin-top:4px;display:block">DB Transport API · ${new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr</small><br><button class="btn-sm" onclick="loadDepartures()" style="margin-top:8px">Nochmal versuchen</button></div>`;
+  }
 }
 
-function reloadBusFrame(){
-  const frame=document.getElementById('bus-frame');
-  if(frame){ const s=frame.src; frame.src=''; frame.src=s; }
-  showToast('Abfahrten aktualisiert');
+function renderDepartures(deps){
+  const container=document.getElementById('dep-container');
+  const now=new Date();
+  const lines = deps.map(dep=>{
+    const line=dep.line||{};
+    const name=line.name||'?';
+    const dest=(dep.destination?.name||dep.direction||'–').replace(/\s*\(.*?\)\s*/g,' ').trim();
+    const planned=new Date(dep.plannedWhen||dep.when);
+    const actual=dep.when ? new Date(dep.when) : planned;
+    const delayMin=dep.delay ? Math.round(dep.delay/60) : 0;
+    const diffMin=Math.round((actual-now)/60000);
+    const hhmm=planned.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+    const product=line.product||'bus';
+    const colors=getLineColor(name,product);
+    const platform=dep.platform||dep.plannedPlatform||'';
+    return {name,dest,hhmm,delayMin,diffMin,colors,platform,product,cancelled:dep.cancelled};
+  }).filter(d=>d.diffMin>=-2 && !d.cancelled);
+
+  if(!lines.length){
+    container.innerHTML='<div class="loading-state" style="color:var(--text3)"><div style="font-size:28px;margin-bottom:8px">🚌</div><div>Keine Abfahrten gefunden</div></div>';
+    return;
+  }
+
+  const now2=new Date();
+  container.innerHTML=`<div style="font-size:11px;color:var(--text3);padding:6px 20px 8px">Stand: ${now2.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr · Quelle: Deutsche Bahn</div><div class="dep-list">${lines.map(d=>{
+    const delayHtml = d.delayMin>0
+      ? `<div class="dep-time-delay" style="color:#c44a4a">+${d.delayMin} min</div>`
+      : `<div class="dep-time-delay" style="color:#4a9e6b">pünktlich</div>`;
+    const diffHtml = d.diffMin<=0
+      ? `<div class="dep-min" style="color:#4a9e6b;font-weight:600">jetzt</div>`
+      : d.diffMin<=2
+      ? `<div class="dep-min" style="color:#d4a820;font-weight:600">in ${d.diffMin} Min</div>`
+      : `<div class="dep-min" style="color:var(--text2)">in ${d.diffMin} Min</div>`;
+    const platformHtml = d.platform ? `<div class="dep-platform">Gleis ${d.platform}</div>` : '';
+    return`<div class="dep-card">
+      <div class="dep-line" style="background:${d.colors.bg};color:${d.colors.text};font-size:${d.name.length>4?'10px':'12px'}">${d.name}</div>
+      <div class="dep-info"><div class="dep-dest">${d.dest}</div>${platformHtml}</div>
+      <div class="dep-time"><div class="dep-time-main">${d.hhmm}</div>${delayHtml}${diffHtml}</div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function getLineColor(name,product){
+  if(product==='nationalExpress'||product==='national') return {bg:'rgba(220,50,50,0.18)',text:'#e05555'};
+  if(product==='regionalExp'||product==='regional') return {bg:'rgba(255,120,50,0.15)',text:'#ff8844'};
+  if(product==='suburban') return {bg:'rgba(80,160,80,0.15)',text:'#50c850'};
+  if(product==='subway') return {bg:'rgba(74,123,196,0.15)',text:'#4a9ee8'};
+  if(product==='tram') return {bg:'rgba(212,100,50,0.15)',text:'#d46432'};
+  const num=parseInt(name.replace(/\D/g,''))||0;
+  if(num>=260&&num<=270) return {bg:'rgba(74,123,196,0.18)',text:'#5b8fd4'};
+  if(num>=76&&num<=80) return {bg:'rgba(74,158,107,0.18)',text:'#4ab87a'};
+  if(num>=7900&&num<=7999) return {bg:'rgba(212,168,32,0.18)',text:'#d4a820'};
+  return {bg:'rgba(136,136,136,0.15)',text:'#999'};
 }
 
 // ══════════════════════════════════════════
