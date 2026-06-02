@@ -8,460 +8,123 @@
 <meta name="apple-mobile-web-app-title" content="Mülltonne">
 <meta name="theme-color" content="#111111">
 <title>Mülltonne Mögglingen</title>
-<link rel="manifest" href="/manifest.json">
+<link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #111111;
-    --bg2: #1a1a1a;
-    --bg3: #222222;
-    --bg4: #2a2a2a;
-    --text: #f0ede8;
-    --text2: #999;
-    --text3: #555;
-    --border: rgba(255,255,255,0.08);
-    --border2: rgba(255,255,255,0.14);
+:root {
+  --bg:#111;--bg2:#1a1a1a;--bg3:#222;--bg4:#2a2a2a;
+  --text:#f0ede8;--text2:#999;--text3:#555;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;min-height:100vh;max-width:430px;margin:0 auto}
 
-    --restmuell: #888;
-    --restmuell-bg: rgba(136,136,136,0.12);
-    --bio: #4a9e6b;
-    --bio-bg: rgba(74,158,107,0.12);
-    --papier: #4a7bc4;
-    --papier-bg: rgba(74,123,196,0.12);
-    --gelb: #d4a820;
-    --gelb-bg: rgba(212,168,32,0.12);
-    --sperrmuell: #c4604a;
-    --sperrmuell-bg: rgba(196,96,74,0.12);
-  }
+.header{padding:52px 20px 16px;border-bottom:1px solid var(--border)}
+.header-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2px}
+.header-street{font-size:11px;font-weight:400;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px}
+.header-title{font-size:26px;font-weight:300;letter-spacing:-0.5px}
+.header-title span{font-weight:600}
+.icon-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:50%;width:38px;height:38px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+.nav{display:flex;border-bottom:1px solid var(--border);padding:0 20px}
+.nav-tab{flex:1;text-align:center;padding:13px 0 11px;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;letter-spacing:0.02em}
+.nav-tab.active{color:var(--text);border-bottom-color:var(--text)}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 16px;
-    min-height: 100vh;
-    max-width: 430px;
-    margin: 0 auto;
-  }
+.view{display:none;padding:0 0 100px}
+.view.active{display:block}
 
-  /* Header */
-  .header {
-    padding: 56px 20px 20px;
-    border-bottom: 1px solid var(--border);
-  }
-  .header-top {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    margin-bottom: 4px;
-  }
-  .header-street {
-    font-size: 12px;
-    font-weight: 400;
-    color: var(--text2);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-  .header-title {
-    font-size: 28px;
-    font-weight: 300;
-    letter-spacing: -0.5px;
-    line-height: 1.1;
-  }
-  .header-title span { font-weight: 600; }
+/* Filter chips */
+.filter-bar{display:flex;gap:6px;padding:12px 16px;overflow-x:auto;scrollbar-width:none}
+.filter-bar::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid var(--border2);background:var(--bg2);color:var(--text2);cursor:pointer;white-space:nowrap;transition:all 0.15s}
+.chip.active{background:var(--text);color:var(--bg);border-color:var(--text)}
 
-  .icon-btn {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    color: var(--text);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    flex-shrink: 0;
-    transition: background 0.15s;
-  }
-  .icon-btn:active { background: var(--bg4); }
+/* Next banner */
+.next-banner{margin:0 16px 12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border2);border-radius:14px}
+.next-label{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:10px}
+.next-items{display:flex;flex-direction:column;gap:7px}
+.next-item{display:flex;align-items:center;gap:9px}
+.next-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.next-item-name{font-size:14px;font-weight:500;flex:1}
+.next-item-date{font-size:12px;color:var(--text2);font-variant-numeric:tabular-nums}
+.next-item-days{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;flex-shrink:0}
 
-  /* Nav tabs */
-  .nav {
-    display: flex;
-    border-bottom: 1px solid var(--border);
-    padding: 0 20px;
-  }
-  .nav-tab {
-    flex: 1;
-    text-align: center;
-    padding: 14px 0 12px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text3);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: all 0.15s;
-    letter-spacing: 0.02em;
-  }
-  .nav-tab.active {
-    color: var(--text);
-    border-bottom-color: var(--text);
-  }
+.section-label{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);padding:14px 20px 6px}
 
-  /* Views */
-  .view { display: none; padding: 0 0 100px; }
-  .view.active { display: block; }
+.pickup-list{padding:0 16px;display:flex;flex-direction:column;gap:5px}
+.pickup-card{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;position:relative;overflow:hidden}
+.pickup-card.past{opacity:0.3}
+.pickup-card.today{border-color:rgba(255,255,255,0.22);background:var(--bg3)}
+.pickup-color-bar{position:absolute;left:0;top:0;bottom:0;width:3px}
+.pickup-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.pickup-info{flex:1;min-width:0}
+.pickup-type{font-size:14px;font-weight:500}
+.pickup-date{font-size:12px;color:var(--text2);margin-top:1px;font-variant-numeric:tabular-nums}
+.pickup-badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:0.04em;flex-shrink:0}
+.delete-btn{background:none;border:none;color:var(--text3);cursor:pointer;padding:4px;font-size:14px;opacity:0.4}
+.delete-btn:active{opacity:1;color:#c44}
 
-  /* Next pickup banner */
-  .next-banner {
-    margin: 16px;
-    padding: 16px 18px;
-    background: var(--bg2);
-    border: 1px solid var(--border2);
-    border-radius: 16px;
-  }
-  .next-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text3);
-    margin-bottom: 10px;
-  }
-  .next-items { display: flex; flex-direction: column; gap: 8px; }
-  .next-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .next-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .next-item-name { font-size: 15px; font-weight: 500; flex: 1; }
-  .next-item-date { font-size: 13px; color: var(--text2); font-family: 'DM Mono', monospace; }
-  .next-item-days {
-    font-size: 12px;
-    font-weight: 500;
-    padding: 3px 8px;
-    border-radius: 20px;
-    flex-shrink: 0;
-  }
+/* Month divider */
+.month-divider{padding:16px 20px 6px;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3)}
 
-  /* Section headers */
-  .section-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text3);
-    padding: 20px 20px 8px;
-  }
+/* Stats bar */
+.stats-bar{display:flex;gap:0;margin:12px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.stat-item{flex:1;text-align:center;padding:10px 6px;border-right:1px solid var(--border)}
+.stat-item:last-child{border-right:none}
+.stat-num{font-size:18px;font-weight:600}
+.stat-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-top:1px}
 
-  /* Pickup list */
-  .pickup-list { padding: 0 16px; display: flex; flex-direction: column; gap: 6px; }
+/* Legende */
+.legende{margin:0 16px 8px;padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:12px}
+.legende-title{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:10px}
+.legende-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.legende-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2)}
+.legende-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 
-  .pickup-card {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 14px 16px;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    transition: background 0.1s;
-    position: relative;
-    overflow: hidden;
-  }
-  .pickup-card.past { opacity: 0.35; }
-  .pickup-card.today { border-color: var(--border2); background: var(--bg3); }
+/* Add view */
+.add-section{margin:14px 16px;padding:18px;background:var(--bg2);border:1px solid var(--border);border-radius:14px}
+.add-section h3{font-size:13px;font-weight:500;color:var(--text2);margin-bottom:14px}
+.form-row{margin-bottom:10px}
+.form-label{font-size:12px;color:var(--text2);margin-bottom:5px;display:block}
+select,input[type="date"]{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:9px;color:var(--text);padding:10px 12px;font-size:14px;font-family:'DM Sans',sans-serif;-webkit-appearance:none;appearance:none;outline:none}
+select option{background:#222}
+.btn-primary{width:100%;background:var(--text);color:var(--bg);border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer}
+.btn-secondary{width:100%;background:var(--bg3);color:var(--text);border:1px solid var(--border2);border-radius:10px;padding:11px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:7px}
 
-  .pickup-color-bar {
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 3px;
-    border-radius: 14px 0 0 14px;
-  }
+/* ICS drop */
+.ics-drop{border:2px dashed var(--border2);border-radius:10px;padding:20px;text-align:center;cursor:pointer;margin-top:8px}
+.ics-drop:hover{border-color:rgba(74,158,107,0.5);background:rgba(74,158,107,0.04)}
+#ics-file-input{display:none}
 
-  .pickup-icon {
-    width: 38px;
-    height: 38px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    flex-shrink: 0;
-  }
+/* Settings */
+.settings-section{margin:0 16px 4px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.settings-row{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border);gap:12px}
+.settings-row:last-child{border-bottom:none}
+.settings-icon{font-size:18px;flex-shrink:0;width:26px;text-align:center}
+.settings-info{flex:1}
+.settings-title{font-size:14px;font-weight:500}
+.settings-desc{font-size:11px;color:var(--text2);margin-top:2px}
+.toggle{position:relative;width:44px;height:24px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-track{position:absolute;inset:0;background:var(--bg4);border-radius:12px;cursor:pointer;border:1px solid var(--border2)}
+.toggle input:checked+.toggle-track{background:#4a9e6b;border-color:#4a9e6b}
+.toggle-track::after{content:'';position:absolute;left:3px;top:50%;transform:translateY(-50%);width:16px;height:16px;border-radius:50%;background:var(--text3);transition:all 0.2s}
+.toggle input:checked+.toggle-track::after{left:calc(100% - 19px);background:#fff}
+select.reminder-select{width:auto;padding:5px 9px;font-size:12px;border-radius:7px}
+.btn-sm{background:var(--bg3);color:var(--text);border:1px solid var(--border2);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer}
 
-  .pickup-info { flex: 1; min-width: 0; }
-  .pickup-type { font-size: 15px; font-weight: 500; }
-  .pickup-date { font-size: 12px; color: var(--text2); font-family: 'DM Mono', monospace; margin-top: 2px; }
+.notif-banner{margin:12px 16px;padding:12px 14px;background:rgba(74,158,107,0.1);border:1px solid rgba(74,158,107,0.25);border-radius:10px;font-size:13px;color:#4a9e6b;cursor:pointer;display:flex;align-items:center;gap:9px}
+.notif-banner.hidden{display:none}
 
-  .pickup-badge {
-    font-size: 11px;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 20px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    flex-shrink: 0;
-  }
+.install-hint{margin:0 16px 14px;padding:14px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;font-size:13px;color:var(--text2);line-height:1.6;display:none}
+.install-hint strong{color:var(--text)}
 
-  .pickup-actions {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-  }
-
-  .delete-btn {
-    background: none;
-    border: none;
-    color: var(--text3);
-    cursor: pointer;
-    padding: 4px;
-    font-size: 16px;
-    line-height: 1;
-    opacity: 0.5;
-    transition: opacity 0.15s;
-  }
-  .delete-btn:active { opacity: 1; color: #c44; }
-
-  /* Add form */
-  .add-section {
-    margin: 16px;
-    padding: 20px;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-  }
-  .add-section h3 {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text2);
-    margin-bottom: 16px;
-  }
-  .form-row { margin-bottom: 12px; }
-  .form-label {
-    font-size: 12px;
-    color: var(--text2);
-    margin-bottom: 6px;
-    display: block;
-    letter-spacing: 0.02em;
-  }
-
-  select, input[type="date"], input[type="text"] {
-    width: 100%;
-    background: var(--bg3);
-    border: 1px solid var(--border2);
-    border-radius: 10px;
-    color: var(--text);
-    padding: 10px 14px;
-    font-size: 15px;
-    font-family: 'DM Sans', sans-serif;
-    -webkit-appearance: none;
-    appearance: none;
-    outline: none;
-  }
-  select:focus, input:focus { border-color: rgba(255,255,255,0.3); }
-
-  select option { background: #222; }
-
-  .color-preview {
-    display: flex;
-    gap: 8px;
-    margin-top: 12px;
-    margin-bottom: 16px;
-  }
-  .color-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
-  .btn-primary {
-    width: 100%;
-    background: var(--text);
-    color: var(--bg);
-    border: none;
-    border-radius: 12px;
-    padding: 14px;
-    font-size: 15px;
-    font-weight: 600;
-    font-family: 'DM Sans', sans-serif;
-    cursor: pointer;
-    transition: opacity 0.15s;
-    letter-spacing: 0.01em;
-  }
-  .btn-primary:active { opacity: 0.8; }
-  .btn-secondary {
-    width: 100%;
-    background: var(--bg3);
-    color: var(--text);
-    border: 1px solid var(--border2);
-    border-radius: 12px;
-    padding: 12px;
-    font-size: 14px;
-    font-weight: 500;
-    font-family: 'DM Sans', sans-serif;
-    cursor: pointer;
-    margin-top: 8px;
-    transition: background 0.15s;
-  }
-  .btn-secondary:active { background: var(--bg4); }
-
-  /* Settings */
-  .settings-section {
-    margin: 16px;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    overflow: hidden;
-  }
-  .settings-row {
-    display: flex;
-    align-items: center;
-    padding: 16px 18px;
-    border-bottom: 1px solid var(--border);
-    gap: 14px;
-  }
-  .settings-row:last-child { border-bottom: none; }
-  .settings-icon {
-    font-size: 20px;
-    flex-shrink: 0;
-    width: 28px;
-    text-align: center;
-  }
-  .settings-info { flex: 1; }
-  .settings-title { font-size: 15px; font-weight: 500; }
-  .settings-desc { font-size: 12px; color: var(--text2); margin-top: 2px; }
-
-  /* Toggle */
-  .toggle {
-    position: relative;
-    width: 46px;
-    height: 26px;
-    flex-shrink: 0;
-  }
-  .toggle input { opacity: 0; width: 0; height: 0; }
-  .toggle-track {
-    position: absolute;
-    inset: 0;
-    background: var(--bg4);
-    border-radius: 13px;
-    transition: background 0.2s;
-    cursor: pointer;
-    border: 1px solid var(--border2);
-  }
-  .toggle input:checked + .toggle-track { background: #4a9e6b; border-color: #4a9e6b; }
-  .toggle-track::after {
-    content: '';
-    position: absolute;
-    left: 3px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: var(--text3);
-    transition: all 0.2s;
-  }
-  .toggle input:checked + .toggle-track::after {
-    left: calc(100% - 21px);
-    background: white;
-  }
-
-  select.reminder-select {
-    width: auto;
-    padding: 6px 10px;
-    font-size: 13px;
-    border-radius: 8px;
-  }
-
-  /* Notification permission banner */
-  .notif-banner {
-    margin: 16px;
-    padding: 14px 16px;
-    background: rgba(74,158,107,0.1);
-    border: 1px solid rgba(74,158,107,0.3);
-    border-radius: 12px;
-    font-size: 13px;
-    color: #4a9e6b;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .notif-banner.hidden { display: none; }
-
-  /* ICS import */
-  .ics-drop {
-    border: 2px dashed var(--border2);
-    border-radius: 12px;
-    padding: 24px;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color 0.15s, background 0.15s;
-    margin-top: 8px;
-  }
-  .ics-drop:hover, .ics-drop.drag-over {
-    border-color: rgba(74,158,107,0.6);
-    background: rgba(74,158,107,0.05);
-  }
-  .ics-drop-icon { font-size: 28px; margin-bottom: 8px; }
-  .ics-drop-text { font-size: 14px; color: var(--text2); }
-  .ics-drop-sub { font-size: 12px; color: var(--text3); margin-top: 4px; }
-
-  #ics-file-input { display: none; }
-
-  .toast {
-    position: fixed;
-    bottom: 100px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--bg4);
-    color: var(--text);
-    padding: 10px 20px;
-    border-radius: 20px;
-    font-size: 14px;
-    border: 1px solid var(--border2);
-    z-index: 100;
-    opacity: 0;
-    transition: opacity 0.2s;
-    white-space: nowrap;
-  }
-  .toast.show { opacity: 1; }
-
-  .empty-state {
-    text-align: center;
-    padding: 40px 20px;
-    color: var(--text3);
-  }
-  .empty-state-icon { font-size: 40px; margin-bottom: 12px; }
-  .empty-state-text { font-size: 15px; }
-
-  /* Bottom padding for safe area */
-  .safe-bottom { height: env(safe-area-inset-bottom, 20px); }
-
-  /* PWA install prompt */
-  .install-hint {
-    margin: 0 16px 16px;
-    padding: 12px 16px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    font-size: 13px;
-    color: var(--text2);
-    line-height: 1.5;
-  }
-  .install-hint strong { color: var(--text); }
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--bg4);color:var(--text);padding:9px 18px;border-radius:20px;font-size:13px;border:1px solid var(--border2);z-index:100;opacity:0;transition:opacity 0.2s;white-space:nowrap}
+.toast.show{opacity:1}
+.empty-state{text-align:center;padding:48px 20px;color:var(--text3)}
+.empty-state-icon{font-size:36px;margin-bottom:10px}
+.empty-state-text{font-size:14px;line-height:1.6}
 </style>
 </head>
 <body>
@@ -483,29 +146,30 @@
 </div>
 
 <div id="notif-banner" class="notif-banner hidden" onclick="requestNotifications()">
-  🔔 <span>Benachrichtigungen aktivieren, um Erinnerungen zu erhalten</span>
+  🔔 <span>Benachrichtigungen aktivieren</span>
 </div>
 
-<!-- HOME VIEW -->
+<!-- HOME -->
 <div id="view-home" class="view active">
+  <div class="filter-bar" id="filter-bar"></div>
   <div id="next-banner" class="next-banner" style="display:none">
     <div class="next-label">Als nächstes rausstellen</div>
     <div id="next-items" class="next-items"></div>
   </div>
-  <div class="section-label" id="upcoming-label">Kommende Termine</div>
-  <div class="pickup-list" id="pickup-list"></div>
+  <div id="stats-bar"></div>
+  <div id="pickup-container"></div>
   <div class="section-label" id="past-label" style="display:none">Vergangene Termine</div>
   <div class="pickup-list" id="past-list"></div>
 </div>
 
-<!-- ADD VIEW -->
+<!-- ADD -->
 <div id="view-add" class="view">
   <div class="add-section">
-    <h3>ICS-Datei importieren</h3>
+    <h3>ICS-Datei der GOA importieren</h3>
     <div class="ics-drop" id="ics-drop" onclick="document.getElementById('ics-file-input').click()">
-      <div class="ics-drop-icon">📅</div>
-      <div class="ics-drop-text">ICS-Datei der GOA importieren</div>
-      <div class="ics-drop-sub">Von goa-online.de herunterladen → hier importieren</div>
+      <div style="font-size:26px;margin-bottom:6px">📅</div>
+      <div style="font-size:13px;color:var(--text2)">ICS-Datei hier ablegen oder antippen</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:3px">Von goa-online.de → Abfuhrkalender herunterladen</div>
     </div>
     <input type="file" id="ics-file-input" accept=".ics">
   </div>
@@ -513,110 +177,106 @@
   <div class="add-section">
     <h3>Termin manuell eintragen</h3>
     <div class="form-row">
-      <label class="form-label">Tonne / Abfallart</label>
+      <label class="form-label">Abfallart</label>
       <select id="add-type">
-        <option value="restmuell">🗑️ Restmüll</option>
-        <option value="bio">🟢 Biomüll</option>
-        <option value="papier">🔵 Altpapier (Blaue Tonne)</option>
-        <option value="gelb">🟡 Gelber Sack / Wertstofftonne</option>
-        <option value="sperrmuell">🔴 Sperrmüll</option>
+        <option value="restmuell">🗑️ Hausmüll (schwarze Tonne)</option>
+        <option value="bio">🌿 Bioabfälle (braune Tonne)</option>
+        <option value="papier">📰 Blaue Tonne (Altpapier)</option>
+        <option value="gelb">♻️ Gelber Sack</option>
+        <option value="gartentonne">🌱 Gartentonne (braun/grün)</option>
+        <option value="gruenabfuhr">🌳 Grünabfuhr</option>
+        <option value="altpapier_verein">📦 Altpapier Vereinssammlung</option>
+        <option value="christbaum">🎄 Christbaumsammlung</option>
       </select>
     </div>
     <div class="form-row">
-      <label class="form-label">Abholdatum</label>
+      <label class="form-label">Datum</label>
       <input type="date" id="add-date">
     </div>
     <button class="btn-primary" onclick="addPickup()">Termin hinzufügen</button>
-
-    <div style="margin-top:20px; border-top: 1px solid var(--border); padding-top:16px;">
-      <h3 style="margin-bottom:12px">Schnell-Vorlage: GOA Mögglingen 2026</h3>
-      <div style="font-size:13px; color:var(--text2); margin-bottom:12px; line-height:1.6">
-        Typischer 14-täglicher Rhythmus für Mögglingen.<br>Bitte mit deinem echten PDF abgleichen.
-      </div>
-      <button class="btn-secondary" onclick="loadTemplate()">📋 Beispieltermine laden (Jul–Dez 2026)</button>
-    </div>
+    <button class="btn-secondary" onclick="loadGOAData()">📋 Alle GOA-Termine 2026/2027 laden</button>
   </div>
 </div>
 
-<!-- SETTINGS VIEW -->
+<!-- SETTINGS -->
 <div id="view-settings" class="view">
   <div class="section-label">Erinnerungen</div>
   <div class="settings-section">
     <div class="settings-row">
       <div class="settings-icon">🔔</div>
       <div class="settings-info">
-        <div class="settings-title">Erinnerungen aktiv</div>
+        <div class="settings-title">Benachrichtigungen</div>
         <div class="settings-desc" id="notif-status">Wird geprüft…</div>
       </div>
-      <label class="toggle">
-        <input type="checkbox" id="toggle-notifs" onchange="toggleNotifications(this.checked)">
-        <div class="toggle-track"></div>
-      </label>
+      <label class="toggle"><input type="checkbox" id="toggle-notifs" onchange="toggleNotifications(this.checked)"><div class="toggle-track"></div></label>
     </div>
     <div class="settings-row">
       <div class="settings-icon">⏰</div>
       <div class="settings-info">
         <div class="settings-title">Wie früh erinnern?</div>
-        <div class="settings-desc">Am Vortag oder früher</div>
+        <div class="settings-desc">Vor dem Abholtermin</div>
       </div>
       <select class="reminder-select" id="reminder-days" onchange="saveSettings()">
-        <option value="1">1 Tag</option>
-        <option value="2" selected>2 Tage</option>
-        <option value="3">3 Tage</option>
-        <option value="7">1 Woche</option>
+        <option value="0">Am selben Tag</option>
+        <option value="1">1 Tag vorher</option>
+        <option value="2" selected>2 Tage vorher</option>
+        <option value="3">3 Tage vorher</option>
+        <option value="7">1 Woche vorher</option>
       </select>
     </div>
     <div class="settings-row">
       <div class="settings-icon">🕗</div>
       <div class="settings-info">
-        <div class="settings-title">Uhrzeit der Erinnerung</div>
-        <div class="settings-desc">Wann bekommst du die Nachricht?</div>
+        <div class="settings-title">Uhrzeit</div>
+        <div class="settings-desc">Wann kommt die Erinnerung?</div>
       </div>
       <select class="reminder-select" id="reminder-time" onchange="saveSettings()">
         <option value="07:00">07:00</option>
         <option value="08:00" selected>08:00</option>
+        <option value="17:00">17:00</option>
         <option value="18:00">18:00</option>
         <option value="19:00">19:00</option>
         <option value="20:00">20:00</option>
       </select>
     </div>
     <div class="settings-row">
-      <div class="settings-icon">📱</div>
+      <div class="settings-icon">🧪</div>
       <div class="settings-info">
-        <div class="settings-title">Erinnerung testen</div>
-        <div class="settings-desc">Schickt sofort eine Test-Benachrichtigung</div>
+        <div class="settings-title">Test-Benachrichtigung</div>
+        <div class="settings-desc">Sofort eine Probe schicken</div>
       </div>
-      <button class="btn-secondary" style="width:auto; padding: 8px 14px; font-size:13px; margin:0" onclick="testNotification()">Testen</button>
+      <button class="btn-sm" onclick="testNotification()">Testen</button>
     </div>
   </div>
+
+  <div class="section-label">Tonnen anzeigen</div>
+  <div class="settings-section" id="visibility-settings"></div>
 
   <div class="section-label">App</div>
   <div class="settings-section">
     <div class="settings-row">
       <div class="settings-icon">📲</div>
       <div class="settings-info">
-        <div class="settings-title">App installieren</div>
-        <div class="settings-desc">Zum Homescreen hinzufügen für Offline-Nutzung</div>
+        <div class="settings-title">Zum Homescreen hinzufügen</div>
+        <div class="settings-desc">Als App installieren (PWA)</div>
       </div>
-      <button class="btn-secondary" style="width:auto; padding: 8px 14px; font-size:13px; margin:0" onclick="showInstallHint()">Anleitung</button>
+      <button class="btn-sm" onclick="showInstallHint()">Anleitung</button>
     </div>
     <div class="settings-row">
       <div class="settings-icon">🗑️</div>
       <div class="settings-info">
         <div class="settings-title">Alle Termine löschen</div>
-        <div class="settings-desc">Setzt die App komplett zurück</div>
+        <div class="settings-desc">App komplett zurücksetzen</div>
       </div>
-      <button class="btn-secondary" style="width:auto; padding: 8px 14px; font-size:13px; margin:0; color:#c44; border-color:rgba(204,68,68,0.3)" onclick="clearAll()">Löschen</button>
+      <button class="btn-sm" style="color:#c44;border-color:rgba(204,68,68,0.3)" onclick="clearAll()">Löschen</button>
     </div>
   </div>
 
-  <div id="install-hint" class="install-hint hidden" style="display:none">
-    <strong>So installierst du die App:</strong><br><br>
-    📱 <strong>iPhone/iPad (Safari):</strong><br>
+  <div class="install-hint" id="install-hint">
+    <strong>iPhone/iPad (Safari):</strong><br>
     Teilen-Button → „Zum Home-Bildschirm"<br><br>
-    🤖 <strong>Android (Chrome):</strong><br>
-    Menü (⋮) → „App installieren" oder<br>
-    „Zum Startbildschirm hinzufügen"
+    <strong>Android (Chrome):</strong><br>
+    Menü (⋮) → „App installieren" oder „Zum Startbildschirm hinzufügen"
   </div>
 </div>
 
@@ -624,20 +284,24 @@
 
 <script>
 const TYPES = {
-  restmuell: { label: 'Restmüll', emoji: '🗑️', color: '#888', bg: 'rgba(136,136,136,0.15)' },
-  bio:       { label: 'Biomüll', emoji: '🌿', color: '#4a9e6b', bg: 'rgba(74,158,107,0.15)' },
-  papier:    { label: 'Altpapier', emoji: '📰', color: '#4a7bc4', bg: 'rgba(74,123,196,0.15)' },
-  gelb:      { label: 'Gelber Sack', emoji: '♻️', color: '#d4a820', bg: 'rgba(212,168,32,0.15)' },
-  sperrmuell:{ label: 'Sperrmüll', emoji: '📦', color: '#c4604a', bg: 'rgba(196,96,74,0.15)' }
+  restmuell:      { label:'Hausmüll',              kuerzel:'HM',  emoji:'🗑️', color:'#888',    bg:'rgba(136,136,136,0.14)' },
+  bio:            { label:'Bioabfälle',            kuerzel:'Bio', emoji:'🌿', color:'#4a9e6b', bg:'rgba(74,158,107,0.14)' },
+  papier:         { label:'Blaue Tonne',           kuerzel:'BT',  emoji:'📰', color:'#4a7bc4', bg:'rgba(74,123,196,0.14)' },
+  gelb:           { label:'Gelber Sack',           kuerzel:'GS',  emoji:'♻️', color:'#d4a820', bg:'rgba(212,168,32,0.14)' },
+  gartentonne:    { label:'Gartentonne',           kuerzel:'GT',  emoji:'🌱', color:'#5daa3a', bg:'rgba(93,170,58,0.14)' },
+  gruenabfuhr:    { label:'Grünabfuhr',            kuerzel:'GA',  emoji:'🌳', color:'#2e7d32', bg:'rgba(46,125,50,0.14)' },
+  altpapier_verein:{ label:'AV Holsammlung',       kuerzel:'AVH', emoji:'📦', color:'#7b5ea7', bg:'rgba(123,94,167,0.14)' },
+  christbaum:     { label:'Christbaumsammlung',    kuerzel:'CS',  emoji:'🎄', color:'#c0392b', bg:'rgba(192,57,43,0.14)' }
 };
+
+const GOA_TERMINE = [{"type":"bio","date":"2026-03-07"},{"type":"bio","date":"2026-03-20"},{"type":"papier","date":"2026-03-20"},{"type":"gelb","date":"2026-03-20"},{"type":"gartentonne","date":"2026-03-20"},{"type":"gartentonne","date":"2026-04-04"},{"type":"bio","date":"2026-04-07"},{"type":"restmuell","date":"2026-04-14"},{"type":"gartentonne","date":"2026-04-17"},{"type":"bio","date":"2026-04-20"},{"type":"papier","date":"2026-04-23"},{"type":"gelb","date":"2026-04-23"},{"type":"restmuell","date":"2026-04-28"},{"type":"gartentonne","date":"2026-05-02"},{"type":"bio","date":"2026-05-04"},{"type":"gruenabfuhr","date":"2026-05-04"},{"type":"bio","date":"2026-05-11"},{"type":"restmuell","date":"2026-05-12"},{"type":"gartentonne","date":"2026-05-16"},{"type":"bio","date":"2026-05-18"},{"type":"papier","date":"2026-05-21"},{"type":"gelb","date":"2026-05-21"},{"type":"bio","date":"2026-05-26"},{"type":"restmuell","date":"2026-05-27"},{"type":"gartentonne","date":"2026-05-30"},{"type":"bio","date":"2026-06-01"},{"type":"bio","date":"2026-06-08"},{"type":"restmuell","date":"2026-06-09"},{"type":"gartentonne","date":"2026-06-12"},{"type":"altpapier_verein","date":"2026-06-13"},{"type":"bio","date":"2026-06-15"},{"type":"papier","date":"2026-06-16"},{"type":"papier","date":"2026-06-18"},{"type":"gelb","date":"2026-06-18"},{"type":"bio","date":"2026-06-22"},{"type":"restmuell","date":"2026-06-23"},{"type":"gartentonne","date":"2026-06-26"},{"type":"bio","date":"2026-06-29"},{"type":"bio","date":"2026-07-06"},{"type":"restmuell","date":"2026-07-07"},{"type":"gartentonne","date":"2026-07-10"},{"type":"bio","date":"2026-07-13"},{"type":"papier","date":"2026-07-16"},{"type":"gelb","date":"2026-07-16"},{"type":"bio","date":"2026-07-20"},{"type":"restmuell","date":"2026-07-21"},{"type":"gartentonne","date":"2026-07-24"},{"type":"bio","date":"2026-07-27"},{"type":"bio","date":"2026-08-03"},{"type":"restmuell","date":"2026-08-04"},{"type":"gartentonne","date":"2026-08-07"},{"type":"bio","date":"2026-08-10"},{"type":"papier","date":"2026-08-13"},{"type":"gelb","date":"2026-08-13"},{"type":"bio","date":"2026-08-17"},{"type":"restmuell","date":"2026-08-18"},{"type":"gartentonne","date":"2026-08-21"},{"type":"bio","date":"2026-08-24"},{"type":"bio","date":"2026-08-31"},{"type":"restmuell","date":"2026-09-01"},{"type":"gartentonne","date":"2026-09-04"},{"type":"altpapier_verein","date":"2026-09-05"},{"type":"bio","date":"2026-09-07"},{"type":"papier","date":"2026-09-10"},{"type":"gelb","date":"2026-09-10"},{"type":"bio","date":"2026-09-14"},{"type":"restmuell","date":"2026-09-15"},{"type":"gartentonne","date":"2026-09-18"},{"type":"bio","date":"2026-09-21"},{"type":"bio","date":"2026-09-28"},{"type":"restmuell","date":"2026-09-29"},{"type":"gartentonne","date":"2026-10-02"},{"type":"bio","date":"2026-10-05"},{"type":"papier","date":"2026-10-08"},{"type":"gelb","date":"2026-10-08"},{"type":"bio","date":"2026-10-12"},{"type":"restmuell","date":"2026-10-13"},{"type":"gartentonne","date":"2026-10-16"},{"type":"bio","date":"2026-10-19"},{"type":"bio","date":"2026-10-26"},{"type":"restmuell","date":"2026-10-27"},{"type":"gartentonne","date":"2026-10-30"},{"type":"bio","date":"2026-11-02"},{"type":"papier","date":"2026-11-05"},{"type":"gelb","date":"2026-11-05"},{"type":"bio","date":"2026-11-09"},{"type":"restmuell","date":"2026-11-10"},{"type":"gartentonne","date":"2026-11-13"},{"type":"bio","date":"2026-11-16"},{"type":"gruenabfuhr","date":"2026-11-20"},{"type":"bio","date":"2026-11-23"},{"type":"restmuell","date":"2026-11-24"},{"type":"gartentonne","date":"2026-11-27"},{"type":"bio","date":"2026-11-30"},{"type":"bio","date":"2026-12-02"},{"type":"papier","date":"2026-12-03"},{"type":"gelb","date":"2026-12-03"},{"type":"restmuell","date":"2026-12-08"},{"type":"gartentonne","date":"2026-12-11"},{"type":"bio","date":"2026-12-14"},{"type":"bio","date":"2026-12-21"},{"type":"restmuell","date":"2026-12-22"},{"type":"bio","date":"2026-12-29"},{"type":"papier","date":"2027-01-02"},{"type":"gelb","date":"2027-01-02"},{"type":"bio","date":"2027-01-05"},{"type":"restmuell","date":"2027-01-07"},{"type":"christbaum","date":"2027-01-11"},{"type":"bio","date":"2027-01-12"},{"type":"bio","date":"2027-01-18"},{"type":"restmuell","date":"2027-01-19"},{"type":"bio","date":"2027-01-25"},{"type":"papier","date":"2027-01-28"},{"type":"gelb","date":"2027-01-28"},{"type":"bio","date":"2027-02-01"},{"type":"restmuell","date":"2027-02-02"},{"type":"bio","date":"2027-02-08"},{"type":"bio","date":"2027-02-15"},{"type":"restmuell","date":"2027-02-16"},{"type":"bio","date":"2027-02-22"},{"type":"papier","date":"2027-02-25"},{"type":"gelb","date":"2027-02-25"},{"type":"bio","date":"2027-03-01"},{"type":"restmuell","date":"2027-03-02"},{"type":"altpapier_verein","date":"2027-03-06"},{"type":"bio","date":"2027-03-08"},{"type":"bio","date":"2027-03-15"},{"type":"restmuell","date":"2027-03-16"},{"type":"bio","date":"2027-03-22"},{"type":"papier","date":"2027-03-25"},{"type":"gelb","date":"2027-03-25"},{"type":"bio","date":"2027-03-30"},{"type":"restmuell","date":"2027-03-31"}];
 
 let pickups = JSON.parse(localStorage.getItem('pickups') || '[]');
 let settings = JSON.parse(localStorage.getItem('settings') || '{"reminderDays":2,"reminderTime":"08:00","notificationsEnabled":false}');
+let hiddenTypes = JSON.parse(localStorage.getItem('hiddenTypes') || '[]');
+let activeFilter = 'alle';
 
-// Set today's date as default
 document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
-
-// Load settings into UI
 document.getElementById('reminder-days').value = settings.reminderDays;
 document.getElementById('reminder-time').value = settings.reminderTime;
 
@@ -649,30 +313,25 @@ function saveSettings() {
 }
 
 function switchTab(tab) {
-  document.querySelectorAll('.nav-tab').forEach((t,i) => {
-    t.classList.toggle('active', ['home','add','settings'][i] === tab);
-  });
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.getElementById('view-' + tab).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach((t,i)=>t.classList.toggle('active',['home','add','settings'][i]===tab));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+tab).classList.add('active');
+  if(tab==='settings') renderVisibilitySettings();
 }
 
 function addPickup() {
   const type = document.getElementById('add-type').value;
   const date = document.getElementById('add-date').value;
-  if (!date) { showToast('Bitte ein Datum auswählen'); return; }
-
-  pickups.push({ id: Date.now(), type, date });
-  pickups.sort((a,b) => a.date.localeCompare(b.date));
-  save();
-  renderHome();
-  showToast('Termin hinzugefügt ✓');
-  document.getElementById('add-date').value = '';
+  if(!date){showToast('Bitte ein Datum auswählen');return}
+  pickups.push({id:Date.now(),type,date,custom:true});
+  pickups.sort((a,b)=>a.date.localeCompare(b.date));
+  save(); renderHome(); showToast('Termin hinzugefügt ✓');
+  document.getElementById('add-date').value='';
 }
 
 function deletePickup(id) {
-  pickups = pickups.filter(p => p.id !== id);
-  save();
-  renderHome();
+  pickups = pickups.filter(p=>p.id!==id);
+  save(); renderHome();
 }
 
 function save() {
@@ -680,332 +339,251 @@ function save() {
   scheduleAllReminders();
 }
 
-function formatDate(dateStr) {
-  const d = new Date(dateStr + 'T12:00:00');
-  return d.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric' });
+function formatDate(ds) {
+  const d = new Date(ds+'T12:00:00');
+  return d.toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'});
 }
 
-function daysUntil(dateStr) {
-  const today = new Date(); today.setHours(0,0,0,0);
-  const d = new Date(dateStr + 'T00:00:00'); d.setHours(0,0,0,0);
-  return Math.round((d - today) / 86400000);
+function formatDateShort(ds) {
+  const d = new Date(ds+'T12:00:00');
+  return d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'});
 }
 
-function badgeForDays(days) {
-  if (days < 0) return null;
-  if (days === 0) return { text: 'Heute!', color: '#4a9e6b', bg: 'rgba(74,158,107,0.18)' };
-  if (days === 1) return { text: 'Morgen', color: '#d4a820', bg: 'rgba(212,168,32,0.18)' };
-  if (days <= 3) return { text: `in ${days} Tagen`, color: '#888', bg: 'rgba(136,136,136,0.18)' };
-  return null;
+function daysUntil(ds) {
+  const t=new Date();t.setHours(0,0,0,0);
+  const d=new Date(ds+'T00:00:00');d.setHours(0,0,0,0);
+  return Math.round((d-t)/86400000);
+}
+
+function getMonthKey(ds) {
+  const d=new Date(ds+'T12:00:00');
+  return d.toLocaleDateString('de-DE',{month:'long',year:'numeric'});
 }
 
 function renderHome() {
-  const today = new Date(); today.setHours(0,0,0,0);
+  const visible = pickups.filter(p => !hiddenTypes.includes(p.type));
+  const filtered = activeFilter==='alle' ? visible : visible.filter(p=>p.type===activeFilter);
+  const upcoming = filtered.filter(p=>daysUntil(p.date)>=0);
+  const past = filtered.filter(p=>daysUntil(p.date)<0);
 
-  const upcoming = pickups.filter(p => daysUntil(p.date) >= 0);
-  const past = pickups.filter(p => daysUntil(p.date) < 0);
+  // Filter chips
+  const types = [...new Set(pickups.map(p=>p.type))];
+  const fb = document.getElementById('filter-bar');
+  fb.innerHTML = `<div class="chip ${activeFilter==='alle'?'active':''}" onclick="setFilter('alle')">Alle</div>` +
+    types.map(t=>{const d=TYPES[t]||TYPES.restmuell;return`<div class="chip ${activeFilter===t?'active':''}" onclick="setFilter('${t}')">${d.emoji} ${d.kuerzel}</div>`}).join('');
 
-  // Next banner — earliest upcoming that's within 7 days
-  const nextBanner = document.getElementById('next-banner');
-  const nextItems = document.getElementById('next-items');
-  const imminent = upcoming.filter(p => daysUntil(p.date) <= 7);
+  // Stats
+  const sb = document.getElementById('stats-bar');
+  if(pickups.length) {
+    const soon = pickups.filter(p=>daysUntil(p.date)>=0&&daysUntil(p.date)<=7).length;
+    const total = pickups.filter(p=>daysUntil(p.date)>=0).length;
+    const done = pickups.filter(p=>daysUntil(p.date)<0).length;
+    sb.innerHTML=`<div class="stats-bar">
+      <div class="stat-item"><div class="stat-num">${soon}</div><div class="stat-label">Diese Woche</div></div>
+      <div class="stat-item"><div class="stat-num">${total}</div><div class="stat-label">Ausstehend</div></div>
+      <div class="stat-item"><div class="stat-num">${done}</div><div class="stat-label">Erledigt</div></div>
+    </div>`;
+  } else sb.innerHTML='';
 
-  if (imminent.length) {
-    nextBanner.style.display = 'block';
-    // Group by date
-    const byDate = {};
-    imminent.forEach(p => { (byDate[p.date] = byDate[p.date] || []).push(p); });
-    const firstDate = Object.keys(byDate).sort()[0];
-    nextItems.innerHTML = byDate[firstDate].map(p => {
-      const t = TYPES[p.type] || TYPES.restmuell;
-      const days = daysUntil(p.date);
-      return `<div class="next-item">
-        <div class="next-dot" style="background:${t.color}"></div>
-        <div class="next-item-name">${t.emoji} ${t.label}</div>
-        <div class="next-item-date">${formatDate(p.date)}</div>
-        <div class="next-item-days" style="background:${days===0?'rgba(74,158,107,0.2)':days===1?'rgba(212,168,32,0.2)':'rgba(136,136,136,0.15)'}; color:${days===0?'#4a9e6b':days===1?'#d4a820':'#888'}">${days===0?'Heute':days===1?'Morgen':'in '+days+' d'}</div>
-      </div>`;
+  // Next banner
+  const nb = document.getElementById('next-banner');
+  const ni = document.getElementById('next-items');
+  const imminent = visible.filter(p=>daysUntil(p.date)>=0&&daysUntil(p.date)<=7);
+  if(imminent.length) {
+    nb.style.display='block';
+    const byDate={};
+    imminent.forEach(p=>{(byDate[p.date]=byDate[p.date]||[]).push(p)});
+    const first=Object.keys(byDate).sort()[0];
+    ni.innerHTML=byDate[first].map(p=>{
+      const t=TYPES[p.type]||TYPES.restmuell,days=daysUntil(p.date);
+      const dc=days===0?'#4a9e6b':days===1?'#d4a820':'#888';
+      const db=days===0?'rgba(74,158,107,0.18)':days===1?'rgba(212,168,32,0.18)':'rgba(136,136,136,0.15)';
+      const dl=days===0?'Heute':days===1?'Morgen':'in '+days+' d';
+      return`<div class="next-item"><div class="next-dot" style="background:${t.color}"></div><div class="next-item-name">${t.emoji} ${t.label}</div><div class="next-item-date">${formatDateShort(p.date)}</div><div class="next-item-days" style="background:${db};color:${dc}">${dl}</div></div>`;
     }).join('');
+  } else nb.style.display='none';
+
+  // Main list grouped by month
+  const container = document.getElementById('pickup-container');
+  if(!upcoming.length) {
+    container.innerHTML=`<div class="empty-state"><div class="empty-state-icon">📅</div><div class="empty-state-text">Keine Termine vorhanden.<br>Wechsle zu „Hinzufügen"<br>und lade die GOA-Termine.</div></div>`;
   } else {
-    nextBanner.style.display = 'none';
+    const byMonth={};
+    upcoming.forEach(p=>{const m=getMonthKey(p.date);(byMonth[m]=byMonth[m]||[]).push(p)});
+    container.innerHTML=Object.entries(byMonth).map(([month,items])=>`
+      <div class="month-divider">${month}</div>
+      <div class="pickup-list">${items.map(p=>renderCard(p,false)).join('')}</div>
+    `).join('');
   }
 
-  const list = document.getElementById('pickup-list');
-  if (!upcoming.length) {
-    list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📅</div><div class="empty-state-text">Noch keine Termine eingetragen.<br>Wechsle zu „Hinzufügen".</div></div>';
-  } else {
-    list.innerHTML = upcoming.map(p => renderCard(p, false)).join('');
-  }
-
-  const pastList = document.getElementById('past-list');
-  const pastLabel = document.getElementById('past-label');
-  if (past.length) {
-    pastLabel.style.display = 'block';
-    pastList.innerHTML = past.slice().reverse().slice(0,5).map(p => renderCard(p, true)).join('');
-  } else {
-    pastLabel.style.display = 'none';
-    pastList.innerHTML = '';
-  }
+  // Past
+  const pastList=document.getElementById('past-list');
+  const pastLabel=document.getElementById('past-label');
+  if(past.length){
+    pastLabel.style.display='block';
+    pastList.innerHTML=past.slice().reverse().slice(0,8).map(p=>renderCard(p,true)).join('');
+  } else {pastLabel.style.display='none';pastList.innerHTML='';}
 }
 
 function renderCard(p, isPast) {
-  const t = TYPES[p.type] || TYPES.restmuell;
-  const days = daysUntil(p.date);
-  const badge = badgeForDays(days);
-  const isToday = days === 0;
-
-  return `<div class="pickup-card ${isPast?'past':''} ${isToday?'today':''}">
+  const t=TYPES[p.type]||TYPES.restmuell,days=daysUntil(p.date);
+  let badge='';
+  if(!isPast){
+    if(days===0) badge=`<div class="pickup-badge" style="background:rgba(74,158,107,0.2);color:#4a9e6b">Heute!</div>`;
+    else if(days===1) badge=`<div class="pickup-badge" style="background:rgba(212,168,32,0.2);color:#d4a820">Morgen</div>`;
+    else if(days<=3) badge=`<div class="pickup-badge" style="background:rgba(136,136,136,0.15);color:#888">in ${days} d</div>`;
+  }
+  return`<div class="pickup-card ${isPast?'past':''} ${days===0?'today':''}">
     <div class="pickup-color-bar" style="background:${t.color}"></div>
     <div class="pickup-icon" style="background:${t.bg}">${t.emoji}</div>
     <div class="pickup-info">
-      <div class="pickup-type">${t.label}</div>
+      <div class="pickup-type">${t.label} <span style="font-size:11px;color:var(--text3);font-weight:400">${t.kuerzel}</span></div>
       <div class="pickup-date">${formatDate(p.date)}</div>
     </div>
-    <div class="pickup-actions">
-      ${badge ? `<div class="pickup-badge" style="background:${badge.bg};color:${badge.color}">${badge.text}</div>` : ''}
-      <button class="delete-btn" onclick="deletePickup(${p.id})" title="Löschen">✕</button>
-    </div>
+    <div style="display:flex;gap:5px;align-items:center">${badge}<button class="delete-btn" onclick="deletePickup(${p.id})">✕</button></div>
   </div>`;
 }
 
-// Notification system
+function setFilter(f) {
+  activeFilter=f; renderHome();
+}
+
+function renderVisibilitySettings() {
+  const el=document.getElementById('visibility-settings');
+  el.innerHTML=Object.entries(TYPES).map(([key,t])=>`
+    <div class="settings-row">
+      <div class="settings-icon">${t.emoji}</div>
+      <div class="settings-info"><div class="settings-title">${t.label}</div><div class="settings-desc">${t.kuerzel}</div></div>
+      <label class="toggle"><input type="checkbox" ${!hiddenTypes.includes(key)?'checked':''} onchange="toggleType('${key}',this.checked)"><div class="toggle-track"></div></label>
+    </div>`).join('');
+}
+
+function toggleType(key, visible) {
+  if(visible) hiddenTypes=hiddenTypes.filter(t=>t!==key);
+  else if(!hiddenTypes.includes(key)) hiddenTypes.push(key);
+  localStorage.setItem('hiddenTypes',JSON.stringify(hiddenTypes));
+  renderHome();
+}
+
+function loadGOAData() {
+  const existing=new Set(pickups.map(p=>`${p.type}-${p.date}`));
+  const newOnes=GOA_TERMINE.filter(e=>!existing.has(`${e.type}-${e.date}`)).map((e,i)=>({...e,id:Date.now()+i}));
+  pickups=[...pickups,...newOnes].sort((a,b)=>a.date.localeCompare(b.date));
+  save(); renderHome();
+  showToast(`${newOnes.length} GOA-Termine geladen ✓`);
+  switchTab('home');
+}
+
+// ICS
+document.getElementById('ics-file-input').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=ev=>parseICS(ev.target.result);r.readAsText(f);
+});
+
+function parseICS(text) {
+  const events=[];
+  text.split('BEGIN:VEVENT').slice(1).forEach(block=>{
+    const sm=block.match(/SUMMARY[^:]*:(.+)/),dm=block.match(/DTSTART[^:]*:(\d{8})/);
+    if(!sm||!dm)return;
+    const s=sm[1].trim().toLowerCase(),raw=dm[1];
+    const date=`${raw.slice(0,4)}-${raw.slice(4,6)}-${raw.slice(6,8)}`;
+    let type='restmuell';
+    if(s.includes('bio')||s.includes('bioabfall')) type='bio';
+    else if(s.includes('blaue')||s.includes('altpapier')&&!s.includes('verein')) type='papier';
+    else if(s.includes('gelb')||s.includes('wertstoff')||s.includes('gelber sack')) type='gelb';
+    else if(s.includes('gartentonne')||s.includes('garten')) type='gartentonne';
+    else if(s.includes('grünabfuhr')||s.includes('gruenabfuhr')||s.includes('grünabfall')) type='gruenabfuhr';
+    else if(s.includes('vereinssammlung')||s.includes('avh')) type='altpapier_verein';
+    else if(s.includes('christbaum')) type='christbaum';
+    events.push({id:Date.now()+Math.random(),type,date});
+  });
+  if(!events.length){showToast('Keine Termine gefunden');return}
+  const existing=new Set(pickups.map(p=>`${p.type}-${p.date}`));
+  const newOnes=events.filter(e=>!existing.has(`${e.type}-${e.date}`));
+  pickups=[...pickups,...newOnes].sort((a,b)=>a.date.localeCompare(b.date));
+  save();renderHome();
+  showToast(`${newOnes.length} Termine importiert ✓`);
+  switchTab('home');
+}
+
+// Notifications
 async function checkNotifStatus() {
-  const banner = document.getElementById('notif-banner');
-  const toggle = document.getElementById('toggle-notifs');
-  const status = document.getElementById('notif-status');
-
-  if (!('Notification' in window)) {
-    status.textContent = 'Nicht unterstützt in diesem Browser';
-    toggle.disabled = true;
-    return;
-  }
-
-  if (Notification.permission === 'granted') {
-    banner.classList.add('hidden');
-    toggle.checked = settings.notificationsEnabled;
-    status.textContent = 'Berechtigung erteilt';
-    if (settings.notificationsEnabled) scheduleAllReminders();
-  } else if (Notification.permission === 'denied') {
-    status.textContent = 'Berechtigung abgelehnt – in Browser-Einstellungen aktivieren';
-    toggle.disabled = true;
-  } else {
-    banner.classList.remove('hidden');
-    toggle.checked = false;
-    status.textContent = 'Berechtigung noch nicht erteilt';
-  }
+  const banner=document.getElementById('notif-banner');
+  const toggle=document.getElementById('toggle-notifs');
+  const status=document.getElementById('notif-status');
+  if(!('Notification' in window)){status.textContent='Nicht unterstützt';toggle.disabled=true;return}
+  if(Notification.permission==='granted'){
+    banner.classList.add('hidden');toggle.checked=settings.notificationsEnabled;
+    status.textContent=settings.notificationsEnabled?'Aktiv':'Deaktiviert';
+    if(settings.notificationsEnabled)scheduleAllReminders();
+  } else if(Notification.permission==='denied'){
+    status.textContent='Berechtigung verweigert';toggle.disabled=true;
+  } else {banner.classList.remove('hidden');toggle.checked=false;status.textContent='Berechtigung ausstehend'}
 }
 
 async function requestNotifications() {
-  if (!('Notification' in window)) { showToast('Benachrichtigungen nicht unterstützt'); return; }
-  const perm = await Notification.requestPermission();
-  if (perm === 'granted') {
-    settings.notificationsEnabled = true;
-    localStorage.setItem('settings', JSON.stringify(settings));
-    document.getElementById('toggle-notifs').checked = true;
-    document.getElementById('notif-status').textContent = 'Aktiv';
+  const perm=await Notification.requestPermission();
+  if(perm==='granted'){
+    settings.notificationsEnabled=true;localStorage.setItem('settings',JSON.stringify(settings));
+    document.getElementById('toggle-notifs').checked=true;
+    document.getElementById('notif-status').textContent='Aktiv';
     document.getElementById('notif-banner').classList.add('hidden');
-    scheduleAllReminders();
-    showToast('Benachrichtigungen aktiviert ✓');
-  } else {
-    showToast('Berechtigung nicht erteilt');
-  }
+    scheduleAllReminders();showToast('Benachrichtigungen aktiv ✓');
+  } else showToast('Berechtigung nicht erteilt');
 }
 
 function toggleNotifications(enabled) {
-  if (enabled && Notification.permission !== 'granted') {
-    requestNotifications();
-    return;
-  }
-  settings.notificationsEnabled = enabled;
-  localStorage.setItem('settings', JSON.stringify(settings));
-  if (enabled) { scheduleAllReminders(); showToast('Erinnerungen aktiviert'); }
-  else { clearScheduled(); showToast('Erinnerungen deaktiviert'); }
+  if(enabled&&Notification.permission!=='granted'){requestNotifications();return}
+  settings.notificationsEnabled=enabled;localStorage.setItem('settings',JSON.stringify(settings));
+  document.getElementById('notif-status').textContent=enabled?'Aktiv':'Deaktiviert';
+  if(enabled){scheduleAllReminders();showToast('Erinnerungen aktiviert');}
+  else{clearScheduled();showToast('Erinnerungen deaktiviert');}
 }
 
-let scheduledTimers = [];
-function clearScheduled() { scheduledTimers.forEach(clearTimeout); scheduledTimers = []; }
+let scheduledTimers=[];
+function clearScheduled(){scheduledTimers.forEach(clearTimeout);scheduledTimers=[];}
 
 function scheduleAllReminders() {
   clearScheduled();
-  if (!settings.notificationsEnabled || Notification.permission !== 'granted') return;
-
-  const [h, m] = settings.reminderTime.split(':').map(Number);
-  const now = new Date();
-
-  pickups.forEach(p => {
-    const pickupDate = new Date(p.date + 'T12:00:00');
-    const reminderDate = new Date(pickupDate);
-    reminderDate.setDate(reminderDate.getDate() - settings.reminderDays);
-    reminderDate.setHours(h, m, 0, 0);
-
-    const msUntil = reminderDate - now;
-    if (msUntil > 0 && msUntil < 7 * 24 * 60 * 60 * 1000) {
-      const t = TYPES[p.type] || TYPES.restmuell;
-      const timer = setTimeout(() => {
-        if (Notification.permission === 'granted' && settings.notificationsEnabled) {
-          new Notification(`${t.emoji} ${t.label} – Tonne rausstellen!`, {
-            body: `Abholung am ${formatDate(p.date)}${settings.reminderDays > 0 ? ' (in ' + settings.reminderDays + ' Tag' + (settings.reminderDays > 1 ? 'en' : '') + ')' : ' (heute)'}`,
-            icon: 'icon-192.png',
-            tag: `pickup-${p.id}`,
-            requireInteraction: true
+  if(!settings.notificationsEnabled||Notification.permission!=='granted')return;
+  const [h,m]=settings.reminderTime.split(':').map(Number),now=new Date();
+  pickups.forEach(p=>{
+    const pd=new Date(p.date+'T12:00:00');
+    const rd=new Date(pd);rd.setDate(rd.getDate()-settings.reminderDays);rd.setHours(h,m,0,0);
+    const ms=rd-now;
+    if(ms>0&&ms<7*24*60*60*1000){
+      const t=TYPES[p.type]||TYPES.restmuell;
+      const days=settings.reminderDays;
+      const timer=setTimeout(()=>{
+        if(Notification.permission==='granted'&&settings.notificationsEnabled)
+          new Notification(`${t.emoji} ${t.label} – Tonne rausstellen!`,{
+            body:`Abholung am ${formatDate(p.date)}${days>0?' (in '+days+' Tag'+(days>1?'en':')+')':' (heute)'}`,
+            icon:'icon-192.png',tag:`pickup-${p.id}`,requireInteraction:true
           });
-        }
-      }, msUntil);
+      },ms);
       scheduledTimers.push(timer);
     }
   });
 }
 
-function refreshReminders() {
-  scheduleAllReminders();
-  showToast('Erinnerungen aktualisiert ✓');
-}
+function refreshReminders(){scheduleAllReminders();showToast('Erinnerungen aktualisiert ✓');}
 
 function testNotification() {
-  if (Notification.permission !== 'granted') {
-    showToast('Bitte erst Benachrichtigungen aktivieren');
-    return;
-  }
-  new Notification('🗑️ Restmüll – Tonne rausstellen!', {
-    body: 'Das ist eine Test-Erinnerung der Mülltonne-App.',
-    icon: 'icon-192.png',
-    requireInteraction: false
-  });
-  showToast('Test-Benachrichtigung gesendet');
+  if(Notification.permission!=='granted'){showToast('Erst Benachrichtigungen aktivieren');return}
+  new Notification('🗑️ Hausmüll – Tonne rausstellen!',{body:'Test-Erinnerung der Mülltonne-App.',icon:'icon-192.png'});
+  showToast('Test gesendet');
 }
 
-// ICS import
-document.getElementById('ics-file-input').addEventListener('change', e => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => parseICS(ev.target.result);
-  reader.readAsText(file);
-});
+function clearAll(){if(!confirm('Wirklich alle Termine löschen?'))return;pickups=[];save();renderHome();showToast('Alle Termine gelöscht');}
 
-const drop = document.getElementById('ics-drop');
-drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('drag-over'); });
-drop.addEventListener('dragleave', () => drop.classList.remove('drag-over'));
-drop.addEventListener('drop', e => {
-  e.preventDefault(); drop.classList.remove('drag-over');
-  const file = e.dataTransfer.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => parseICS(ev.target.result);
-  reader.readAsText(file);
-});
+function showInstallHint(){const el=document.getElementById('install-hint');el.style.display=el.style.display==='none'||!el.style.display?'block':'none';}
 
-function parseICS(text) {
-  const events = [];
-  const blocks = text.split('BEGIN:VEVENT');
-  blocks.slice(1).forEach(block => {
-    const summaryMatch = block.match(/SUMMARY[^:]*:(.+)/);
-    const dateMatch = block.match(/DTSTART[^:]*:(\d{8})/);
-    if (!summaryMatch || !dateMatch) return;
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
 
-    const summary = summaryMatch[1].trim().toLowerCase();
-    const raw = dateMatch[1];
-    const date = `${raw.slice(0,4)}-${raw.slice(4,6)}-${raw.slice(6,8)}`;
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(console.error);
 
-    let type = 'restmuell';
-    if (summary.includes('bio') || summary.includes('grün')) type = 'bio';
-    else if (summary.includes('papier') || summary.includes('blau')) type = 'papier';
-    else if (summary.includes('gelb') || summary.includes('wertstoff') || summary.includes('gelber')) type = 'gelb';
-    else if (summary.includes('sperr')) type = 'sperrmuell';
-
-    events.push({ id: Date.now() + Math.random(), type, date });
-  });
-
-  if (!events.length) { showToast('Keine Termine in der Datei gefunden'); return; }
-
-  const existing = new Set(pickups.map(p => `${p.type}-${p.date}`));
-  const newOnes = events.filter(e => !existing.has(`${e.type}-${e.date}`));
-  pickups = [...pickups, ...newOnes].sort((a,b) => a.date.localeCompare(b.date));
-  save();
-  renderHome();
-  showToast(`${newOnes.length} Termine importiert ✓`);
-  switchTab('home');
-}
-
-// Template
-function loadTemplate() {
-  const template = [
-    // Restmüll alle 4 Wochen
-    {type:'restmuell', date:'2026-07-03'},
-    {type:'restmuell', date:'2026-07-31'},
-    {type:'restmuell', date:'2026-08-28'},
-    {type:'restmuell', date:'2026-09-25'},
-    {type:'restmuell', date:'2026-10-23'},
-    {type:'restmuell', date:'2026-11-20'},
-    {type:'restmuell', date:'2026-12-18'},
-    // Biomüll alle 2 Wochen
-    {type:'bio', date:'2026-07-06'},
-    {type:'bio', date:'2026-07-20'},
-    {type:'bio', date:'2026-08-03'},
-    {type:'bio', date:'2026-08-17'},
-    {type:'bio', date:'2026-08-31'},
-    {type:'bio', date:'2026-09-14'},
-    {type:'bio', date:'2026-09-28'},
-    {type:'bio', date:'2026-10-12'},
-    {type:'bio', date:'2026-10-26'},
-    {type:'bio', date:'2026-11-09'},
-    {type:'bio', date:'2026-11-23'},
-    {type:'bio', date:'2026-12-07'},
-    // Altpapier alle 4 Wochen
-    {type:'papier', date:'2026-07-10'},
-    {type:'papier', date:'2026-08-07'},
-    {type:'papier', date:'2026-09-04'},
-    {type:'papier', date:'2026-10-02'},
-    {type:'papier', date:'2026-10-30'},
-    {type:'papier', date:'2026-11-27'},
-    {type:'papier', date:'2026-12-11'},
-    // Gelber Sack alle 4 Wochen
-    {type:'gelb', date:'2026-07-17'},
-    {type:'gelb', date:'2026-08-14'},
-    {type:'gelb', date:'2026-09-11'},
-    {type:'gelb', date:'2026-10-09'},
-    {type:'gelb', date:'2026-11-06'},
-    {type:'gelb', date:'2026-12-04'},
-  ].map((p,i) => ({...p, id: Date.now() + i}));
-
-  const existing = new Set(pickups.map(p => `${p.type}-${p.date}`));
-  const newOnes = template.filter(e => !existing.has(`${e.type}-${e.date}`));
-  pickups = [...pickups, ...newOnes].sort((a,b) => a.date.localeCompare(b.date));
-  save();
-  renderHome();
-  showToast(`${newOnes.length} Beispieltermine geladen – bitte mit GOA-PDF abgleichen!`);
-  switchTab('home');
-}
-
-function clearAll() {
-  if (!confirm('Wirklich alle Termine löschen?')) return;
-  pickups = [];
-  save();
-  renderHome();
-  showToast('Alle Termine gelöscht');
-}
-
-function showInstallHint() {
-  const el = document.getElementById('install-hint');
-  el.style.display = el.style.display === 'none' ? 'block' : 'none';
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
-}
-
-// Service Worker
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').catch(console.error);
-}
-
-// Init
 checkNotifStatus();
 renderHome();
 </script>
-<div class="safe-bottom"></div>
 </body>
 </html>
