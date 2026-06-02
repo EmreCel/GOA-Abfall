@@ -1,5 +1,5 @@
-const CACHE_NAME = 'muelltonne-v1';
-const ASSETS = ['./','./index.html','./sw.js','./manifest.json'];
+const CACHE_NAME = 'muelltonne-v3';
+const ASSETS = ['./', './index.html', './sw.js', './manifest.json'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(ASSETS)));
@@ -21,10 +21,8 @@ self.addEventListener('fetch', e => {
 
 self.addEventListener('notificationclick', e => {
   e.notification.close();
-  e.waitUntil(clients.matchAll({ type: 'window' }).then(clientList => {
-    for (const client of clientList) {
-      if (client.url && 'focus' in client) return client.focus();
-    }
+  e.waitUntil(clients.matchAll({ type: 'window' }).then(list => {
+    for (const c of list) { if (c.url && 'focus' in c) return c.focus(); }
     if (clients.openWindow) return clients.openWindow('./');
   }));
 });
