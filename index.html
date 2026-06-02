@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mülltonne">
+<meta name="theme-color" content="#111111">
+<title>Mülltonne Mögglingen</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #111111;
+    --bg2: #1a1a1a;
+    --bg3: #222222;
+    --bg4: #2a2a2a;
+    --text: #f0ede8;
+    --text2: #999;
+    --text3: #555;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+
+    --restmuell: #888;
+    --restmuell-bg: rgba(136,136,136,0.12);
+    --bio: #4a9e6b;
+    --bio-bg: rgba(74,158,107,0.12);
+    --papier: #4a7bc4;
+    --papier-bg: rgba(74,123,196,0.12);
+    --gelb: #d4a820;
+    --gelb-bg: rgba(212,168,32,0.12);
+    --sperrmuell: #c4604a;
+    --sperrmuell-bg: rgba(196,96,74,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    min-height: 100vh;
+    max-width: 430px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .header {
+    padding: 56px 20px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  .header-street {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text2);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .header-title {
+    font-size: 28px;
+    font-weight: 300;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+  .header-title span { font-weight: 600; }
+
+  .icon-btn {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .icon-btn:active { background: var(--bg4); }
+
+  /* Nav tabs */
+  .nav {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+  }
+  .nav-tab {
+    flex: 1;
+    text-align: center;
+    padding: 14px 0 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text3);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+  }
+  .nav-tab.active {
+    color: var(--text);
+    border-bottom-color: var(--text);
+  }
+
+  /* Views */
+  .view { display: none; padding: 0 0 100px; }
+  .view.active { display: block; }
+
+  /* Next pickup banner */
+  .next-banner {
+    margin: 16px;
+    padding: 16px 18px;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 16px;
+  }
+  .next-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text3);
+    margin-bottom: 10px;
+  }
+  .next-items { display: flex; flex-direction: column; gap: 8px; }
+  .next-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .next-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .next-item-name { font-size: 15px; font-weight: 500; flex: 1; }
+  .next-item-date { font-size: 13px; color: var(--text2); font-family: 'DM Mono', monospace; }
+  .next-item-days {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 20px;
+    flex-shrink: 0;
+  }
+
+  /* Section headers */
+  .section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text3);
+    padding: 20px 20px 8px;
+  }
+
+  /* Pickup list */
+  .pickup-list { padding: 0 16px; display: flex; flex-direction: column; gap: 6px; }
+
+  .pickup-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    transition: background 0.1s;
+    position: relative;
+    overflow: hidden;
+  }
+  .pickup-card.past { opacity: 0.35; }
+  .pickup-card.today { border-color: var(--border2); background: var(--bg3); }
+
+  .pickup-color-bar {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    border-radius: 14px 0 0 14px;
+  }
+
+  .pickup-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .pickup-info { flex: 1; min-width: 0; }
+  .pickup-type { font-size: 15px; font-weight: 500; }
+  .pickup-date { font-size: 12px; color: var(--text2); font-family: 'DM Mono', monospace; margin-top: 2px; }
+
+  .pickup-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+  }
+
+  .pickup-actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .delete-btn {
+    background: none;
+    border: none;
+    color: var(--text3);
+    cursor: pointer;
+    padding: 4px;
+    font-size: 16px;
+    line-height: 1;
+    opacity: 0.5;
+    transition: opacity 0.15s;
+  }
+  .delete-btn:active { opacity: 1; color: #c44; }
+
+  /* Add form */
+  .add-section {
+    margin: 16px;
+    padding: 20px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+  }
+  .add-section h3 {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text2);
+    margin-bottom: 16px;
+  }
+  .form-row { margin-bottom: 12px; }
+  .form-label {
+    font-size: 12px;
+    color: var(--text2);
+    margin-bottom: 6px;
+    display: block;
+    letter-spacing: 0.02em;
+  }
+
+  select, input[type="date"], input[type="text"] {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    color: var(--text);
+    padding: 10px 14px;
+    font-size: 15px;
+    font-family: 'DM Sans', sans-serif;
+    -webkit-appearance: none;
+    appearance: none;
+    outline: none;
+  }
+  select:focus, input:focus { border-color: rgba(255,255,255,0.3); }
+
+  select option { background: #222; }
+
+  .color-preview {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    margin-bottom: 16px;
+  }
+  .color-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .btn-primary {
+    width: 100%;
+    background: var(--text);
+    color: var(--bg);
+    border: none;
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary:active { opacity: 0.8; }
+  .btn-secondary {
+    width: 100%;
+    background: var(--bg3);
+    color: var(--text);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.15s;
+  }
+  .btn-secondary:active { background: var(--bg4); }
+
+  /* Settings */
+  .settings-section {
+    margin: 16px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .settings-row {
+    display: flex;
+    align-items: center;
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--border);
+    gap: 14px;
+  }
+  .settings-row:last-child { border-bottom: none; }
+  .settings-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    width: 28px;
+    text-align: center;
+  }
+  .settings-info { flex: 1; }
+  .settings-title { font-size: 15px; font-weight: 500; }
+  .settings-desc { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+  /* Toggle */
+  .toggle {
+    position: relative;
+    width: 46px;
+    height: 26px;
+    flex-shrink: 0;
+  }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-track {
+    position: absolute;
+    inset: 0;
+    background: var(--bg4);
+    border-radius: 13px;
+    transition: background 0.2s;
+    cursor: pointer;
+    border: 1px solid var(--border2);
+  }
+  .toggle input:checked + .toggle-track { background: #4a9e6b; border-color: #4a9e6b; }
+  .toggle-track::after {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--text3);
+    transition: all 0.2s;
+  }
+  .toggle input:checked + .toggle-track::after {
+    left: calc(100% - 21px);
+    background: white;
+  }
+
+  select.reminder-select {
+    width: auto;
+    padding: 6px 10px;
+    font-size: 13px;
+    border-radius: 8px;
+  }
+
+  /* Notification permission banner */
+  .notif-banner {
+    margin: 16px;
+    padding: 14px 16px;
+    background: rgba(74,158,107,0.1);
+    border: 1px solid rgba(74,158,107,0.3);
+    border-radius: 12px;
+    font-size: 13px;
+    color: #4a9e6b;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .notif-banner.hidden { display: none; }
+
+  /* ICS import */
+  .ics-drop {
+    border: 2px dashed var(--border2);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    margin-top: 8px;
+  }
+  .ics-drop:hover, .ics-drop.drag-over {
+    border-color: rgba(74,158,107,0.6);
+    background: rgba(74,158,107,0.05);
+  }
+  .ics-drop-icon { font-size: 28px; margin-bottom: 8px; }
+  .ics-drop-text { font-size: 14px; color: var(--text2); }
+  .ics-drop-sub { font-size: 12px; color: var(--text3); margin-top: 4px; }
+
+  #ics-file-input { display: none; }
+
+  .toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg4);
+    color: var(--text);
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    border: 1px solid var(--border2);
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text3);
+  }
+  .empty-state-icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-state-text { font-size: 15px; }
+
+  /* Bottom padding for safe area */
+  .safe-bottom { height: env(safe-area-inset-bottom, 20px); }
+
+  /* PWA install prompt */
+  .install-hint {
+    margin: 0 16px 16px;
+    padding: 12px 16px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.5;
+  }
+  .install-hint strong { color: var(--text); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="header-street">Bahnhofstraße · Mögglingen</div>
+      <div class="header-title">Müll<span>tonne</span></div>
+    </div>
+    <button class="icon-btn" onclick="refreshReminders()" title="Erinnerungen aktualisieren">🔔</button>
+  </div>
+</div>
+
+<div class="nav">
+  <div class="nav-tab active" onclick="switchTab('home')">Übersicht</div>
+  <div class="nav-tab" onclick="switchTab('add')">Hinzufügen</div>
+  <div class="nav-tab" onclick="switchTab('settings')">Einstellungen</div>
+</div>
+
+<div id="notif-banner" class="notif-banner hidden" onclick="requestNotifications()">
+  🔔 <span>Benachrichtigungen aktivieren, um Erinnerungen zu erhalten</span>
+</div>
+
+<!-- HOME VIEW -->
+<div id="view-home" class="view active">
+  <div id="next-banner" class="next-banner" style="display:none">
+    <div class="next-label">Als nächstes rausstellen</div>
+    <div id="next-items" class="next-items"></div>
+  </div>
+  <div class="section-label" id="upcoming-label">Kommende Termine</div>
+  <div class="pickup-list" id="pickup-list"></div>
+  <div class="section-label" id="past-label" style="display:none">Vergangene Termine</div>
+  <div class="pickup-list" id="past-list"></div>
+</div>
+
+<!-- ADD VIEW -->
+<div id="view-add" class="view">
+  <div class="add-section">
+    <h3>ICS-Datei importieren</h3>
+    <div class="ics-drop" id="ics-drop" onclick="document.getElementById('ics-file-input').click()">
+      <div class="ics-drop-icon">📅</div>
+      <div class="ics-drop-text">ICS-Datei der GOA importieren</div>
+      <div class="ics-drop-sub">Von goa-online.de herunterladen → hier importieren</div>
+    </div>
+    <input type="file" id="ics-file-input" accept=".ics">
+  </div>
+
+  <div class="add-section">
+    <h3>Termin manuell eintragen</h3>
+    <div class="form-row">
+      <label class="form-label">Tonne / Abfallart</label>
+      <select id="add-type">
+        <option value="restmuell">🗑️ Restmüll</option>
+        <option value="bio">🟢 Biomüll</option>
+        <option value="papier">🔵 Altpapier (Blaue Tonne)</option>
+        <option value="gelb">🟡 Gelber Sack / Wertstofftonne</option>
+        <option value="sperrmuell">🔴 Sperrmüll</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Abholdatum</label>
+      <input type="date" id="add-date">
+    </div>
+    <button class="btn-primary" onclick="addPickup()">Termin hinzufügen</button>
+
+    <div style="margin-top:20px; border-top: 1px solid var(--border); padding-top:16px;">
+      <h3 style="margin-bottom:12px">Schnell-Vorlage: GOA Mögglingen 2026</h3>
+      <div style="font-size:13px; color:var(--text2); margin-bottom:12px; line-height:1.6">
+        Typischer 14-täglicher Rhythmus für Mögglingen.<br>Bitte mit deinem echten PDF abgleichen.
+      </div>
+      <button class="btn-secondary" onclick="loadTemplate()">📋 Beispieltermine laden (Jul–Dez 2026)</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS VIEW -->
+<div id="view-settings" class="view">
+  <div class="section-label">Erinnerungen</div>
+  <div class="settings-section">
+    <div class="settings-row">
+      <div class="settings-icon">🔔</div>
+      <div class="settings-info">
+        <div class="settings-title">Erinnerungen aktiv</div>
+        <div class="settings-desc" id="notif-status">Wird geprüft…</div>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="toggle-notifs" onchange="toggleNotifications(this.checked)">
+        <div class="toggle-track"></div>
+      </label>
+    </div>
+    <div class="settings-row">
+      <div class="settings-icon">⏰</div>
+      <div class="settings-info">
+        <div class="settings-title">Wie früh erinnern?</div>
+        <div class="settings-desc">Am Vortag oder früher</div>
+      </div>
+      <select class="reminder-select" id="reminder-days" onchange="saveSettings()">
+        <option value="1">1 Tag</option>
+        <option value="2" selected>2 Tage</option>
+        <option value="3">3 Tage</option>
+        <option value="7">1 Woche</option>
+      </select>
+    </div>
+    <div class="settings-row">
+      <div class="settings-icon">🕗</div>
+      <div class="settings-info">
+        <div class="settings-title">Uhrzeit der Erinnerung</div>
+        <div class="settings-desc">Wann bekommst du die Nachricht?</div>
+      </div>
+      <select class="reminder-select" id="reminder-time" onchange="saveSettings()">
+        <option value="07:00">07:00</option>
+        <option value="08:00" selected>08:00</option>
+        <option value="18:00">18:00</option>
+        <option value="19:00">19:00</option>
+        <option value="20:00">20:00</option>
+      </select>
+    </div>
+    <div class="settings-row">
+      <div class="settings-icon">📱</div>
+      <div class="settings-info">
+        <div class="settings-title">Erinnerung testen</div>
+        <div class="settings-desc">Schickt sofort eine Test-Benachrichtigung</div>
+      </div>
+      <button class="btn-secondary" style="width:auto; padding: 8px 14px; font-size:13px; margin:0" onclick="testNotification()">Testen</button>
+    </div>
+  </div>
+
+  <div class="section-label">App</div>
+  <div class="settings-section">
+    <div class="settings-row">
+      <div class="settings-icon">📲</div>
+      <div class="settings-info">
+        <div class="settings-title">App installieren</div>
+        <div class="settings-desc">Zum Homescreen hinzufügen für Offline-Nutzung</div>
+      </div>
+      <button class="btn-secondary" style="width:auto; padding: 8px 14px; font-size:13px; margin:0" onclick="showInstallHint()">Anleitung</button>
+    </div>
+    <div class="settings-row">
+      <div class="settings-icon">🗑️</div>
+      <div class="settings-info">
+        <div class="settings-title">Alle Termine löschen</div>
+        <div class="settings-desc">Setzt die App komplett zurück</div>
+      </div>
+      <button class="btn-secondary" style="width:auto; padding: 8px 14px; font-size:13px; margin:0; color:#c44; border-color:rgba(204,68,68,0.3)" onclick="clearAll()">Löschen</button>
+    </div>
+  </div>
+
+  <div id="install-hint" class="install-hint hidden" style="display:none">
+    <strong>So installierst du die App:</strong><br><br>
+    📱 <strong>iPhone/iPad (Safari):</strong><br>
+    Teilen-Button → „Zum Home-Bildschirm"<br><br>
+    🤖 <strong>Android (Chrome):</strong><br>
+    Menü (⋮) → „App installieren" oder<br>
+    „Zum Startbildschirm hinzufügen"
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const TYPES = {
+  restmuell: { label: 'Restmüll', emoji: '🗑️', color: '#888', bg: 'rgba(136,136,136,0.15)' },
+  bio:       { label: 'Biomüll', emoji: '🌿', color: '#4a9e6b', bg: 'rgba(74,158,107,0.15)' },
+  papier:    { label: 'Altpapier', emoji: '📰', color: '#4a7bc4', bg: 'rgba(74,123,196,0.15)' },
+  gelb:      { label: 'Gelber Sack', emoji: '♻️', color: '#d4a820', bg: 'rgba(212,168,32,0.15)' },
+  sperrmuell:{ label: 'Sperrmüll', emoji: '📦', color: '#c4604a', bg: 'rgba(196,96,74,0.15)' }
+};
+
+let pickups = JSON.parse(localStorage.getItem('pickups') || '[]');
+let settings = JSON.parse(localStorage.getItem('settings') || '{"reminderDays":2,"reminderTime":"08:00","notificationsEnabled":false}');
+
+// Set today's date as default
+document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
+
+// Load settings into UI
+document.getElementById('reminder-days').value = settings.reminderDays;
+document.getElementById('reminder-time').value = settings.reminderTime;
+
+function saveSettings() {
+  settings.reminderDays = parseInt(document.getElementById('reminder-days').value);
+  settings.reminderTime = document.getElementById('reminder-time').value;
+  localStorage.setItem('settings', JSON.stringify(settings));
+  scheduleAllReminders();
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.nav-tab').forEach((t,i) => {
+    t.classList.toggle('active', ['home','add','settings'][i] === tab);
+  });
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + tab).classList.add('active');
+}
+
+function addPickup() {
+  const type = document.getElementById('add-type').value;
+  const date = document.getElementById('add-date').value;
+  if (!date) { showToast('Bitte ein Datum auswählen'); return; }
+
+  pickups.push({ id: Date.now(), type, date });
+  pickups.sort((a,b) => a.date.localeCompare(b.date));
+  save();
+  renderHome();
+  showToast('Termin hinzugefügt ✓');
+  document.getElementById('add-date').value = '';
+}
+
+function deletePickup(id) {
+  pickups = pickups.filter(p => p.id !== id);
+  save();
+  renderHome();
+}
+
+function save() {
+  localStorage.setItem('pickups', JSON.stringify(pickups));
+  scheduleAllReminders();
+}
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  return d.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+function daysUntil(dateStr) {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const d = new Date(dateStr + 'T00:00:00'); d.setHours(0,0,0,0);
+  return Math.round((d - today) / 86400000);
+}
+
+function badgeForDays(days) {
+  if (days < 0) return null;
+  if (days === 0) return { text: 'Heute!', color: '#4a9e6b', bg: 'rgba(74,158,107,0.18)' };
+  if (days === 1) return { text: 'Morgen', color: '#d4a820', bg: 'rgba(212,168,32,0.18)' };
+  if (days <= 3) return { text: `in ${days} Tagen`, color: '#888', bg: 'rgba(136,136,136,0.18)' };
+  return null;
+}
+
+function renderHome() {
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  const upcoming = pickups.filter(p => daysUntil(p.date) >= 0);
+  const past = pickups.filter(p => daysUntil(p.date) < 0);
+
+  // Next banner — earliest upcoming that's within 7 days
+  const nextBanner = document.getElementById('next-banner');
+  const nextItems = document.getElementById('next-items');
+  const imminent = upcoming.filter(p => daysUntil(p.date) <= 7);
+
+  if (imminent.length) {
+    nextBanner.style.display = 'block';
+    // Group by date
+    const byDate = {};
+    imminent.forEach(p => { (byDate[p.date] = byDate[p.date] || []).push(p); });
+    const firstDate = Object.keys(byDate).sort()[0];
+    nextItems.innerHTML = byDate[firstDate].map(p => {
+      const t = TYPES[p.type] || TYPES.restmuell;
+      const days = daysUntil(p.date);
+      return `<div class="next-item">
+        <div class="next-dot" style="background:${t.color}"></div>
+        <div class="next-item-name">${t.emoji} ${t.label}</div>
+        <div class="next-item-date">${formatDate(p.date)}</div>
+        <div class="next-item-days" style="background:${days===0?'rgba(74,158,107,0.2)':days===1?'rgba(212,168,32,0.2)':'rgba(136,136,136,0.15)'}; color:${days===0?'#4a9e6b':days===1?'#d4a820':'#888'}">${days===0?'Heute':days===1?'Morgen':'in '+days+' d'}</div>
+      </div>`;
+    }).join('');
+  } else {
+    nextBanner.style.display = 'none';
+  }
+
+  const list = document.getElementById('pickup-list');
+  if (!upcoming.length) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📅</div><div class="empty-state-text">Noch keine Termine eingetragen.<br>Wechsle zu „Hinzufügen".</div></div>';
+  } else {
+    list.innerHTML = upcoming.map(p => renderCard(p, false)).join('');
+  }
+
+  const pastList = document.getElementById('past-list');
+  const pastLabel = document.getElementById('past-label');
+  if (past.length) {
+    pastLabel.style.display = 'block';
+    pastList.innerHTML = past.slice().reverse().slice(0,5).map(p => renderCard(p, true)).join('');
+  } else {
+    pastLabel.style.display = 'none';
+    pastList.innerHTML = '';
+  }
+}
+
+function renderCard(p, isPast) {
+  const t = TYPES[p.type] || TYPES.restmuell;
+  const days = daysUntil(p.date);
+  const badge = badgeForDays(days);
+  const isToday = days === 0;
+
+  return `<div class="pickup-card ${isPast?'past':''} ${isToday?'today':''}">
+    <div class="pickup-color-bar" style="background:${t.color}"></div>
+    <div class="pickup-icon" style="background:${t.bg}">${t.emoji}</div>
+    <div class="pickup-info">
+      <div class="pickup-type">${t.label}</div>
+      <div class="pickup-date">${formatDate(p.date)}</div>
+    </div>
+    <div class="pickup-actions">
+      ${badge ? `<div class="pickup-badge" style="background:${badge.bg};color:${badge.color}">${badge.text}</div>` : ''}
+      <button class="delete-btn" onclick="deletePickup(${p.id})" title="Löschen">✕</button>
+    </div>
+  </div>`;
+}
+
+// Notification system
+async function checkNotifStatus() {
+  const banner = document.getElementById('notif-banner');
+  const toggle = document.getElementById('toggle-notifs');
+  const status = document.getElementById('notif-status');
+
+  if (!('Notification' in window)) {
+    status.textContent = 'Nicht unterstützt in diesem Browser';
+    toggle.disabled = true;
+    return;
+  }
+
+  if (Notification.permission === 'granted') {
+    banner.classList.add('hidden');
+    toggle.checked = settings.notificationsEnabled;
+    status.textContent = 'Berechtigung erteilt';
+    if (settings.notificationsEnabled) scheduleAllReminders();
+  } else if (Notification.permission === 'denied') {
+    status.textContent = 'Berechtigung abgelehnt – in Browser-Einstellungen aktivieren';
+    toggle.disabled = true;
+  } else {
+    banner.classList.remove('hidden');
+    toggle.checked = false;
+    status.textContent = 'Berechtigung noch nicht erteilt';
+  }
+}
+
+async function requestNotifications() {
+  if (!('Notification' in window)) { showToast('Benachrichtigungen nicht unterstützt'); return; }
+  const perm = await Notification.requestPermission();
+  if (perm === 'granted') {
+    settings.notificationsEnabled = true;
+    localStorage.setItem('settings', JSON.stringify(settings));
+    document.getElementById('toggle-notifs').checked = true;
+    document.getElementById('notif-status').textContent = 'Aktiv';
+    document.getElementById('notif-banner').classList.add('hidden');
+    scheduleAllReminders();
+    showToast('Benachrichtigungen aktiviert ✓');
+  } else {
+    showToast('Berechtigung nicht erteilt');
+  }
+}
+
+function toggleNotifications(enabled) {
+  if (enabled && Notification.permission !== 'granted') {
+    requestNotifications();
+    return;
+  }
+  settings.notificationsEnabled = enabled;
+  localStorage.setItem('settings', JSON.stringify(settings));
+  if (enabled) { scheduleAllReminders(); showToast('Erinnerungen aktiviert'); }
+  else { clearScheduled(); showToast('Erinnerungen deaktiviert'); }
+}
+
+let scheduledTimers = [];
+function clearScheduled() { scheduledTimers.forEach(clearTimeout); scheduledTimers = []; }
+
+function scheduleAllReminders() {
+  clearScheduled();
+  if (!settings.notificationsEnabled || Notification.permission !== 'granted') return;
+
+  const [h, m] = settings.reminderTime.split(':').map(Number);
+  const now = new Date();
+
+  pickups.forEach(p => {
+    const pickupDate = new Date(p.date + 'T12:00:00');
+    const reminderDate = new Date(pickupDate);
+    reminderDate.setDate(reminderDate.getDate() - settings.reminderDays);
+    reminderDate.setHours(h, m, 0, 0);
+
+    const msUntil = reminderDate - now;
+    if (msUntil > 0 && msUntil < 7 * 24 * 60 * 60 * 1000) {
+      const t = TYPES[p.type] || TYPES.restmuell;
+      const timer = setTimeout(() => {
+        if (Notification.permission === 'granted' && settings.notificationsEnabled) {
+          new Notification(`${t.emoji} ${t.label} – Tonne rausstellen!`, {
+            body: `Abholung am ${formatDate(p.date)}${settings.reminderDays > 0 ? ' (in ' + settings.reminderDays + ' Tag' + (settings.reminderDays > 1 ? 'en' : '') + ')' : ' (heute)'}`,
+            icon: 'icon-192.png',
+            tag: `pickup-${p.id}`,
+            requireInteraction: true
+          });
+        }
+      }, msUntil);
+      scheduledTimers.push(timer);
+    }
+  });
+}
+
+function refreshReminders() {
+  scheduleAllReminders();
+  showToast('Erinnerungen aktualisiert ✓');
+}
+
+function testNotification() {
+  if (Notification.permission !== 'granted') {
+    showToast('Bitte erst Benachrichtigungen aktivieren');
+    return;
+  }
+  new Notification('🗑️ Restmüll – Tonne rausstellen!', {
+    body: 'Das ist eine Test-Erinnerung der Mülltonne-App.',
+    icon: 'icon-192.png',
+    requireInteraction: false
+  });
+  showToast('Test-Benachrichtigung gesendet');
+}
+
+// ICS import
+document.getElementById('ics-file-input').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => parseICS(ev.target.result);
+  reader.readAsText(file);
+});
+
+const drop = document.getElementById('ics-drop');
+drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('drag-over'); });
+drop.addEventListener('dragleave', () => drop.classList.remove('drag-over'));
+drop.addEventListener('drop', e => {
+  e.preventDefault(); drop.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => parseICS(ev.target.result);
+  reader.readAsText(file);
+});
+
+function parseICS(text) {
+  const events = [];
+  const blocks = text.split('BEGIN:VEVENT');
+  blocks.slice(1).forEach(block => {
+    const summaryMatch = block.match(/SUMMARY[^:]*:(.+)/);
+    const dateMatch = block.match(/DTSTART[^:]*:(\d{8})/);
+    if (!summaryMatch || !dateMatch) return;
+
+    const summary = summaryMatch[1].trim().toLowerCase();
+    const raw = dateMatch[1];
+    const date = `${raw.slice(0,4)}-${raw.slice(4,6)}-${raw.slice(6,8)}`;
+
+    let type = 'restmuell';
+    if (summary.includes('bio') || summary.includes('grün')) type = 'bio';
+    else if (summary.includes('papier') || summary.includes('blau')) type = 'papier';
+    else if (summary.includes('gelb') || summary.includes('wertstoff') || summary.includes('gelber')) type = 'gelb';
+    else if (summary.includes('sperr')) type = 'sperrmuell';
+
+    events.push({ id: Date.now() + Math.random(), type, date });
+  });
+
+  if (!events.length) { showToast('Keine Termine in der Datei gefunden'); return; }
+
+  const existing = new Set(pickups.map(p => `${p.type}-${p.date}`));
+  const newOnes = events.filter(e => !existing.has(`${e.type}-${e.date}`));
+  pickups = [...pickups, ...newOnes].sort((a,b) => a.date.localeCompare(b.date));
+  save();
+  renderHome();
+  showToast(`${newOnes.length} Termine importiert ✓`);
+  switchTab('home');
+}
+
+// Template
+function loadTemplate() {
+  const template = [
+    // Restmüll alle 4 Wochen
+    {type:'restmuell', date:'2026-07-03'},
+    {type:'restmuell', date:'2026-07-31'},
+    {type:'restmuell', date:'2026-08-28'},
+    {type:'restmuell', date:'2026-09-25'},
+    {type:'restmuell', date:'2026-10-23'},
+    {type:'restmuell', date:'2026-11-20'},
+    {type:'restmuell', date:'2026-12-18'},
+    // Biomüll alle 2 Wochen
+    {type:'bio', date:'2026-07-06'},
+    {type:'bio', date:'2026-07-20'},
+    {type:'bio', date:'2026-08-03'},
+    {type:'bio', date:'2026-08-17'},
+    {type:'bio', date:'2026-08-31'},
+    {type:'bio', date:'2026-09-14'},
+    {type:'bio', date:'2026-09-28'},
+    {type:'bio', date:'2026-10-12'},
+    {type:'bio', date:'2026-10-26'},
+    {type:'bio', date:'2026-11-09'},
+    {type:'bio', date:'2026-11-23'},
+    {type:'bio', date:'2026-12-07'},
+    // Altpapier alle 4 Wochen
+    {type:'papier', date:'2026-07-10'},
+    {type:'papier', date:'2026-08-07'},
+    {type:'papier', date:'2026-09-04'},
+    {type:'papier', date:'2026-10-02'},
+    {type:'papier', date:'2026-10-30'},
+    {type:'papier', date:'2026-11-27'},
+    {type:'papier', date:'2026-12-11'},
+    // Gelber Sack alle 4 Wochen
+    {type:'gelb', date:'2026-07-17'},
+    {type:'gelb', date:'2026-08-14'},
+    {type:'gelb', date:'2026-09-11'},
+    {type:'gelb', date:'2026-10-09'},
+    {type:'gelb', date:'2026-11-06'},
+    {type:'gelb', date:'2026-12-04'},
+  ].map((p,i) => ({...p, id: Date.now() + i}));
+
+  const existing = new Set(pickups.map(p => `${p.type}-${p.date}`));
+  const newOnes = template.filter(e => !existing.has(`${e.type}-${e.date}`));
+  pickups = [...pickups, ...newOnes].sort((a,b) => a.date.localeCompare(b.date));
+  save();
+  renderHome();
+  showToast(`${newOnes.length} Beispieltermine geladen – bitte mit GOA-PDF abgleichen!`);
+  switchTab('home');
+}
+
+function clearAll() {
+  if (!confirm('Wirklich alle Termine löschen?')) return;
+  pickups = [];
+  save();
+  renderHome();
+  showToast('Alle Termine gelöscht');
+}
+
+function showInstallHint() {
+  const el = document.getElementById('install-hint');
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// Service Worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(console.error);
+}
+
+// Init
+checkNotifStatus();
+renderHome();
+</script>
+<div class="safe-bottom"></div>
+</body>
+</html>
