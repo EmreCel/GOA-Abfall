@@ -557,7 +557,7 @@ function scheduleAllReminders() {
       const timer=setTimeout(()=>{
         if(Notification.permission==='granted'&&settings.notificationsEnabled)
           new Notification(`${t.emoji} ${t.label} – Tonne rausstellen!`,{
-            body:`Abholung am ${formatDate(p.date)}${days>0?' (in '+days+' Tag'+(days>1?'en':')+')':' (heute)'}`,
+            body:`Abholung am ${formatDate(p.date)}${days>0?' (in '+days+' Tag'+(days>1?'en':'')+')':' (heute)'}`,
             icon:'icon-192.png',tag:`pickup-${p.id}`,requireInteraction:true
           });
       },ms);
