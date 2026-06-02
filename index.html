@@ -5,53 +5,48 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Mülltonne">
+<meta name="apple-mobile-web-app-title" content="Mögglingen">
 <meta name="theme-color" content="#111111">
-<title>Mülltonne Mögglingen</title>
+<title>Mögglingen App</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#111;--bg2:#1a1a1a;--bg3:#222;--bg4:#2a2a2a;
-  --text:#f0ede8;--text2:#999;--text3:#555;
-  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
-}
+:root{--bg:#111;--bg2:#1a1a1a;--bg3:#222;--bg4:#2a2a2a;--text:#f0ede8;--text2:#999;--text3:#555;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;min-height:100vh;max-width:430px;margin:0 auto}
-
-.header{padding:52px 20px 16px;border-bottom:1px solid var(--border)}
-.header-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2px}
-.header-street{font-size:11px;font-weight:400;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px}
+.header{padding:52px 20px 14px;border-bottom:1px solid var(--border)}
+.header-top{display:flex;align-items:flex-start;justify-content:space-between}
+.header-sub{font-size:11px;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:3px}
 .header-title{font-size:26px;font-weight:300;letter-spacing:-0.5px}
 .header-title span{font-weight:600}
 .icon-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:50%;width:38px;height:38px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
-
-.nav{display:flex;border-bottom:1px solid var(--border);padding:0 20px}
-.nav-tab{flex:1;text-align:center;padding:13px 0 11px;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;letter-spacing:0.02em}
+.nav{display:flex;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav-tab{flex-shrink:0;padding:13px 16px 11px;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
 .nav-tab.active{color:var(--text);border-bottom-color:var(--text)}
-
-.view{display:none;padding:0 0 100px}
+.view{display:none;padding-bottom:100px}
 .view.active{display:block}
 
-/* Filter chips */
+/* ── MÜLL ── */
 .filter-bar{display:flex;gap:6px;padding:12px 16px;overflow-x:auto;scrollbar-width:none}
 .filter-bar::-webkit-scrollbar{display:none}
-.chip{flex-shrink:0;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid var(--border2);background:var(--bg2);color:var(--text2);cursor:pointer;white-space:nowrap;transition:all 0.15s}
+.chip{flex-shrink:0;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid var(--border2);background:var(--bg2);color:var(--text2);cursor:pointer}
 .chip.active{background:var(--text);color:var(--bg);border-color:var(--text)}
-
-/* Next banner */
 .next-banner{margin:0 16px 12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border2);border-radius:14px}
 .next-label{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:10px}
-.next-items{display:flex;flex-direction:column;gap:7px}
-.next-item{display:flex;align-items:center;gap:9px}
+.next-item{display:flex;align-items:center;gap:9px;margin-bottom:6px}
+.next-item:last-child{margin-bottom:0}
 .next-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
 .next-item-name{font-size:14px;font-weight:500;flex:1}
-.next-item-date{font-size:12px;color:var(--text2);font-variant-numeric:tabular-nums}
 .next-item-days{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;flex-shrink:0}
-
+.stats-bar{display:flex;margin:0 16px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.stat-item{flex:1;text-align:center;padding:10px 6px;border-right:1px solid var(--border)}
+.stat-item:last-child{border-right:none}
+.stat-num{font-size:18px;font-weight:600}
+.stat-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-top:1px}
 .section-label{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);padding:14px 20px 6px}
-
+.month-divider{padding:14px 20px 6px;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3)}
 .pickup-list{padding:0 16px;display:flex;flex-direction:column;gap:5px}
 .pickup-card{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;position:relative;overflow:hidden}
 .pickup-card.past{opacity:0.3}
@@ -60,44 +55,77 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .pickup-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
 .pickup-info{flex:1;min-width:0}
 .pickup-type{font-size:14px;font-weight:500}
-.pickup-date{font-size:12px;color:var(--text2);margin-top:1px;font-variant-numeric:tabular-nums}
-.pickup-badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:0.04em;flex-shrink:0}
+.pickup-date{font-size:12px;color:var(--text2);margin-top:1px}
+.pickup-badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;flex-shrink:0}
 .delete-btn{background:none;border:none;color:var(--text3);cursor:pointer;padding:4px;font-size:14px;opacity:0.4}
-.delete-btn:active{opacity:1;color:#c44}
 
-/* Month divider */
-.month-divider{padding:16px 20px 6px;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3)}
+/* ── BUS ── */
+.bus-header{padding:14px 16px 8px;display:flex;align-items:center;justify-content:space-between}
+.bus-station-label{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3)}
+.bus-station-name{font-size:16px;font-weight:500;margin-top:2px}
+.refresh-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.refresh-btn:active{background:var(--bg4)}
+.dep-list{padding:0 16px;display:flex;flex-direction:column;gap:5px}
+.dep-card{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:12px}
+.dep-line{min-width:42px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+.dep-info{flex:1;min-width:0}
+.dep-dest{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dep-platform{font-size:11px;color:var(--text3);margin-top:1px}
+.dep-time{text-align:right;flex-shrink:0}
+.dep-time-main{font-size:18px;font-weight:600;font-variant-numeric:tabular-nums}
+.dep-time-delay{font-size:11px;margin-top:1px}
+.dep-min{font-size:11px;color:var(--text2);margin-top:2px}
+.station-tabs{display:flex;gap:6px;padding:0 16px 12px;overflow-x:auto;scrollbar-width:none}
+.station-tabs::-webkit-scrollbar{display:none}
+.station-chip{flex-shrink:0;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid var(--border2);background:var(--bg2);color:var(--text2);cursor:pointer}
+.station-chip.active{background:var(--text);color:var(--bg);border-color:var(--text)}
+.loading-state{text-align:center;padding:40px 20px;color:var(--text3)}
+.loading-spinner{font-size:28px;margin-bottom:10px;animation:spin 1s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-state{margin:16px;padding:14px 16px;background:rgba(196,74,74,0.1);border:1px solid rgba(196,74,74,0.25);border-radius:12px;font-size:13px;color:#c44a4a}
 
-/* Stats bar */
-.stats-bar{display:flex;gap:0;margin:12px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
-.stat-item{flex:1;text-align:center;padding:10px 6px;border-right:1px solid var(--border)}
-.stat-item:last-child{border-right:none}
-.stat-num{font-size:18px;font-weight:600}
-.stat-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-top:1px}
+/* ── SPRIT ── */
+.sprit-header{padding:14px 16px 4px}
+.sprit-key-section{margin:0 16px 12px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:14px}
+.sprit-key-section h3{font-size:13px;color:var(--text2);margin-bottom:10px;font-weight:500}
+.sprit-key-row{display:flex;gap:8px}
+input[type=text],input[type=password]{flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:9px;color:var(--text);padding:9px 12px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;-webkit-appearance:none}
+.btn-sm-green{background:rgba(74,158,107,0.15);color:#4a9e6b;border:1px solid rgba(74,158,107,0.3);border-radius:9px;padding:9px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.sprit-filter{display:flex;gap:6px;padding:0 16px 10px}
+.fuel-chip{flex:1;text-align:center;padding:8px;border-radius:10px;font-size:12px;font-weight:600;border:1px solid var(--border2);background:var(--bg2);color:var(--text2);cursor:pointer}
+.fuel-chip.active{border-color:rgba(212,168,32,0.5);background:rgba(212,168,32,0.1);color:#d4a820}
+.sprit-list{padding:0 16px;display:flex;flex-direction:column;gap:5px}
+.sprit-card{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:12px}
+.sprit-rank{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.sprit-rank.gold{background:rgba(212,168,32,0.2);color:#d4a820}
+.sprit-rank.silver{background:rgba(136,136,136,0.2);color:#aaa}
+.sprit-rank.bronze{background:rgba(196,114,74,0.2);color:#c47a4a}
+.sprit-rank.other{background:var(--bg3);color:var(--text3)}
+.sprit-info{flex:1;min-width:0}
+.sprit-name{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sprit-dist{font-size:11px;color:var(--text3);margin-top:1px}
+.sprit-price{font-size:20px;font-weight:600;color:#d4a820;flex-shrink:0}
+.sprit-price-sub{font-size:10px;color:var(--text3);text-align:right;margin-top:1px}
+.sprit-updated{font-size:11px;color:var(--text3);text-align:center;padding:10px 16px 0}
+.no-key-hint{margin:16px;padding:16px;background:var(--bg2);border:1px dashed var(--border2);border-radius:14px;text-align:center}
+.no-key-hint-icon{font-size:32px;margin-bottom:8px}
+.no-key-hint-text{font-size:13px;color:var(--text2);line-height:1.6}
+.no-key-hint a{color:#4a9e6b;text-decoration:none}
 
-/* Legende */
-.legende{margin:0 16px 8px;padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:12px}
-.legende-title{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:10px}
-.legende-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.legende-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2)}
-.legende-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-
-/* Add view */
+/* ── ADD ── */
 .add-section{margin:14px 16px;padding:18px;background:var(--bg2);border:1px solid var(--border);border-radius:14px}
 .add-section h3{font-size:13px;font-weight:500;color:var(--text2);margin-bottom:14px}
 .form-row{margin-bottom:10px}
 .form-label{font-size:12px;color:var(--text2);margin-bottom:5px;display:block}
-select,input[type="date"]{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:9px;color:var(--text);padding:10px 12px;font-size:14px;font-family:'DM Sans',sans-serif;-webkit-appearance:none;appearance:none;outline:none}
+select,input[type=date]{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:9px;color:var(--text);padding:10px 12px;font-size:14px;font-family:'DM Sans',sans-serif;-webkit-appearance:none;appearance:none;outline:none}
 select option{background:#222}
 .btn-primary{width:100%;background:var(--text);color:var(--bg);border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer}
 .btn-secondary{width:100%;background:var(--bg3);color:var(--text);border:1px solid var(--border2);border-radius:10px;padding:11px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:7px}
-
-/* ICS drop */
 .ics-drop{border:2px dashed var(--border2);border-radius:10px;padding:20px;text-align:center;cursor:pointer;margin-top:8px}
-.ics-drop:hover{border-color:rgba(74,158,107,0.5);background:rgba(74,158,107,0.04)}
+.ics-drop:hover{border-color:rgba(74,158,107,0.5)}
 #ics-file-input{display:none}
 
-/* Settings */
+/* ── SETTINGS ── */
 .settings-section{margin:0 16px 4px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden}
 .settings-row{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border);gap:12px}
 .settings-row:last-child{border-bottom:none}
@@ -113,18 +141,15 @@ select option{background:#222}
 .toggle input:checked+.toggle-track::after{left:calc(100% - 19px);background:#fff}
 select.reminder-select{width:auto;padding:5px 9px;font-size:12px;border-radius:7px}
 .btn-sm{background:var(--bg3);color:var(--text);border:1px solid var(--border2);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer}
-
 .notif-banner{margin:12px 16px;padding:12px 14px;background:rgba(74,158,107,0.1);border:1px solid rgba(74,158,107,0.25);border-radius:10px;font-size:13px;color:#4a9e6b;cursor:pointer;display:flex;align-items:center;gap:9px}
 .notif-banner.hidden{display:none}
-
 .install-hint{margin:0 16px 14px;padding:14px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;font-size:13px;color:var(--text2);line-height:1.6;display:none}
 .install-hint strong{color:var(--text)}
-
-.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--bg4);color:var(--text);padding:9px 18px;border-radius:20px;font-size:13px;border:1px solid var(--border2);z-index:100;opacity:0;transition:opacity 0.2s;white-space:nowrap}
-.toast.show{opacity:1}
 .empty-state{text-align:center;padding:48px 20px;color:var(--text3)}
 .empty-state-icon{font-size:36px;margin-bottom:10px}
 .empty-state-text{font-size:14px;line-height:1.6}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--bg4);color:var(--text);padding:9px 18px;border-radius:20px;font-size:13px;border:1px solid var(--border2);z-index:100;opacity:0;transition:opacity 0.2s;white-space:nowrap}
+.toast.show{opacity:1}
 </style>
 </head>
 <body>
@@ -132,29 +157,31 @@ select.reminder-select{width:auto;padding:5px 9px;font-size:12px;border-radius:7
 <div class="header">
   <div class="header-top">
     <div>
-      <div class="header-street">Bahnhofstraße · Mögglingen</div>
-      <div class="header-title">Müll<span>tonne</span></div>
+      <div class="header-sub">Bahnhofstraße · 73563 Mögglingen</div>
+      <div class="header-title">Mögglingen <span>App</span></div>
     </div>
-    <button class="icon-btn" onclick="refreshReminders()" title="Erinnerungen aktualisieren">🔔</button>
+    <button class="icon-btn" id="header-action-btn">🔔</button>
   </div>
 </div>
 
 <div class="nav">
-  <div class="nav-tab active" onclick="switchTab('home')">Übersicht</div>
-  <div class="nav-tab" onclick="switchTab('add')">Hinzufügen</div>
-  <div class="nav-tab" onclick="switchTab('settings')">Einstellungen</div>
+  <div class="nav-tab active" onclick="switchTab('muell')">🗑️ Müll</div>
+  <div class="nav-tab" onclick="switchTab('bus')">🚌 Bus & Bahn</div>
+  <div class="nav-tab" onclick="switchTab('sprit')">⛽ Sprit</div>
+  <div class="nav-tab" onclick="switchTab('add')">➕ Hinzufügen</div>
+  <div class="nav-tab" onclick="switchTab('settings')">⚙️ Einstellungen</div>
 </div>
 
 <div id="notif-banner" class="notif-banner hidden" onclick="requestNotifications()">
   🔔 <span>Benachrichtigungen aktivieren</span>
 </div>
 
-<!-- HOME -->
-<div id="view-home" class="view active">
+<!-- ═══════════════ MÜLL ═══════════════ -->
+<div id="view-muell" class="view active">
   <div class="filter-bar" id="filter-bar"></div>
   <div id="next-banner" class="next-banner" style="display:none">
     <div class="next-label">Als nächstes rausstellen</div>
-    <div id="next-items" class="next-items"></div>
+    <div id="next-items"></div>
   </div>
   <div id="stats-bar"></div>
   <div id="pickup-container"></div>
@@ -162,31 +189,74 @@ select.reminder-select{width:auto;padding:5px 9px;font-size:12px;border-radius:7
   <div class="pickup-list" id="past-list"></div>
 </div>
 
-<!-- ADD -->
+<!-- ═══════════════ BUS ═══════════════ -->
+<div id="view-bus" class="view">
+  <div class="bus-header">
+    <div>
+      <div class="bus-station-label">Haltestelle</div>
+      <div class="bus-station-name" id="active-station-name">Mögglingen (Gmünd)</div>
+    </div>
+    <button class="refresh-btn" onclick="loadDepartures()">↻ Aktualisieren</button>
+  </div>
+  <div class="station-tabs" id="station-tabs"></div>
+  <div id="dep-container">
+    <div class="loading-state"><div class="loading-spinner">⏳</div><div>Lade Abfahrten…</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════ SPRIT ═══════════════ -->
+<div id="view-sprit" class="view">
+  <div class="sprit-header">
+    <div class="section-label" style="padding:14px 0 4px">Tankstellen in der Nähe</div>
+  </div>
+  <div class="sprit-key-section" id="sprit-key-section">
+    <h3>Tankerkönig API-Key</h3>
+    <div class="sprit-key-row">
+      <input type="password" id="tk-key-input" placeholder="API-Key eingeben…">
+      <button class="btn-sm-green" onclick="saveTKKey()">Speichern</button>
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.5">
+      Kostenlos auf <a href="https://creativecommons.tankerkoenig.de" style="color:#4a9e6b">creativecommons.tankerkoenig.de</a> registrieren
+    </div>
+  </div>
+  <div class="sprit-filter" id="sprit-filter">
+    <div class="fuel-chip active" onclick="setFuel('e5')" id="chip-e5">Super E5</div>
+    <div class="fuel-chip" onclick="setFuel('e10')" id="chip-e10">Super E10</div>
+    <div class="fuel-chip" onclick="setFuel('diesel')" id="chip-diesel">Diesel</div>
+  </div>
+  <div id="sprit-container">
+    <div class="no-key-hint">
+      <div class="no-key-hint-icon">⛽</div>
+      <div class="no-key-hint-text">API-Key eingeben um Echtzeit-Spritpreise<br>für Tankstellen rund um Mögglingen zu sehen.<br><br>Kostenlos auf <a href="https://creativecommons.tankerkoenig.de">creativecommons.tankerkoenig.de</a></div>
+    </div>
+  </div>
+  <div class="sprit-updated" id="sprit-updated"></div>
+</div>
+
+<!-- ═══════════════ HINZUFÜGEN ═══════════════ -->
 <div id="view-add" class="view">
   <div class="add-section">
     <h3>ICS-Datei der GOA importieren</h3>
-    <div class="ics-drop" id="ics-drop" onclick="document.getElementById('ics-file-input').click()">
+    <div class="ics-drop" onclick="document.getElementById('ics-file-input').click()">
       <div style="font-size:26px;margin-bottom:6px">📅</div>
-      <div style="font-size:13px;color:var(--text2)">ICS-Datei hier ablegen oder antippen</div>
+      <div style="font-size:13px;color:var(--text2)">ICS-Datei hier antippen</div>
       <div style="font-size:11px;color:var(--text3);margin-top:3px">Von goa-online.de → Abfuhrkalender herunterladen</div>
     </div>
     <input type="file" id="ics-file-input" accept=".ics">
   </div>
-
   <div class="add-section">
     <h3>Termin manuell eintragen</h3>
     <div class="form-row">
       <label class="form-label">Abfallart</label>
       <select id="add-type">
-        <option value="restmuell">🗑️ Hausmüll (schwarze Tonne)</option>
-        <option value="bio">🌿 Bioabfälle (braune Tonne)</option>
-        <option value="papier">📰 Blaue Tonne (Altpapier)</option>
-        <option value="gelb">♻️ Gelber Sack</option>
-        <option value="gartentonne">🌱 Gartentonne (braun/grün)</option>
-        <option value="gruenabfuhr">🌳 Grünabfuhr</option>
-        <option value="altpapier_verein">📦 Altpapier Vereinssammlung</option>
-        <option value="christbaum">🎄 Christbaumsammlung</option>
+        <option value="restmuell">🗑️ Hausmüll (HM)</option>
+        <option value="bio">🌿 Bioabfälle (Bio)</option>
+        <option value="papier">📰 Blaue Tonne (BT)</option>
+        <option value="gelb">♻️ Gelber Sack (GS)</option>
+        <option value="gartentonne">🌱 Gartentonne (GT)</option>
+        <option value="gruenabfuhr">🌳 Grünabfuhr (GA)</option>
+        <option value="altpapier_verein">📦 AV Holsammlung (AVH)</option>
+        <option value="christbaum">🎄 Christbaumsammlung (CS)</option>
       </select>
     </div>
     <div class="form-row">
@@ -198,26 +268,20 @@ select.reminder-select{width:auto;padding:5px 9px;font-size:12px;border-radius:7
   </div>
 </div>
 
-<!-- SETTINGS -->
+<!-- ═══════════════ EINSTELLUNGEN ═══════════════ -->
 <div id="view-settings" class="view">
   <div class="section-label">Erinnerungen</div>
   <div class="settings-section">
     <div class="settings-row">
       <div class="settings-icon">🔔</div>
-      <div class="settings-info">
-        <div class="settings-title">Benachrichtigungen</div>
-        <div class="settings-desc" id="notif-status">Wird geprüft…</div>
-      </div>
+      <div class="settings-info"><div class="settings-title">Benachrichtigungen</div><div class="settings-desc" id="notif-status">Wird geprüft…</div></div>
       <label class="toggle"><input type="checkbox" id="toggle-notifs" onchange="toggleNotifications(this.checked)"><div class="toggle-track"></div></label>
     </div>
     <div class="settings-row">
       <div class="settings-icon">⏰</div>
-      <div class="settings-info">
-        <div class="settings-title">Wie früh erinnern?</div>
-        <div class="settings-desc">Vor dem Abholtermin</div>
-      </div>
+      <div class="settings-info"><div class="settings-title">Wie früh erinnern?</div><div class="settings-desc">Vor dem Abholtermin</div></div>
       <select class="reminder-select" id="reminder-days" onchange="saveSettings()">
-        <option value="0">Am selben Tag</option>
+        <option value="0">Selber Tag</option>
         <option value="1">1 Tag vorher</option>
         <option value="2" selected>2 Tage vorher</option>
         <option value="3">3 Tage vorher</option>
@@ -226,10 +290,7 @@ select.reminder-select{width:auto;padding:5px 9px;font-size:12px;border-radius:7
     </div>
     <div class="settings-row">
       <div class="settings-icon">🕗</div>
-      <div class="settings-info">
-        <div class="settings-title">Uhrzeit</div>
-        <div class="settings-desc">Wann kommt die Erinnerung?</div>
-      </div>
+      <div class="settings-info"><div class="settings-title">Uhrzeit</div><div class="settings-desc">Wann kommt die Erinnerung?</div></div>
       <select class="reminder-select" id="reminder-time" onchange="saveSettings()">
         <option value="07:00">07:00</option>
         <option value="08:00" selected>08:00</option>
@@ -241,10 +302,7 @@ select.reminder-select{width:auto;padding:5px 9px;font-size:12px;border-radius:7
     </div>
     <div class="settings-row">
       <div class="settings-icon">🧪</div>
-      <div class="settings-info">
-        <div class="settings-title">Test-Benachrichtigung</div>
-        <div class="settings-desc">Sofort eine Probe schicken</div>
-      </div>
+      <div class="settings-info"><div class="settings-title">Test-Benachrichtigung</div><div class="settings-desc">Sofort eine Probe schicken</div></div>
       <button class="btn-sm" onclick="testNotification()">Testen</button>
     </div>
   </div>
@@ -256,231 +314,333 @@ select.reminder-select{width:auto;padding:5px 9px;font-size:12px;border-radius:7
   <div class="settings-section">
     <div class="settings-row">
       <div class="settings-icon">📲</div>
-      <div class="settings-info">
-        <div class="settings-title">Zum Homescreen hinzufügen</div>
-        <div class="settings-desc">Als App installieren (PWA)</div>
-      </div>
+      <div class="settings-info"><div class="settings-title">Zum Homescreen hinzufügen</div><div class="settings-desc">Als PWA installieren</div></div>
       <button class="btn-sm" onclick="showInstallHint()">Anleitung</button>
     </div>
     <div class="settings-row">
       <div class="settings-icon">🗑️</div>
-      <div class="settings-info">
-        <div class="settings-title">Alle Termine löschen</div>
-        <div class="settings-desc">App komplett zurücksetzen</div>
-      </div>
+      <div class="settings-info"><div class="settings-title">Alle Termine löschen</div><div class="settings-desc">App zurücksetzen</div></div>
       <button class="btn-sm" style="color:#c44;border-color:rgba(204,68,68,0.3)" onclick="clearAll()">Löschen</button>
     </div>
   </div>
-
   <div class="install-hint" id="install-hint">
-    <strong>iPhone/iPad (Safari):</strong><br>
-    Teilen-Button → „Zum Home-Bildschirm"<br><br>
-    <strong>Android (Chrome):</strong><br>
-    Menü (⋮) → „App installieren" oder „Zum Startbildschirm hinzufügen"
+    <strong>iPhone/iPad (Safari):</strong><br>Teilen → „Zum Home-Bildschirm"<br><br>
+    <strong>Android (Chrome):</strong><br>Menü ⋮ → „App installieren"
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
+// ══════════════════════════════════════════
+// TYPEN
+// ══════════════════════════════════════════
 const TYPES = {
-  restmuell:      { label:'Hausmüll',              kuerzel:'HM',  emoji:'🗑️', color:'#888',    bg:'rgba(136,136,136,0.14)' },
-  bio:            { label:'Bioabfälle',            kuerzel:'Bio', emoji:'🌿', color:'#4a9e6b', bg:'rgba(74,158,107,0.14)' },
-  papier:         { label:'Blaue Tonne',           kuerzel:'BT',  emoji:'📰', color:'#4a7bc4', bg:'rgba(74,123,196,0.14)' },
-  gelb:           { label:'Gelber Sack',           kuerzel:'GS',  emoji:'♻️', color:'#d4a820', bg:'rgba(212,168,32,0.14)' },
-  gartentonne:    { label:'Gartentonne',           kuerzel:'GT',  emoji:'🌱', color:'#5daa3a', bg:'rgba(93,170,58,0.14)' },
-  gruenabfuhr:    { label:'Grünabfuhr',            kuerzel:'GA',  emoji:'🌳', color:'#2e7d32', bg:'rgba(46,125,50,0.14)' },
-  altpapier_verein:{ label:'AV Holsammlung',       kuerzel:'AVH', emoji:'📦', color:'#7b5ea7', bg:'rgba(123,94,167,0.14)' },
-  christbaum:     { label:'Christbaumsammlung',    kuerzel:'CS',  emoji:'🎄', color:'#c0392b', bg:'rgba(192,57,43,0.14)' }
+  restmuell:       {label:'Hausmüll',           kuerzel:'HM',  emoji:'🗑️', color:'#888',    bg:'rgba(136,136,136,0.14)'},
+  bio:             {label:'Bioabfälle',          kuerzel:'Bio', emoji:'🌿', color:'#4a9e6b', bg:'rgba(74,158,107,0.14)'},
+  papier:          {label:'Blaue Tonne',         kuerzel:'BT',  emoji:'📰', color:'#4a7bc4', bg:'rgba(74,123,196,0.14)'},
+  gelb:            {label:'Gelber Sack',         kuerzel:'GS',  emoji:'♻️', color:'#d4a820', bg:'rgba(212,168,32,0.14)'},
+  gartentonne:     {label:'Gartentonne',         kuerzel:'GT',  emoji:'🌱', color:'#5daa3a', bg:'rgba(93,170,58,0.14)'},
+  gruenabfuhr:     {label:'Grünabfuhr',          kuerzel:'GA',  emoji:'🌳', color:'#2e7d32', bg:'rgba(46,125,50,0.14)'},
+  altpapier_verein:{label:'AV Holsammlung',      kuerzel:'AVH', emoji:'📦', color:'#7b5ea7', bg:'rgba(123,94,167,0.14)'},
+  christbaum:      {label:'Christbaumsammlung',  kuerzel:'CS',  emoji:'🎄', color:'#c0392b', bg:'rgba(192,57,43,0.14)'}
 };
 
 const GOA_TERMINE = [{"type":"bio","date":"2026-03-07"},{"type":"bio","date":"2026-03-20"},{"type":"papier","date":"2026-03-20"},{"type":"gelb","date":"2026-03-20"},{"type":"gartentonne","date":"2026-03-20"},{"type":"gartentonne","date":"2026-04-04"},{"type":"bio","date":"2026-04-07"},{"type":"restmuell","date":"2026-04-14"},{"type":"gartentonne","date":"2026-04-17"},{"type":"bio","date":"2026-04-20"},{"type":"papier","date":"2026-04-23"},{"type":"gelb","date":"2026-04-23"},{"type":"restmuell","date":"2026-04-28"},{"type":"gartentonne","date":"2026-05-02"},{"type":"bio","date":"2026-05-04"},{"type":"gruenabfuhr","date":"2026-05-04"},{"type":"bio","date":"2026-05-11"},{"type":"restmuell","date":"2026-05-12"},{"type":"gartentonne","date":"2026-05-16"},{"type":"bio","date":"2026-05-18"},{"type":"papier","date":"2026-05-21"},{"type":"gelb","date":"2026-05-21"},{"type":"bio","date":"2026-05-26"},{"type":"restmuell","date":"2026-05-27"},{"type":"gartentonne","date":"2026-05-30"},{"type":"bio","date":"2026-06-01"},{"type":"bio","date":"2026-06-08"},{"type":"restmuell","date":"2026-06-09"},{"type":"gartentonne","date":"2026-06-12"},{"type":"altpapier_verein","date":"2026-06-13"},{"type":"bio","date":"2026-06-15"},{"type":"papier","date":"2026-06-16"},{"type":"papier","date":"2026-06-18"},{"type":"gelb","date":"2026-06-18"},{"type":"bio","date":"2026-06-22"},{"type":"restmuell","date":"2026-06-23"},{"type":"gartentonne","date":"2026-06-26"},{"type":"bio","date":"2026-06-29"},{"type":"bio","date":"2026-07-06"},{"type":"restmuell","date":"2026-07-07"},{"type":"gartentonne","date":"2026-07-10"},{"type":"bio","date":"2026-07-13"},{"type":"papier","date":"2026-07-16"},{"type":"gelb","date":"2026-07-16"},{"type":"bio","date":"2026-07-20"},{"type":"restmuell","date":"2026-07-21"},{"type":"gartentonne","date":"2026-07-24"},{"type":"bio","date":"2026-07-27"},{"type":"bio","date":"2026-08-03"},{"type":"restmuell","date":"2026-08-04"},{"type":"gartentonne","date":"2026-08-07"},{"type":"bio","date":"2026-08-10"},{"type":"papier","date":"2026-08-13"},{"type":"gelb","date":"2026-08-13"},{"type":"bio","date":"2026-08-17"},{"type":"restmuell","date":"2026-08-18"},{"type":"gartentonne","date":"2026-08-21"},{"type":"bio","date":"2026-08-24"},{"type":"bio","date":"2026-08-31"},{"type":"restmuell","date":"2026-09-01"},{"type":"gartentonne","date":"2026-09-04"},{"type":"altpapier_verein","date":"2026-09-05"},{"type":"bio","date":"2026-09-07"},{"type":"papier","date":"2026-09-10"},{"type":"gelb","date":"2026-09-10"},{"type":"bio","date":"2026-09-14"},{"type":"restmuell","date":"2026-09-15"},{"type":"gartentonne","date":"2026-09-18"},{"type":"bio","date":"2026-09-21"},{"type":"bio","date":"2026-09-28"},{"type":"restmuell","date":"2026-09-29"},{"type":"gartentonne","date":"2026-10-02"},{"type":"bio","date":"2026-10-05"},{"type":"papier","date":"2026-10-08"},{"type":"gelb","date":"2026-10-08"},{"type":"bio","date":"2026-10-12"},{"type":"restmuell","date":"2026-10-13"},{"type":"gartentonne","date":"2026-10-16"},{"type":"bio","date":"2026-10-19"},{"type":"bio","date":"2026-10-26"},{"type":"restmuell","date":"2026-10-27"},{"type":"gartentonne","date":"2026-10-30"},{"type":"bio","date":"2026-11-02"},{"type":"papier","date":"2026-11-05"},{"type":"gelb","date":"2026-11-05"},{"type":"bio","date":"2026-11-09"},{"type":"restmuell","date":"2026-11-10"},{"type":"gartentonne","date":"2026-11-13"},{"type":"bio","date":"2026-11-16"},{"type":"gruenabfuhr","date":"2026-11-20"},{"type":"bio","date":"2026-11-23"},{"type":"restmuell","date":"2026-11-24"},{"type":"gartentonne","date":"2026-11-27"},{"type":"bio","date":"2026-11-30"},{"type":"bio","date":"2026-12-02"},{"type":"papier","date":"2026-12-03"},{"type":"gelb","date":"2026-12-03"},{"type":"restmuell","date":"2026-12-08"},{"type":"gartentonne","date":"2026-12-11"},{"type":"bio","date":"2026-12-14"},{"type":"bio","date":"2026-12-21"},{"type":"restmuell","date":"2026-12-22"},{"type":"bio","date":"2026-12-29"},{"type":"papier","date":"2027-01-02"},{"type":"gelb","date":"2027-01-02"},{"type":"bio","date":"2027-01-05"},{"type":"restmuell","date":"2027-01-07"},{"type":"christbaum","date":"2027-01-11"},{"type":"bio","date":"2027-01-12"},{"type":"bio","date":"2027-01-18"},{"type":"restmuell","date":"2027-01-19"},{"type":"bio","date":"2027-01-25"},{"type":"papier","date":"2027-01-28"},{"type":"gelb","date":"2027-01-28"},{"type":"bio","date":"2027-02-01"},{"type":"restmuell","date":"2027-02-02"},{"type":"bio","date":"2027-02-08"},{"type":"bio","date":"2027-02-15"},{"type":"restmuell","date":"2027-02-16"},{"type":"bio","date":"2027-02-22"},{"type":"papier","date":"2027-02-25"},{"type":"gelb","date":"2027-02-25"},{"type":"bio","date":"2027-03-01"},{"type":"restmuell","date":"2027-03-02"},{"type":"altpapier_verein","date":"2027-03-06"},{"type":"bio","date":"2027-03-08"},{"type":"bio","date":"2027-03-15"},{"type":"restmuell","date":"2027-03-16"},{"type":"bio","date":"2027-03-22"},{"type":"papier","date":"2027-03-25"},{"type":"gelb","date":"2027-03-25"},{"type":"bio","date":"2027-03-30"},{"type":"restmuell","date":"2027-03-31"}];
+
+// Haltestellen Mögglingen
+const STATIONS = [
+  {id:'de:08136:5210', name:'Mögglingen (Gmünd)', short:'Bahnhof'},
+  {id:'de:08136:5211', name:'Mögglingen Bahnhof Bus', short:'Bahnhof Bus'},
+  {id:'de:08136:5213', name:'Mögglingen Mitte', short:'Mitte'},
+];
 
 let pickups = JSON.parse(localStorage.getItem('pickups') || '[]');
 let settings = JSON.parse(localStorage.getItem('settings') || '{"reminderDays":2,"reminderTime":"08:00","notificationsEnabled":false}');
 let hiddenTypes = JSON.parse(localStorage.getItem('hiddenTypes') || '[]');
 let activeFilter = 'alle';
+let activeStation = 0;
+let activeFuel = 'e5';
+let tkKey = localStorage.getItem('tkKey') || '';
 
 document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
 document.getElementById('reminder-days').value = settings.reminderDays;
 document.getElementById('reminder-time').value = settings.reminderTime;
+if(tkKey) document.getElementById('tk-key-input').value = '••••••••••••••••';
 
-function saveSettings() {
-  settings.reminderDays = parseInt(document.getElementById('reminder-days').value);
-  settings.reminderTime = document.getElementById('reminder-time').value;
-  localStorage.setItem('settings', JSON.stringify(settings));
-  scheduleAllReminders();
-}
-
+// ══════════════════════════════════════════
+// TAB NAVIGATION
+// ══════════════════════════════════════════
 function switchTab(tab) {
-  document.querySelectorAll('.nav-tab').forEach((t,i)=>t.classList.toggle('active',['home','add','settings'][i]===tab));
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.getElementById('view-'+tab).classList.add('active');
-  if(tab==='settings') renderVisibilitySettings();
+  document.querySelectorAll('.nav-tab').forEach((t,i) => {
+    t.classList.toggle('active', ['muell','bus','sprit','add','settings'][i] === tab);
+  });
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + tab).classList.add('active');
+  if(tab === 'bus') { renderStationTabs(); loadDepartures(); }
+  if(tab === 'sprit' && tkKey) loadSprit();
+  if(tab === 'settings') renderVisibilitySettings();
+  const btn = document.getElementById('header-action-btn');
+  btn.textContent = tab === 'bus' ? '↻' : '🔔';
+  btn.onclick = tab === 'bus' ? loadDepartures : refreshReminders;
 }
 
+// ══════════════════════════════════════════
+// MÜLL
+// ══════════════════════════════════════════
 function addPickup() {
   const type = document.getElementById('add-type').value;
   const date = document.getElementById('add-date').value;
   if(!date){showToast('Bitte ein Datum auswählen');return}
-  pickups.push({id:Date.now(),type,date,custom:true});
+  pickups.push({id:Date.now(),type,date});
   pickups.sort((a,b)=>a.date.localeCompare(b.date));
-  save(); renderHome(); showToast('Termin hinzugefügt ✓');
-  document.getElementById('add-date').value='';
+  save(); renderMuell(); showToast('Termin hinzugefügt ✓');
 }
+function deletePickup(id){pickups=pickups.filter(p=>p.id!==id);save();renderMuell();}
+function save(){localStorage.setItem('pickups',JSON.stringify(pickups));scheduleAllReminders();}
+function formatDate(ds){const d=new Date(ds+'T12:00:00');return d.toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'});}
+function formatDateShort(ds){const d=new Date(ds+'T12:00:00');return d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'});}
+function daysUntil(ds){const t=new Date();t.setHours(0,0,0,0);const d=new Date(ds+'T00:00:00');d.setHours(0,0,0,0);return Math.round((d-t)/86400000);}
+function getMonthKey(ds){return new Date(ds+'T12:00:00').toLocaleDateString('de-DE',{month:'long',year:'numeric'});}
 
-function deletePickup(id) {
-  pickups = pickups.filter(p=>p.id!==id);
-  save(); renderHome();
-}
-
-function save() {
-  localStorage.setItem('pickups', JSON.stringify(pickups));
-  scheduleAllReminders();
-}
-
-function formatDate(ds) {
-  const d = new Date(ds+'T12:00:00');
-  return d.toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'});
-}
-
-function formatDateShort(ds) {
-  const d = new Date(ds+'T12:00:00');
-  return d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'});
-}
-
-function daysUntil(ds) {
-  const t=new Date();t.setHours(0,0,0,0);
-  const d=new Date(ds+'T00:00:00');d.setHours(0,0,0,0);
-  return Math.round((d-t)/86400000);
-}
-
-function getMonthKey(ds) {
-  const d=new Date(ds+'T12:00:00');
-  return d.toLocaleDateString('de-DE',{month:'long',year:'numeric'});
-}
-
-function renderHome() {
-  const visible = pickups.filter(p => !hiddenTypes.includes(p.type));
+function renderMuell() {
+  const visible = pickups.filter(p=>!hiddenTypes.includes(p.type));
   const filtered = activeFilter==='alle' ? visible : visible.filter(p=>p.type===activeFilter);
   const upcoming = filtered.filter(p=>daysUntil(p.date)>=0);
   const past = filtered.filter(p=>daysUntil(p.date)<0);
 
-  // Filter chips
   const types = [...new Set(pickups.map(p=>p.type))];
-  const fb = document.getElementById('filter-bar');
-  fb.innerHTML = `<div class="chip ${activeFilter==='alle'?'active':''}" onclick="setFilter('alle')">Alle</div>` +
-    types.map(t=>{const d=TYPES[t]||TYPES.restmuell;return`<div class="chip ${activeFilter===t?'active':''}" onclick="setFilter('${t}')">${d.emoji} ${d.kuerzel}</div>`}).join('');
+  document.getElementById('filter-bar').innerHTML =
+    `<div class="chip ${activeFilter==='alle'?'active':''}" onclick="setFilter('alle')">Alle</div>` +
+    types.map(t=>{const d=TYPES[t]||TYPES.restmuell;return`<div class="chip ${activeFilter===t?'active':''}" onclick="setFilter('${t}')">${d.emoji} ${d.kuerzel}</div>`;}).join('');
 
-  // Stats
-  const sb = document.getElementById('stats-bar');
-  if(pickups.length) {
-    const soon = pickups.filter(p=>daysUntil(p.date)>=0&&daysUntil(p.date)<=7).length;
-    const total = pickups.filter(p=>daysUntil(p.date)>=0).length;
-    const done = pickups.filter(p=>daysUntil(p.date)<0).length;
-    sb.innerHTML=`<div class="stats-bar">
-      <div class="stat-item"><div class="stat-num">${soon}</div><div class="stat-label">Diese Woche</div></div>
-      <div class="stat-item"><div class="stat-num">${total}</div><div class="stat-label">Ausstehend</div></div>
-      <div class="stat-item"><div class="stat-num">${done}</div><div class="stat-label">Erledigt</div></div>
-    </div>`;
-  } else sb.innerHTML='';
+  if(pickups.length){
+    const soon=pickups.filter(p=>daysUntil(p.date)>=0&&daysUntil(p.date)<=7).length;
+    const total=pickups.filter(p=>daysUntil(p.date)>=0).length;
+    const done=pickups.filter(p=>daysUntil(p.date)<0).length;
+    document.getElementById('stats-bar').innerHTML=`<div class="stats-bar"><div class="stat-item"><div class="stat-num">${soon}</div><div class="stat-label">Diese Woche</div></div><div class="stat-item"><div class="stat-num">${total}</div><div class="stat-label">Ausstehend</div></div><div class="stat-item"><div class="stat-num">${done}</div><div class="stat-label">Erledigt</div></div></div>`;
+  } else document.getElementById('stats-bar').innerHTML='';
 
-  // Next banner
-  const nb = document.getElementById('next-banner');
-  const ni = document.getElementById('next-items');
-  const imminent = visible.filter(p=>daysUntil(p.date)>=0&&daysUntil(p.date)<=7);
-  if(imminent.length) {
+  const nb=document.getElementById('next-banner');
+  const imminent=visible.filter(p=>daysUntil(p.date)>=0&&daysUntil(p.date)<=7);
+  if(imminent.length){
     nb.style.display='block';
-    const byDate={};
-    imminent.forEach(p=>{(byDate[p.date]=byDate[p.date]||[]).push(p)});
+    const byDate={};imminent.forEach(p=>{(byDate[p.date]=byDate[p.date]||[]).push(p);});
     const first=Object.keys(byDate).sort()[0];
-    ni.innerHTML=byDate[first].map(p=>{
+    document.getElementById('next-items').innerHTML=byDate[first].map(p=>{
       const t=TYPES[p.type]||TYPES.restmuell,days=daysUntil(p.date);
       const dc=days===0?'#4a9e6b':days===1?'#d4a820':'#888';
       const db=days===0?'rgba(74,158,107,0.18)':days===1?'rgba(212,168,32,0.18)':'rgba(136,136,136,0.15)';
-      const dl=days===0?'Heute':days===1?'Morgen':'in '+days+' d';
-      return`<div class="next-item"><div class="next-dot" style="background:${t.color}"></div><div class="next-item-name">${t.emoji} ${t.label}</div><div class="next-item-date">${formatDateShort(p.date)}</div><div class="next-item-days" style="background:${db};color:${dc}">${dl}</div></div>`;
+      return`<div class="next-item"><div class="next-dot" style="background:${t.color}"></div><div class="next-item-name">${t.emoji} ${t.label}</div><div style="font-size:12px;color:var(--text2);flex:1;text-align:right">${formatDateShort(p.date)}</div><div class="next-item-days" style="background:${db};color:${dc};margin-left:6px">${days===0?'Heute':days===1?'Morgen':'in '+days+' d'}</div></div>`;
     }).join('');
   } else nb.style.display='none';
 
-  // Main list grouped by month
-  const container = document.getElementById('pickup-container');
-  if(!upcoming.length) {
-    container.innerHTML=`<div class="empty-state"><div class="empty-state-icon">📅</div><div class="empty-state-text">Keine Termine vorhanden.<br>Wechsle zu „Hinzufügen"<br>und lade die GOA-Termine.</div></div>`;
+  const container=document.getElementById('pickup-container');
+  if(!upcoming.length){
+    container.innerHTML='<div class="empty-state"><div class="empty-state-icon">📅</div><div class="empty-state-text">Keine Termine.<br>Wechsle zu „➕ Hinzufügen".</div></div>';
   } else {
-    const byMonth={};
-    upcoming.forEach(p=>{const m=getMonthKey(p.date);(byMonth[m]=byMonth[m]||[]).push(p)});
-    container.innerHTML=Object.entries(byMonth).map(([month,items])=>`
-      <div class="month-divider">${month}</div>
-      <div class="pickup-list">${items.map(p=>renderCard(p,false)).join('')}</div>
-    `).join('');
+    const byMonth={};upcoming.forEach(p=>{const m=getMonthKey(p.date);(byMonth[m]=byMonth[m]||[]).push(p);});
+    container.innerHTML=Object.entries(byMonth).map(([month,items])=>`<div class="month-divider">${month}</div><div class="pickup-list">${items.map(p=>renderCard(p,false)).join('')}</div>`).join('');
   }
 
-  // Past
-  const pastList=document.getElementById('past-list');
   const pastLabel=document.getElementById('past-label');
-  if(past.length){
-    pastLabel.style.display='block';
-    pastList.innerHTML=past.slice().reverse().slice(0,8).map(p=>renderCard(p,true)).join('');
-  } else {pastLabel.style.display='none';pastList.innerHTML='';}
+  const pastList=document.getElementById('past-list');
+  if(past.length){pastLabel.style.display='block';pastList.innerHTML=past.slice().reverse().slice(0,8).map(p=>renderCard(p,true)).join('');}
+  else{pastLabel.style.display='none';pastList.innerHTML='';}
 }
 
-function renderCard(p, isPast) {
+function renderCard(p,isPast){
   const t=TYPES[p.type]||TYPES.restmuell,days=daysUntil(p.date);
   let badge='';
   if(!isPast){
-    if(days===0) badge=`<div class="pickup-badge" style="background:rgba(74,158,107,0.2);color:#4a9e6b">Heute!</div>`;
-    else if(days===1) badge=`<div class="pickup-badge" style="background:rgba(212,168,32,0.2);color:#d4a820">Morgen</div>`;
-    else if(days<=3) badge=`<div class="pickup-badge" style="background:rgba(136,136,136,0.15);color:#888">in ${days} d</div>`;
+    if(days===0)badge=`<div class="pickup-badge" style="background:rgba(74,158,107,0.2);color:#4a9e6b">Heute!</div>`;
+    else if(days===1)badge=`<div class="pickup-badge" style="background:rgba(212,168,32,0.2);color:#d4a820">Morgen</div>`;
+    else if(days<=3)badge=`<div class="pickup-badge" style="background:rgba(136,136,136,0.15);color:#888">in ${days} d</div>`;
   }
-  return`<div class="pickup-card ${isPast?'past':''} ${days===0?'today':''}">
-    <div class="pickup-color-bar" style="background:${t.color}"></div>
-    <div class="pickup-icon" style="background:${t.bg}">${t.emoji}</div>
-    <div class="pickup-info">
-      <div class="pickup-type">${t.label} <span style="font-size:11px;color:var(--text3);font-weight:400">${t.kuerzel}</span></div>
-      <div class="pickup-date">${formatDate(p.date)}</div>
-    </div>
-    <div style="display:flex;gap:5px;align-items:center">${badge}<button class="delete-btn" onclick="deletePickup(${p.id})">✕</button></div>
-  </div>`;
+  return`<div class="pickup-card ${isPast?'past':''} ${days===0?'today':''}"><div class="pickup-color-bar" style="background:${t.color}"></div><div class="pickup-icon" style="background:${t.bg}">${t.emoji}</div><div class="pickup-info"><div class="pickup-type">${t.label} <span style="font-size:11px;color:var(--text3);font-weight:400">${t.kuerzel}</span></div><div class="pickup-date">${formatDate(p.date)}</div></div><div style="display:flex;gap:5px;align-items:center">${badge}<button class="delete-btn" onclick="deletePickup(${p.id})">✕</button></div></div>`;
 }
-
-function setFilter(f) {
-  activeFilter=f; renderHome();
-}
-
-function renderVisibilitySettings() {
-  const el=document.getElementById('visibility-settings');
-  el.innerHTML=Object.entries(TYPES).map(([key,t])=>`
-    <div class="settings-row">
-      <div class="settings-icon">${t.emoji}</div>
-      <div class="settings-info"><div class="settings-title">${t.label}</div><div class="settings-desc">${t.kuerzel}</div></div>
-      <label class="toggle"><input type="checkbox" ${!hiddenTypes.includes(key)?'checked':''} onchange="toggleType('${key}',this.checked)"><div class="toggle-track"></div></label>
-    </div>`).join('');
-}
-
-function toggleType(key, visible) {
-  if(visible) hiddenTypes=hiddenTypes.filter(t=>t!==key);
-  else if(!hiddenTypes.includes(key)) hiddenTypes.push(key);
-  localStorage.setItem('hiddenTypes',JSON.stringify(hiddenTypes));
-  renderHome();
-}
-
-function loadGOAData() {
+function setFilter(f){activeFilter=f;renderMuell();}
+function loadGOAData(){
   const existing=new Set(pickups.map(p=>`${p.type}-${p.date}`));
   const newOnes=GOA_TERMINE.filter(e=>!existing.has(`${e.type}-${e.date}`)).map((e,i)=>({...e,id:Date.now()+i}));
   pickups=[...pickups,...newOnes].sort((a,b)=>a.date.localeCompare(b.date));
-  save(); renderHome();
-  showToast(`${newOnes.length} GOA-Termine geladen ✓`);
-  switchTab('home');
+  save();renderMuell();showToast(`${newOnes.length} GOA-Termine geladen ✓`);switchTab('muell');
 }
 
-// ICS
+// ══════════════════════════════════════════
+// BUS & BAHN
+// ══════════════════════════════════════════
+function renderStationTabs(){
+  document.getElementById('station-tabs').innerHTML = STATIONS.map((s,i)=>
+    `<div class="station-chip ${i===activeStation?'active':''}" onclick="selectStation(${i})">${s.short}</div>`
+  ).join('');
+}
+
+function selectStation(i){
+  activeStation=i;
+  document.getElementById('active-station-name').textContent=STATIONS[i].name;
+  renderStationTabs();
+  loadDepartures();
+}
+
+async function loadDepartures(){
+  const container=document.getElementById('dep-container');
+  container.innerHTML='<div class="loading-state"><div class="loading-spinner">⏳</div><div style="font-size:13px;color:var(--text3);margin-top:6px">Lade Abfahrten…</div></div>';
+  const station=STATIONS[activeStation];
+  try {
+    // Use DB Timetables API via a CORS proxy
+    const url = `https://v6.db.transport.rest/stops/${encodeURIComponent(station.id)}/departures?results=12&duration=90&language=de`;
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data = await res.json();
+    const deps = data.departures || data;
+    if(!deps || !deps.length){
+      container.innerHTML='<div class="loading-state" style="color:var(--text3)"><div style="font-size:28px;margin-bottom:8px">🚌</div><div style="font-size:13px">Keine Abfahrten gefunden</div></div>';
+      return;
+    }
+    renderDepartures(deps);
+  } catch(e) {
+    // Fallback: try hafas-client based endpoint
+    try {
+      const fallbackUrl = `https://v5.db.transport.rest/stops/${encodeURIComponent(station.id)}/departures?results=12&duration=90`;
+      const res2 = await fetch(fallbackUrl);
+      if(!res2.ok) throw new Error('Fallback failed');
+      const data2 = await res2.json();
+      renderDepartures(data2);
+    } catch(e2) {
+      container.innerHTML=`<div class="error-state">⚠️ Verbindung fehlgeschlagen.<br><small style="opacity:0.7">Bitte Internetverbindung prüfen und erneut versuchen.</small><br><br><button class="btn-sm" onclick="loadDepartures()" style="margin-top:4px">Nochmal versuchen</button></div>`;
+    }
+  }
+}
+
+function renderDepartures(deps){
+  const container=document.getElementById('dep-container');
+  const now=new Date();
+  const lines = deps.map(dep=>{
+    const line=dep.line||{};
+    const name=line.name||line.fahrtNr||'?';
+    const dest=dep.destination?.name||dep.direction||'–';
+    const planned=new Date(dep.plannedWhen||dep.when);
+    const actual=dep.when ? new Date(dep.when) : planned;
+    const delayMin=dep.delay ? Math.round(dep.delay/60) : 0;
+    const diffMin=Math.round((actual-now)/60000);
+    const hhmm=planned.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+    const product=line.product||'bus';
+    const colors=getLineColor(name,product);
+    const platform=dep.platform||dep.stop?.platform||'';
+    return {name,dest,hhmm,delayMin,diffMin,colors,platform,product};
+  }).filter(d=>d.diffMin>=-1);
+
+  if(!lines.length){
+    container.innerHTML='<div class="loading-state" style="color:var(--text3)"><div style="font-size:28px;margin-bottom:8px">🚌</div><div>Keine Abfahrten in den nächsten 90 Min.</div></div>';
+    return;
+  }
+
+  container.innerHTML=`<div class="dep-list">${lines.map(d=>{
+    const delayHtml = d.delayMin>0
+      ? `<div class="dep-time-delay" style="color:#c44a4a">+${d.delayMin} min</div>`
+      : d.delayMin<0
+      ? `<div class="dep-time-delay" style="color:#4a9e6b">${d.delayMin} min</div>`
+      : `<div class="dep-time-delay" style="color:var(--text3)">pünktlich</div>`;
+    const diffHtml = d.diffMin<=0 ? `<div class="dep-min" style="color:#4a9e6b;font-weight:600">jetzt</div>`
+      : d.diffMin<=2 ? `<div class="dep-min" style="color:#d4a820;font-weight:600">in ${d.diffMin} Min</div>`
+      : `<div class="dep-min">in ${d.diffMin} Min</div>`;
+    const platformHtml = d.platform ? `<div class="dep-platform">Gleis/Steig ${d.platform}</div>` : '';
+    return`<div class="dep-card">
+      <div class="dep-line" style="background:${d.colors.bg};color:${d.colors.text}">${d.name}</div>
+      <div class="dep-info"><div class="dep-dest">${d.dest}</div>${platformHtml}</div>
+      <div class="dep-time"><div class="dep-time-main">${d.hhmm}</div>${delayHtml}${diffHtml}</div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function getLineColor(name,product){
+  if(product==='nationalExpress'||product==='national') return {bg:'rgba(255,50,50,0.15)',text:'#ff5555'};
+  if(product==='regionalExp'||product==='regional') return {bg:'rgba(255,100,50,0.15)',text:'#ff7744'};
+  if(product==='suburban') return {bg:'rgba(80,160,80,0.15)',text:'#50c850'};
+  if(product==='subway') return {bg:'rgba(74,123,196,0.15)',text:'#4a9ee8'};
+  if(product==='tram') return {bg:'rgba(212,100,50,0.15)',text:'#d46432'};
+  // Bus — color by line number
+  const num=parseInt(name.replace(/\D/g,''))||0;
+  if(num<100) return {bg:'rgba(74,123,196,0.15)',text:'#4a7bc4'};
+  if(num<200) return {bg:'rgba(74,158,107,0.15)',text:'#4a9e6b'};
+  if(num<300) return {bg:'rgba(212,168,32,0.15)',text:'#d4a820'};
+  return {bg:'rgba(136,136,136,0.15)',text:'#999'};
+}
+
+// ══════════════════════════════════════════
+// SPRITPREISE
+// ══════════════════════════════════════════
+function saveTKKey(){
+  const k=document.getElementById('tk-key-input').value.trim();
+  if(!k||k.includes('•')){showToast('Bitte echten API-Key eingeben');return}
+  tkKey=k;
+  localStorage.setItem('tkKey',k);
+  document.getElementById('tk-key-input').value='••••••••••••••••';
+  showToast('Key gespeichert ✓');
+  loadSprit();
+}
+
+function setFuel(f){
+  activeFuel=f;
+  ['e5','e10','diesel'].forEach(x=>{
+    document.getElementById('chip-'+x).classList.toggle('active',x===f);
+  });
+  if(tkKey) loadSprit();
+}
+
+async function loadSprit(){
+  if(!tkKey){return;}
+  const container=document.getElementById('sprit-container');
+  container.innerHTML='<div class="loading-state"><div class="loading-spinner">⏳</div><div style="font-size:13px;color:var(--text3);margin-top:6px">Lade Spritpreise…</div></div>';
+  // Mögglingen coordinates: 48.8250, 9.9589
+  const lat=48.8250,lng=9.9589,rad=10;
+  const url=`https://creativecommons.tankerkoenig.de/json/list.php?lat=${lat}&lng=${lng}&rad=${rad}&sort=price&type=${activeFuel}&apikey=${tkKey}`;
+  try {
+    const res=await fetch(url);
+    const data=await res.json();
+    if(!data.ok) throw new Error(data.message||'API Fehler');
+    renderSprit(data.stations||[]);
+    const now=new Date();
+    document.getElementById('sprit-updated').textContent=`Aktualisiert: ${now.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr · Quelle: Tankerkönig / MTS-K`;
+  } catch(e) {
+    container.innerHTML=`<div class="error-state">⚠️ ${e.message}<br><small style="opacity:0.7">API-Key prüfen oder später nochmal versuchen.</small></div>`;
+  }
+}
+
+function renderSprit(stations){
+  const container=document.getElementById('sprit-container');
+  if(!stations.length){container.innerHTML='<div class="loading-state" style="color:var(--text3)">Keine Tankstellen gefunden</div>';return;}
+  const top=stations.slice(0,8);
+  container.innerHTML=`<div class="sprit-list">${top.map((s,i)=>{
+    const price=s[activeFuel];
+    if(!price||price<=0) return '';
+    const priceStr=price.toFixed(3)+'€';
+    const dist=s.dist ? (s.dist<1?Math.round(s.dist*1000)+'m':s.dist.toFixed(1)+'km') : '';
+    const rankClass=i===0?'gold':i===1?'silver':i===2?'bronze':'other';
+    const isOpen=s.isOpen;
+    return`<div class="sprit-card" style="${!isOpen?'opacity:0.45':''}">
+      <div class="sprit-rank ${rankClass}">${i+1}</div>
+      <div class="sprit-info">
+        <div class="sprit-name">${s.brand||s.name}</div>
+        <div class="sprit-dist">${s.name}${dist?' · '+dist:''}${!isOpen?' · geschlossen':''}</div>
+      </div>
+      <div style="text-align:right">
+        <div class="sprit-price">${priceStr.slice(0,-1)}<sup style="font-size:13px">${priceStr.slice(-1)}</sup></div>
+        <div class="sprit-price-sub">${activeFuel==='e5'?'Super E5':activeFuel==='e10'?'Super E10':'Diesel'}</div>
+      </div>
+    </div>`;
+  }).filter(Boolean).join('')}</div>`;
+}
+
+// ══════════════════════════════════════════
+// ICS IMPORT
+// ══════════════════════════════════════════
 document.getElementById('ics-file-input').addEventListener('change',e=>{
   const f=e.target.files[0];if(!f)return;
   const r=new FileReader();r.onload=ev=>parseICS(ev.target.result);r.readAsText(f);
 });
-
-function parseICS(text) {
+function parseICS(text){
   const events=[];
   text.split('BEGIN:VEVENT').slice(1).forEach(block=>{
     const sm=block.match(/SUMMARY[^:]*:(.+)/),dm=block.match(/DTSTART[^:]*:(\d{8})/);
@@ -488,12 +648,12 @@ function parseICS(text) {
     const s=sm[1].trim().toLowerCase(),raw=dm[1];
     const date=`${raw.slice(0,4)}-${raw.slice(4,6)}-${raw.slice(6,8)}`;
     let type='restmuell';
-    if(s.includes('bio')||s.includes('bioabfall')) type='bio';
-    else if(s.includes('blaue')||s.includes('altpapier')&&!s.includes('verein')) type='papier';
-    else if(s.includes('gelb')||s.includes('wertstoff')||s.includes('gelber sack')) type='gelb';
-    else if(s.includes('gartentonne')||s.includes('garten')) type='gartentonne';
-    else if(s.includes('grünabfuhr')||s.includes('gruenabfuhr')||s.includes('grünabfall')) type='gruenabfuhr';
-    else if(s.includes('vereinssammlung')||s.includes('avh')) type='altpapier_verein';
+    if(s.includes('bio')) type='bio';
+    else if(s.includes('blaue')||(s.includes('altpapier')&&!s.includes('verein'))) type='papier';
+    else if(s.includes('gelb')||s.includes('wertstoff')) type='gelb';
+    else if(s.includes('gartentonne')) type='gartentonne';
+    else if(s.includes('grün')||s.includes('gruen')) type='gruenabfuhr';
+    else if(s.includes('verein')||s.includes('avh')) type='altpapier_verein';
     else if(s.includes('christbaum')) type='christbaum';
     events.push({id:Date.now()+Math.random(),type,date});
   });
@@ -501,13 +661,38 @@ function parseICS(text) {
   const existing=new Set(pickups.map(p=>`${p.type}-${p.date}`));
   const newOnes=events.filter(e=>!existing.has(`${e.type}-${e.date}`));
   pickups=[...pickups,...newOnes].sort((a,b)=>a.date.localeCompare(b.date));
-  save();renderHome();
-  showToast(`${newOnes.length} Termine importiert ✓`);
-  switchTab('home');
+  save();renderMuell();showToast(`${newOnes.length} Termine importiert ✓`);switchTab('muell');
 }
 
-// Notifications
-async function checkNotifStatus() {
+// ══════════════════════════════════════════
+// EINSTELLUNGEN
+// ══════════════════════════════════════════
+function saveSettings(){
+  settings.reminderDays=parseInt(document.getElementById('reminder-days').value);
+  settings.reminderTime=document.getElementById('reminder-time').value;
+  localStorage.setItem('settings',JSON.stringify(settings));
+  scheduleAllReminders();
+}
+function renderVisibilitySettings(){
+  document.getElementById('visibility-settings').innerHTML=Object.entries(TYPES).map(([key,t])=>`
+    <div class="settings-row">
+      <div class="settings-icon">${t.emoji}</div>
+      <div class="settings-info"><div class="settings-title">${t.label}</div><div class="settings-desc">${t.kuerzel}</div></div>
+      <label class="toggle"><input type="checkbox" ${!hiddenTypes.includes(key)?'checked':''} onchange="toggleType('${key}',this.checked)"><div class="toggle-track"></div></label>
+    </div>`).join('');
+}
+function toggleType(key,visible){
+  if(visible)hiddenTypes=hiddenTypes.filter(t=>t!==key);
+  else if(!hiddenTypes.includes(key))hiddenTypes.push(key);
+  localStorage.setItem('hiddenTypes',JSON.stringify(hiddenTypes));renderMuell();
+}
+function clearAll(){if(!confirm('Wirklich alle Termine löschen?'))return;pickups=[];save();renderMuell();showToast('Alle Termine gelöscht');}
+function showInstallHint(){const el=document.getElementById('install-hint');el.style.display=el.style.display==='none'||!el.style.display?'block':'none';}
+
+// ══════════════════════════════════════════
+// NOTIFICATIONS
+// ══════════════════════════════════════════
+async function checkNotifStatus(){
   const banner=document.getElementById('notif-banner');
   const toggle=document.getElementById('toggle-notifs');
   const status=document.getElementById('notif-status');
@@ -518,10 +703,9 @@ async function checkNotifStatus() {
     if(settings.notificationsEnabled)scheduleAllReminders();
   } else if(Notification.permission==='denied'){
     status.textContent='Berechtigung verweigert';toggle.disabled=true;
-  } else {banner.classList.remove('hidden');toggle.checked=false;status.textContent='Berechtigung ausstehend'}
+  } else {banner.classList.remove('hidden');toggle.checked=false;status.textContent='Berechtigung ausstehend';}
 }
-
-async function requestNotifications() {
+async function requestNotifications(){
   const perm=await Notification.requestPermission();
   if(perm==='granted'){
     settings.notificationsEnabled=true;localStorage.setItem('settings',JSON.stringify(settings));
@@ -529,21 +713,18 @@ async function requestNotifications() {
     document.getElementById('notif-status').textContent='Aktiv';
     document.getElementById('notif-banner').classList.add('hidden');
     scheduleAllReminders();showToast('Benachrichtigungen aktiv ✓');
-  } else showToast('Berechtigung nicht erteilt');
+  }
 }
-
-function toggleNotifications(enabled) {
+function toggleNotifications(enabled){
   if(enabled&&Notification.permission!=='granted'){requestNotifications();return}
   settings.notificationsEnabled=enabled;localStorage.setItem('settings',JSON.stringify(settings));
   document.getElementById('notif-status').textContent=enabled?'Aktiv':'Deaktiviert';
   if(enabled){scheduleAllReminders();showToast('Erinnerungen aktiviert');}
   else{clearScheduled();showToast('Erinnerungen deaktiviert');}
 }
-
 let scheduledTimers=[];
 function clearScheduled(){scheduledTimers.forEach(clearTimeout);scheduledTimers=[];}
-
-function scheduleAllReminders() {
+function scheduleAllReminders(){
   clearScheduled();
   if(!settings.notificationsEnabled||Notification.permission!=='granted')return;
   const [h,m]=settings.reminderTime.split(':').map(Number),now=new Date();
@@ -565,25 +746,20 @@ function scheduleAllReminders() {
     }
   });
 }
-
 function refreshReminders(){scheduleAllReminders();showToast('Erinnerungen aktualisiert ✓');}
-
-function testNotification() {
+function testNotification(){
   if(Notification.permission!=='granted'){showToast('Erst Benachrichtigungen aktivieren');return}
-  new Notification('🗑️ Hausmüll – Tonne rausstellen!',{body:'Test-Erinnerung der Mülltonne-App.',icon:'icon-192.png'});
+  new Notification('🗑️ Hausmüll – Tonne rausstellen!',{body:'Test-Erinnerung der Mögglingen App.',icon:'icon-192.png'});
   showToast('Test gesendet');
 }
-
-function clearAll(){if(!confirm('Wirklich alle Termine löschen?'))return;pickups=[];save();renderHome();showToast('Alle Termine gelöscht');}
-
-function showInstallHint(){const el=document.getElementById('install-hint');el.style.display=el.style.display==='none'||!el.style.display?'block':'none';}
-
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
 
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(console.error);
-
 checkNotifStatus();
-renderHome();
+renderMuell();
 </script>
 </body>
 </html>
