@@ -397,10 +397,18 @@ select option{background:var(--bg2)}
 
 <!-- ═══ BUS ═══ -->
 <div id="view-bus" class="view">
-  <div class="coming-soon">
-    <div class="coming-soon-icon"><i class="ti ti-bus"></i></div>
-    <h2 style="font-size:18px;font-weight:600;margin-bottom:8px">Bus & Bahn</h2>
-    <p style="font-size:14px;color:var(--text3);line-height:1.6">Echtzeit-Abfahrten für Mögglingen folgen bald.</p>
+  <div style="padding:12px 16px 8px;display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em">Haltestelle</div>
+      <div style="font-size:16px;font-weight:500;margin-top:2px" id="bus-station-name">Mögglingen Bahnhof</div>
+    </div>
+    <button class="icon-btn" onclick="loadDepartures()" aria-label="Aktualisieren">
+      <i class="ti ti-refresh" id="bus-refresh-icon"></i>
+    </button>
+  </div>
+  <div style="display:flex;gap:6px;padding:0 16px 12px;overflow-x:auto;scrollbar-width:none" id="bus-station-tabs"></div>
+  <div id="bus-container">
+    <div class="empty-state"><i class="ti ti-loader-2" style="font-size:28px"></i><p>Lade Abfahrten…</p></div>
   </div>
 </div>
 
@@ -537,9 +545,8 @@ select option{background:var(--bg2)}
     <div class="nav-icon-wrap"><i class="ti ti-gas-station"></i></div>
     <span class="nav-label">Sprit</span>
   </div>
-  <div class="nav-item locked" id="nav-bus" onclick="switchTab('bus')">
+  <div class="nav-item" id="nav-bus" onclick="switchTab('bus')">
     <div class="nav-icon-wrap"><i class="ti ti-bus"></i></div>
-    <i class="ti ti-lock nav-lock"></i>
     <span class="nav-label">Bus</span>
   </div>
   <div class="nav-item" id="nav-mehr" onclick="switchTab('mehr')">
@@ -673,13 +680,15 @@ function toggleTheme(){isDark=!isDark;try{localStorage.setItem('theme',isDark?'d
 // ══════════════════════════════════════════
 const TAB_TITLES={home:'Home',muell:'Müll',sprit:'Spritpreise',bus:'Bus & Bahn',mehr:'Mehr'};
 function switchTab(tab){
-  if(tab==='bus'){showToast('Bus & Bahn kommt bald');return;}
+  if(tab==='bus'){renderStationTabs();loadDepartures();}
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-'+tab).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   const ni=document.getElementById('nav-'+tab);if(ni)ni.classList.add('active');
   document.getElementById('header-title').textContent=TAB_TITLES[tab]||'';
+  activeTab=tab;
   if(tab==='sprit'&&tkKey)loadSprit();
+  checkOnboarding();
   if(tab==='mehr')renderVisibilitySettings();
   if(tab==='home')renderHome();
   if(tab==='muell')renderMuell();
@@ -700,7 +709,8 @@ function save(){storageSet('pickups',pickups);storageSet('checkedIds',checkedIds
 function checkOnboarding(){
   const banner=document.getElementById('onboarding-banner');
   const hasFuture=pickups.some(p=>daysUntil(p.date)>=0);
-  banner.classList.toggle('hidden',hasFuture);
+  const onAllowedTab = ['home','muell'].includes(activeTab||'home');
+  banner.classList.toggle('hidden', hasFuture || !onAllowedTab);
 }
 
 // ══════════════════════════════════════════
@@ -956,6 +966,108 @@ function renderSpritList(stations){
     const rankBg=i===0?'var(--amber-bg)':'var(--bg3)',rankC=i===0?'var(--amber)':'var(--text3)';
     return `<div class="pickup-row ${!s.isOpen?'past':''}"><div class="rank-dot" style="background:${rankBg};color:${rankC}">${i+1}</div><div class="type-info"><div class="type-name">${s.brand||s.name}</div><div class="type-sub">${s.name} · ${dist}${!s.isOpen?' · geschlossen':''}</div></div><div style="text-align:right;flex-shrink:0"><div class="sprit-price-big" style="color:${i===0?'var(--green)':'var(--text)'}">${priceStr.slice(0,-1)}<sup style="font-size:11px">${priceStr.slice(-1)}</sup></div></div></div>`;
   }).join('')}</div>`;
+}
+
+// ══════════════════════════════════════════
+// BUS & BAHN
+// ══════════════════════════════════════════
+const WORKER_URL = 'https://moegglingen-bus.emre18celik.workers.dev';
+const BUS_STATIONS = [
+  { key:'bahnhof', label:'Bahnhof/Zug', name:'Mögglingen Bahnhof' },
+  { key:'mitte',   label:'Mitte',       name:'Mögglingen Mitte'   },
+];
+let activeBusStation = 0;
+
+function renderStationTabs(){
+  document.getElementById('bus-station-tabs').innerHTML = BUS_STATIONS.map((s,i)=>
+    `<button class="chip ${i===activeBusStation?'active':''}" onclick="selectStation(${i})">${s.label}</button>`
+  ).join('');
+  document.getElementById('bus-station-name').textContent = BUS_STATIONS[activeBusStation].name;
+}
+
+function selectStation(i){
+  activeBusStation = i;
+  renderStationTabs();
+  loadDepartures();
+}
+
+async function loadDepartures(){
+  const container = document.getElementById('bus-container');
+  const icon = document.getElementById('bus-refresh-icon');
+  if(icon){ icon.style.transition='transform 0.6s'; icon.style.transform='rotate(360deg)'; setTimeout(()=>{icon.style.transition='';icon.style.transform='';},600); }
+  container.innerHTML = '<div class="empty-state"><i class="ti ti-loader-2" style="font-size:28px"></i><p style="font-size:13px">Lade Abfahrten…</p></div>';
+
+  const stop = BUS_STATIONS[activeBusStation];
+  try {
+    const res = await fetch(`${WORKER_URL}/departures?stop=${stop.key}&limit=20`, );
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if(data.error) throw new Error(data.error);
+    renderDepartures(data.departures || [], data.stop);
+  } catch(e) {
+    container.innerHTML = `<div style="margin:16px">
+      <div style="padding:14px 16px;background:var(--red-bg);border-radius:12px;font-size:13px;color:var(--red);margin-bottom:12px">
+        <i class="ti ti-alert-circle" style="margin-right:6px"></i>${e.message}
+      </div>
+      <button class="btn-secondary" onclick="loadDepartures()"><i class="ti ti-refresh"></i>Nochmal versuchen</button>
+    </div>`;
+  }
+}
+
+function renderDepartures(deps, stopName){
+  const container = document.getElementById('bus-container');
+  const now = new Date();
+
+  const lines = deps.map(d => {
+    const planned  = new Date(d.planned);
+    const realtime = new Date(d.realtime || d.planned);
+    const diffMin  = Math.round((realtime - now) / 60000);
+    const hhmm     = planned.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+    return { ...d, diffMin, hhmm, planned };
+  }).filter(d => d.diffMin > -2).slice(0, 15);
+
+  if(!lines.length){
+    container.innerHTML = '<div class="empty-state"><i class="ti ti-bus-off"></i><p>Keine Abfahrten in den<br>nächsten 2 Stunden</p></div>';
+    return;
+  }
+
+  const ts = now.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+  container.innerHTML = `
+    <div style="font-size:11px;color:var(--text3);padding:0 20px 8px">Stand: ${ts} Uhr · EFA-BW Echtzeit</div>
+    <div class="card" style="margin:0 16px;border-radius:14px;overflow:hidden">
+      ${lines.map(d => {
+        const delayColor = d.delayMin > 1 ? 'var(--red)' : 'var(--green)';
+        const delayText  = d.delayMin > 1 ? `+${d.delayMin} min` : 'pünktlich';
+        const diffText   = d.diffMin <= 0 ? 'jetzt' : d.diffMin <= 2 ? `in ${d.diffMin} Min` : `in ${d.diffMin} Min`;
+        const diffColor  = d.diffMin <= 0 ? 'var(--green)' : d.diffMin <= 5 ? 'var(--amber)' : 'var(--text2)';
+        const lineColors = getBusLineColor(d.line);
+        const platform   = d.platform ? `<div class="type-sub">Gleis ${d.platform}</div>` : '';
+        return `<div class="pickup-row">
+          <div style="width:44px;height:28px;border-radius:7px;background:${lineColors.bg};color:${lineColors.text};display:flex;align-items:center;justify-content:center;font-size:${d.line.length>4?'10':'12'}px;font-weight:700;flex-shrink:0">${d.line}</div>
+          <div class="type-info">
+            <div class="type-name">${d.dest}</div>
+            ${platform}
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            <div style="font-size:18px;font-weight:600;font-variant-numeric:tabular-nums">${d.hhmm}</div>
+            <div style="font-size:11px;color:${delayColor}">${delayText}</div>
+            <div style="font-size:11px;color:${diffColor};font-weight:500">${diffText}</div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+function getBusLineColor(name){
+  const n = name.toUpperCase();
+  if(n.startsWith('RE')||n.startsWith('RB')||n.startsWith('IRE')) return {bg:'rgba(255,120,50,0.15)',text:'#ff8844'};
+  if(n.startsWith('S'))  return {bg:'rgba(80,160,80,0.15)',text:'#50c850'};
+  if(n.startsWith('IC')||n.startsWith('EC')) return {bg:'rgba(220,50,50,0.15)',text:'#e05555'};
+  const num = parseInt(name.replace(/\D/g,'')) || 0;
+  if(num>=7900&&num<=7999) return {bg:'rgba(212,168,32,0.15)',text:'#d4a820'};
+  if(num>=260&&num<=270)   return {bg:'rgba(74,123,196,0.15)',text:'#4a7bc4'};
+  if(num>=76&&num<=80)     return {bg:'rgba(74,158,107,0.15)',text:'#4a9e6b'};
+  return {bg:'rgba(136,136,136,0.15)',text:'#888'};
 }
 
 // ══════════════════════════════════════════
