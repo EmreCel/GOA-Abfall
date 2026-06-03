@@ -213,6 +213,7 @@ select option{background:var(--bg2)}
 /* INSTALL HINT */
 .install-hint{margin:0 16px 14px;padding:14px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;font-size:13px;color:var(--text2);line-height:1.6;display:none}
 .install-hint strong{color:var(--text);font-weight:600}
+#greeting-text{display:inline-block;opacity:1;transform:translateY(0)}
 
 /* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:300;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s}
@@ -229,7 +230,7 @@ select option{background:var(--bg2)}
   <div class="header-inner">
     <div>
       <div class="header-sub">73563 · Mögglingen</div>
-      <div class="header-title" id="header-title">Home</div>
+      <div class="header-title" id="header-title"><span id="greeting-text">Willkommen</span></div>
     </div>
     <div class="header-actions">
       <button class="icon-btn" onclick="toggleTheme()" aria-label="Theme">
@@ -406,7 +407,25 @@ select option{background:var(--bg2)}
       <i class="ti ti-refresh" id="bus-refresh-icon"></i>
     </button>
   </div>
-  <div style="display:flex;gap:6px;padding:0 16px 12px;overflow-x:auto;scrollbar-width:none" id="bus-station-tabs"></div>
+  <!-- Station dropdown -->
+  <div style="padding:0 16px 10px;display:flex;gap:8px;align-items:center">
+    <div style="flex:1;position:relative">
+      <select id="bus-station-select" onchange="selectStation(this.value)"
+        style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;color:var(--text);padding:9px 36px 9px 12px;font-size:14px;font-family:inherit;outline:none;-webkit-appearance:none;appearance:none">
+      </select>
+      <i class="ti ti-chevron-down" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--text3);pointer-events:none"></i>
+    </div>
+  </div>
+  <!-- Date + Time picker -->
+  <div style="padding:0 16px 12px;display:flex;gap:8px;align-items:center">
+    <input type="date" id="bus-date" onchange="updateBusTime()"
+      style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;color:var(--text);padding:8px 12px;font-size:13px;font-family:inherit;outline:none;-webkit-appearance:none">
+    <input type="time" id="bus-time" onchange="updateBusTime()"
+      style="width:90px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;color:var(--text);padding:8px 10px;font-size:13px;font-family:inherit;outline:none;-webkit-appearance:none">
+    <button onclick="resetToNow()" style="width:36px;height:36px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:15px;flex-shrink:0" title="Jetzt">
+      <i class="ti ti-clock-hour-3"></i>
+    </button>
+  </div>
   <div id="bus-container">
     <div class="empty-state"><i class="ti ti-loader-2" style="font-size:28px"></i><p>Lade Abfahrten…</p></div>
   </div>
@@ -525,6 +544,13 @@ select option{background:var(--bg2)}
       <button class="btn-sm" style="color:var(--red);border-color:var(--red-bg)" onclick="clearAll()">Löschen</button>
     </div>
   </div>
+  <div style="text-align:center;padding:20px 16px 8px">
+    <a href="mailto:info@ec-syncora.de" style="font-size:12px;color:var(--text3);text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:color 0.15s" onmouseover="this.style.color='var(--text2)'" onmouseout="this.style.color='var(--text3)'">
+      <i class="ti ti-code" style="font-size:13px"></i>
+      Gebaut &amp; verwaltet von <strong style="font-weight:500">EC-Syncora · Emre Celik</strong>
+    </a>
+  </div>
+
   <div class="install-hint" id="install-hint">
     <strong>iPhone/iPad:</strong> Safari → Teilen → „Zum Home-Bildschirm"<br><br>
     <strong>Android:</strong> Chrome → Menü ⋮ → „App installieren"
@@ -650,6 +676,7 @@ checkOnboarding();
 renderHome();
 loadWeather();
 renderWSH();
+startGreeting();
 
 // Load from IndexedDB async (more persistent on iOS)
 async function loadFromDB(){
@@ -742,7 +769,19 @@ function renderHomePickups(){
       const bg=isDark?t.darkBg:t.bg;
       let badge='';
       if(i===0){if(d===0)badge='<span class="badge badge-today">Heute</span>';else if(d===1)badge='<span class="badge badge-tom">Morgen</span>';else if(d<=3)badge=`<span class="badge badge-soon">in ${d} d</span>`;}
-      return `<div class="card-row"><div class="type-icon" style="background:${bg};color:${t.color}"><i class="ti ${t.icon}"></i></div><div class="type-info"><div class="type-name">${t.label}</div><div class="type-sub">${fmtDateShort(date)} · ${t.kuerzel}</div></div>${badge}</div>`;
+      const isChecked = checkedIds.includes(p.id);
+      return `<div class="card-row" style="${isChecked?'opacity:0.5':''}">
+        <div class="type-icon" style="background:${bg};color:${t.color}"><i class="ti ${t.icon}"></i></div>
+        <div class="type-info">
+          <div class="type-name">${t.label}${isChecked?' <span style=\"font-size:11px;color:var(--green);font-weight:500\">· rausgestellt</span>':''}</div>
+          <div class="type-sub">${fmtDateShort(date)} · ${t.kuerzel}</div>
+        </div>
+        ${badge}
+        <button onclick="toggleCheckHome(${p.id},event)"
+          style="width:28px;height:28px;border-radius:50%;border:1.5px solid ${isChecked?'var(--green)':'var(--border2)'};background:${isChecked?'var(--green-bg)':'var(--bg3)'};color:${isChecked?'var(--green)':'var(--text3)'};display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;cursor:pointer;transition:all 0.2s">
+          <i class="ti ti-check"></i>
+        </button>
+      </div>`;
     }).join('');
   }).join('');
 }
@@ -977,21 +1016,52 @@ function renderSpritList(stations){
 // ══════════════════════════════════════════
 const WORKER_URL = 'https://moegglingen-bus.emre18celik.workers.dev';
 const BUS_STATIONS = [
-  { key:'bahnhof', label:'Bahnhof/Zug', name:'Mögglingen Bahnhof' },
-  { key:'mitte',   label:'Mitte',       name:'Mögglingen Mitte'   },
+  { key:'bahnhof',       name:'Mögglingen Bahnhof',           type:'train' },
+  { key:'bahnhof_bus',   name:'Bahnhof (Bussteig)',            type:'bus'   },
+  { key:'mitte',         name:'Mitte',                         type:'bus'   },
+  { key:'raiba',         name:'Raiffeisenbank',                type:'bus'   },
+  { key:'schule',        name:'Schule',                        type:'bus'   },
+  { key:'rosenstrasse',  name:'Rosenstraße',                   type:'bus'   },
+  { key:'nelkenstrasse', name:'Nelkenstraße',                  type:'bus'   },
+  { key:'lauterstrasse', name:'Lauterstraße Süd',              type:'bus'   },
+  { key:'bruhlfeld',     name:'Im Brühlfeld',                  type:'bus'   },
+  { key:'gollenhof',     name:'Gollenhof',                     type:'bus'   },
 ];
 let activeBusStation = 0;
+let busDateTime = { date:'', time:'' };
 
 function renderStationTabs(){
-  document.getElementById('bus-station-tabs').innerHTML = BUS_STATIONS.map((s,i)=>
-    `<button class="chip ${i===activeBusStation?'active':''}" onclick="selectStation(${i})">${s.label}</button>`
-  ).join('');
+  const sel = document.getElementById('bus-station-select');
+  if(sel) {
+    sel.innerHTML = BUS_STATIONS.map((s,i) =>
+      `<option value="${i}" ${i===activeBusStation?'selected':''}>${s.type==='train'?'🚆':'🚌'} ${s.name}</option>`
+    ).join('');
+  }
   document.getElementById('bus-station-name').textContent = BUS_STATIONS[activeBusStation].name;
+  // Sync date/time pickers to current values
+  const dateEl = document.getElementById('bus-date');
+  const timeEl = document.getElementById('bus-time');
+  if(dateEl && !dateEl.value) dateEl.value = new Date().toISOString().split('T')[0];
+  if(timeEl && !timeEl.value) timeEl.value = new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}).replace(':','').slice(0,5);
 }
 
 function selectStation(i){
-  activeBusStation = i;
+  activeBusStation = parseInt(i);
   renderStationTabs();
+  loadDepartures();
+}
+
+function updateBusTime(){
+  busDateTime.date = document.getElementById('bus-date').value;
+  busDateTime.time = document.getElementById('bus-time').value;
+  loadDepartures();
+}
+
+function resetToNow(){
+  document.getElementById('bus-date').value = new Date().toISOString().split('T')[0];
+  const now = new Date();
+  document.getElementById('bus-time').value = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  busDateTime = {date:'', time:''};
   loadDepartures();
 }
 
@@ -1005,7 +1075,17 @@ async function loadDepartures(){
   try {
     const ctrl = new AbortController();
     const tid = setTimeout(()=>ctrl.abort(),10000);
-    const res = await fetch(`${WORKER_URL}/departures?stop=${stop.key}&limit=20`,{signal:ctrl.signal});
+    const dateEl = document.getElementById('bus-date');
+    const timeEl = document.getElementById('bus-time');
+    const dateVal = dateEl?.value || '';
+    const timeVal = timeEl?.value || '';
+    const today = new Date().toISOString().split('T')[0];
+    const nowTime = new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+    const isNow = (!dateVal || dateVal === today) && (!timeVal || timeVal === nowTime.replace(':','').slice(0,5));
+    let fetchUrl = `${WORKER_URL}/departures?stop=${stop.key}&limit=20`;
+    if(dateVal && dateVal !== today) fetchUrl += `&date=${dateVal}`;
+    if(timeVal && !isNow) fetchUrl += `&time=${timeVal}`;
+    const res = await fetch(fetchUrl, {signal:ctrl.signal});
     clearTimeout(tid);
     if(!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
@@ -1175,6 +1255,42 @@ function refreshReminders(){scheduleAllReminders();showToast('Erinnerungen aktua
 function testNotification(){
   if(Notification.permission!=='granted'){showToast('Erst Benachrichtigungen aktivieren');return;}
   new Notification('Hausmüll – Tonne rausstellen',{body:'Test-Erinnerung der Mögglingen App.',icon:'icon-192.png'});showToast('Test gesendet');
+}
+
+// ══════════════════════════════════════════
+// HOME CHECK
+// ══════════════════════════════════════════
+function toggleCheckHome(id, event){
+  event.stopPropagation();
+  if(checkedIds.includes(id)) checkedIds = checkedIds.filter(c=>c!==id);
+  else checkedIds.push(id);
+  storageSet('checkedIds', checkedIds);
+  renderHomePickups();
+  renderMuell();
+  showToast(checkedIds.includes(id) ? 'Als rausgestellt markiert ✓' : 'Markierung entfernt');
+}
+
+// ══════════════════════════════════════════
+// ROTATING GREETING
+// ══════════════════════════════════════════
+const GREETINGS = ['Willkommen', 'Hallo', 'Merhaba', 'Servus', 'Grüß Gott', 'Hey', 'Guten Tag', 'Salut'];
+let greetIdx = 0;
+function startGreeting(){
+  const el = document.getElementById('greeting-text');
+  if(!el) return;
+  // Only show greeting on home tab
+  setInterval(() => {
+    if(activeTab !== 'home') return;
+    greetIdx = (greetIdx + 1) % GREETINGS.length;
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(-6px)';
+    el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+    setTimeout(() => {
+      el.textContent = GREETINGS[greetIdx];
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+    }, 400);
+  }, 15000);
 }
 
 // ══════════════════════════════════════════
