@@ -293,7 +293,7 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:8px}
   <div>
     <div class="onboarding-title">Abfuhrtermine laden</div>
     <div class="onboarding-sub">Lade einmalig deinen GOA-Kalender für Abholtermine und Erinnerungen.</div>
-    <button class="onboarding-btn" onclick="switchTab('mehr');showToast('ICS-Datei unter „Mehr" hochladen')">Jetzt einrichten</button>
+    <button class="onboarding-btn" onclick="switchTab('mehr');setTimeout(()=>{document.querySelector('.ics-drop')?.scrollIntoView({behavior:'smooth'})},200)">Jetzt einrichten</button>
   </div>
 </div>
 
