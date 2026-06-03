@@ -911,27 +911,98 @@ const WSH_SCHEDULE = {
   winter: { weekday:'07:30–17:00', sa:'08:00–13:00', so:null }
 };
 
-// ── Robuster Storage mit Fallback ──
+// ── Persistenter Storage: IndexedDB + localStorage Fallback ──
+const DB_NAME = 'moeggling-app';
+const DB_VERSION = 1;
+const DB_STORE = 'kv';
+let _db = null;
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    if(_db) { resolve(_db); return; }
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = e => e.target.result.createObjectStore(DB_STORE);
+    req.onsuccess = e => { _db = e.target.result; resolve(_db); };
+    req.onerror = () => reject(req.error);
+  });
+}
+async function dbSet(key, value) {
+  try {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(DB_STORE, 'readwrite');
+      tx.objectStore(DB_STORE).put(JSON.stringify(value), key);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  } catch(e) {}
+  // localStorage fallback
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch(e) {}
+}
+async function dbGet(key, fallback) {
+  try {
+    const db = await openDB();
+    return new Promise((resolve) => {
+      const tx = db.transaction(DB_STORE, 'readonly');
+      const req = tx.objectStore(DB_STORE).get(key);
+      req.onsuccess = () => {
+        if(req.result !== undefined) resolve(JSON.parse(req.result));
+        else {
+          // Try localStorage fallback
+          try {
+            const v = localStorage.getItem(key);
+            if(v !== null) { dbSet(key, JSON.parse(v)); resolve(JSON.parse(v)); return; }
+          } catch(e) {}
+          resolve(fallback);
+        }
+      };
+      req.onerror = () => resolve(fallback);
+    });
+  } catch(e) {
+    try {
+      const v = localStorage.getItem(key);
+      return v !== null ? JSON.parse(v) : fallback;
+    } catch(e2) { return fallback; }
+  }
+}
+
+// Sync wrappers für sofortigen Zugriff beim Start (aus localStorage)
 function storageGet(key, fallback) {
   try {
     const v = localStorage.getItem(key);
-    if(v === null) return fallback;
-    return JSON.parse(v);
-  } catch(e) {
-    try { return JSON.parse(sessionStorage.getItem(key)) || fallback; }
-    catch(e2) { return fallback; }
-  }
+    if(v !== null) return JSON.parse(v);
+  } catch(e) {}
+  return fallback;
 }
 function storageSet(key, value) {
-  const s = JSON.stringify(value);
-  try { localStorage.setItem(key, s); } catch(e) {}
-  try { sessionStorage.setItem(key, s); } catch(e) {}
+  // Sync in localStorage
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch(e) {}
+  // Async persistent in IndexedDB
+  dbSet(key, value);
 }
 
 let pickups     = storageGet('pickups', []);
 let settings    = storageGet('settings', {reminderDays:2,reminderTime:'08:00',notificationsEnabled:false});
 let hiddenTypes = storageGet('hiddenTypes', []);
-let tkKey       = (function(){ try { return localStorage.getItem('tkKey') || '6a7afae6-ab0c-4c82-9317-c1dbeb735619'; } catch(e){ return '6a7afae6-ab0c-4c82-9317-c1dbeb735619'; }})();
+let tkKey       = storageGet('tkKey', '6a7afae6-ab0c-4c82-9317-c1dbeb735619') || '6a7afae6-ab0c-4c82-9317-c1dbeb735619';
+
+// Bei Start: aus IndexedDB laden (persistenter als localStorage auf iOS)
+async function loadFromDB() {
+  const [p, s, h, k] = await Promise.all([
+    dbGet('pickups', null),
+    dbGet('settings', null),
+    dbGet('hiddenTypes', null),
+    dbGet('tkKey', null),
+  ]);
+  let changed = false;
+  if(p !== null && JSON.stringify(p) !== JSON.stringify(pickups)) { pickups = p; changed = true; }
+  if(s !== null) settings = s;
+  if(h !== null) hiddenTypes = h;
+  if(k !== null && k !== '6a7afae6-ab0c-4c82-9317-c1dbeb735619') tkKey = k;
+  if(changed) { renderHome(); renderMuell(); }
+  // Sync localStorage from IndexedDB to keep both in sync
+  if(p !== null) try { localStorage.setItem('pickups', JSON.stringify(p)); } catch(e) {}
+}
 let activeFilter= 'alle';
 let activeFuel  = 'e5';
 let activeTab   = 'home';
@@ -946,24 +1017,13 @@ if(tkKey) {
   document.getElementById('tk-key-input').value = '••••••••••••••••';
   document.getElementById('sprit-key-section').style.display = 'none';
 }
-// Verify storage is working
-(function(){
-  try {
-    localStorage.setItem('_test','1');
-    localStorage.removeItem('_test');
-  } catch(e) {
-    console.warn('localStorage nicht verfügbar, nutze sessionStorage');
-  }
-  // Re-read pickups to ensure fresh state
-  pickups = storageGet('pickups', []);
-  settings = storageGet('settings', {reminderDays:2,reminderTime:'08:00',notificationsEnabled:false});
-  hiddenTypes = storageGet('hiddenTypes', []);
-})();
 applyTheme();
 checkNotifStatus();
 renderHome();
 loadWeather();
 renderWSH();
+// IndexedDB laden (async, überschreibt falls aktueller)
+loadFromDB();
 
 // ══════════════════════════════════════════
 // THEME
@@ -995,6 +1055,7 @@ function switchTab(tab) {
   if(tab === 'sprit' && tkKey) loadSprit();
   if(tab === 'mehr') renderVisibilitySettings();
   if(tab === 'home') renderHome();
+  if(tab === 'muell') renderMuell();
 }
 
 // ══════════════════════════════════════════
