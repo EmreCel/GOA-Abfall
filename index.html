@@ -634,6 +634,7 @@ let checkedIds  = lsGet('checkedIds',[]);
 let tkKey       = lsGet('tkKey','6a7afae6-ab0c-4c82-9317-c1dbeb735619') || '6a7afae6-ab0c-4c82-9317-c1dbeb735619';
 let activeFuel  = 'e5';
 let activeFilter= 'alle';
+let activeTab   = 'home';
 let isDark      = localStorage.getItem('theme')==='dark';
 let spritCache  = null;
 
@@ -680,18 +681,18 @@ function toggleTheme(){isDark=!isDark;try{localStorage.setItem('theme',isDark?'d
 // ══════════════════════════════════════════
 const TAB_TITLES={home:'Home',muell:'Müll',sprit:'Spritpreise',bus:'Bus & Bahn',mehr:'Mehr'};
 function switchTab(tab){
-  if(tab==='bus'){renderStationTabs();loadDepartures();}
+  activeTab=tab;
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-'+tab).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   const ni=document.getElementById('nav-'+tab);if(ni)ni.classList.add('active');
   document.getElementById('header-title').textContent=TAB_TITLES[tab]||'';
-  activeTab=tab;
-  if(tab==='sprit'&&tkKey)loadSprit();
+  if(tab==='home'){renderHome();}
+  if(tab==='muell'){renderMuell();}
+  if(tab==='sprit'&&tkKey){loadSprit();}
+  if(tab==='bus'){renderStationTabs();loadDepartures();}
+  if(tab==='mehr'){renderVisibilitySettings();}
   checkOnboarding();
-  if(tab==='mehr')renderVisibilitySettings();
-  if(tab==='home')renderHome();
-  if(tab==='muell')renderMuell();
 }
 
 // ══════════════════════════════════════════
@@ -708,8 +709,10 @@ function save(){storageSet('pickups',pickups);storageSet('checkedIds',checkedIds
 // ══════════════════════════════════════════
 function checkOnboarding(){
   const banner=document.getElementById('onboarding-banner');
+  if(!banner) return;
   const hasFuture=pickups.some(p=>daysUntil(p.date)>=0);
-  const onAllowedTab = ['home','muell'].includes(activeTab||'home');
+  const currentTab = activeTab || 'home';
+  const onAllowedTab = ['home','muell'].includes(currentTab);
   banner.classList.toggle('hidden', hasFuture || !onAllowedTab);
 }
 
@@ -755,7 +758,8 @@ function renderWSH(){
   const hoursEl=document.getElementById('wsh-hours');
   if(dow===0){statusEl.className='wsh-status-closed';statusEl.textContent='Heute geschlossen';hoursEl.textContent='Sonntags geschlossen';return;}
   const timeStr=dow===6?sched.sa:sched.weekday;
-  const [open,close]=timeStr.split('–').map(t=>{const[hh,mm]=t.trim().split(':');return parseInt(hh)+parseInt(mm)/60;});
+  const parts=timeStr.split(/[–\-]/).map(t=>t.trim());
+  const [open,close]=parts.map(t=>{const[hh,mm]=t.split(':');return parseInt(hh)+parseInt(mm)/60;});
   const isOpen=h>=open&&h<close;
   statusEl.className=isOpen?'wsh-status-open':'wsh-status-closed';
   statusEl.textContent=isOpen?`Geöffnet · bis ${timeStr.split('–')[1]} Uhr`:'Heute geschlossen';
@@ -999,7 +1003,10 @@ async function loadDepartures(){
 
   const stop = BUS_STATIONS[activeBusStation];
   try {
-    const res = await fetch(`${WORKER_URL}/departures?stop=${stop.key}&limit=20`, );
+    const ctrl = new AbortController();
+    const tid = setTimeout(()=>ctrl.abort(),10000);
+    const res = await fetch(`${WORKER_URL}/departures?stop=${stop.key}&limit=20`,{signal:ctrl.signal});
+    clearTimeout(tid);
     if(!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     if(data.error) throw new Error(data.error);
