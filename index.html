@@ -389,37 +389,96 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:8px}
 
 <!-- ═══ BUS ═══ -->
 <div id="view-bus" class="view">
-  <div style="padding:12px 16px 8px;display:flex;align-items:center;justify-content:space-between">
-    <div>
-      <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em">Haltestelle</div>
-      <div style="font-size:16px;font-weight:500;margin-top:2px" id="bus-station-name">Mögglingen Bahnhof</div>
+
+  <!-- Next departure banner -->
+  <div id="bus-next-banner" style="display:none;margin:12px 16px 0;padding:12px 16px;background:var(--hero);border-radius:14px;display:none">
+    <div style="font-size:10px;font-weight:600;color:var(--hero-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Nächste Abfahrt</div>
+    <div id="bus-next-content" style="display:flex;align-items:center;gap:10px">
+      <div id="bus-next-line" style="min-width:44px;height:26px;border-radius:6px;background:rgba(255,255,255,0.1);color:var(--hero-text);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">—</div>
+      <div style="flex:1">
+        <div id="bus-next-dest" style="font-size:14px;font-weight:500;color:var(--hero-text)">—</div>
+        <div id="bus-next-sub" style="font-size:11px;color:var(--hero-muted);margin-top:1px">—</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div id="bus-next-time" style="font-size:20px;font-weight:600;color:var(--hero-text);font-variant-numeric:tabular-nums">—</div>
+        <div id="bus-next-in" style="font-size:11px;font-weight:600;color:var(--hero-muted)"></div>
+      </div>
     </div>
-    <div style="display:flex;gap:8px">
-      <button class="icon-btn" onclick="toggleFavorite()" id="fav-btn" aria-label="Favorit"><i class="ti ti-star" id="fav-icon"></i></button>
-      <button class="icon-btn" onclick="loadDepartures()" aria-label="Aktualisieren"><i class="ti ti-refresh" id="bus-refresh-icon"></i></button>
+  </div>
+
+  <!-- Mode tabs: Abfahrten / Verbindung -->
+  <div style="display:flex;gap:0;margin:12px 16px 0;background:var(--bg3);border-radius:12px;padding:3px">
+    <button id="bus-mode-dep" onclick="setBusMode('dep')" style="flex:1;padding:7px;border-radius:9px;font-size:13px;font-weight:500;font-family:inherit;background:var(--bg2);color:var(--text);border:none;cursor:pointer;transition:all 0.2s">Abfahrten</button>
+    <button id="bus-mode-con" onclick="setBusMode('con')" style="flex:1;padding:7px;border-radius:9px;font-size:13px;font-weight:500;font-family:inherit;background:transparent;color:var(--text3);border:none;cursor:pointer;transition:all 0.2s">Verbindung</button>
+  </div>
+
+  <!-- ── ABFAHRTEN ── -->
+  <div id="bus-dep-panel">
+    <div style="padding:10px 16px 6px;display:flex;align-items:center;justify-content:space-between">
+      <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em" id="bus-station-name">Mögglingen Bahnhof</div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span id="bus-autoupdate-lbl" style="font-size:10px;color:var(--text3)"></span>
+        <button class="icon-btn" onclick="toggleFavorite()" id="fav-btn" aria-label="Favorit" style="width:30px;height:30px;font-size:15px"><i class="ti ti-star" id="fav-icon"></i></button>
+        <button class="icon-btn" onclick="loadDepartures(true)" aria-label="Aktualisieren" style="width:30px;height:30px;font-size:15px"><i class="ti ti-refresh" id="bus-refresh-icon"></i></button>
+      </div>
+    </div>
+    <div style="padding:0 16px 8px">
+      <div style="position:relative">
+        <select id="bus-station-select" onchange="selectStation(this.value)" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;color:var(--text);padding:8px 36px 8px 12px;font-size:14px;font-family:inherit;outline:none;-webkit-appearance:none;appearance:none"></select>
+        <i class="ti ti-chevron-down" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--text3);pointer-events:none"></i>
+      </div>
+    </div>
+    <div style="padding:0 16px 8px;display:flex;gap:8px;align-items:center">
+      <input type="date" id="bus-date" onchange="updateBusTime()" style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;color:var(--text);padding:8px 12px;font-size:13px;font-family:inherit;outline:none;-webkit-appearance:none">
+      <input type="time" id="bus-time" onchange="updateBusTime()" style="width:90px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;color:var(--text);padding:8px 10px;font-size:13px;font-family:inherit;outline:none;-webkit-appearance:none">
+      <button onclick="resetToNow()" style="width:34px;height:34px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:14px;flex-shrink:0" title="Jetzt"><i class="ti ti-clock-hour-3"></i></button>
+    </div>
+    <div style="display:flex;gap:6px;padding:0 16px 10px;overflow-x:auto;scrollbar-width:none">
+      <button class="chip active" id="dir-all" onclick="setDirection('all')">Alle</button>
+      <button class="chip" id="dir-aalen" onclick="setDirection('aalen')">→ Aalen</button>
+      <button class="chip" id="dir-schorndorf" onclick="setDirection('schorndorf')">→ Schorndorf</button>
+      <button class="chip" id="dir-stuttgart" onclick="setDirection('stuttgart')">→ Stuttgart</button>
+      <button class="chip" id="dir-gmuend" onclick="setDirection('gmuend')">→ Gmünd</button>
+    </div>
+    <div id="bus-container">
+      <div class="empty-state"><i class="ti ti-loader-2" style="font-size:28px"></i><p style="font-size:13px">Lade Abfahrten…</p></div>
     </div>
   </div>
-  <div style="padding:0 16px 8px">
-    <div style="position:relative">
-      <select id="bus-station-select" onchange="selectStation(this.value)" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;color:var(--text);padding:9px 36px 9px 12px;font-size:14px;font-family:inherit;outline:none;-webkit-appearance:none;appearance:none"></select>
-      <i class="ti ti-chevron-down" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--text3);pointer-events:none"></i>
+
+  <!-- ── VERBINDUNG ── -->
+  <div id="bus-con-panel" style="display:none;padding:12px 16px 0">
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
+      <!-- Von -->
+      <div style="position:relative">
+        <i class="ti ti-map-pin" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--text3)"></i>
+        <input type="text" id="con-from" placeholder="Von (z.B. Mögglingen Bahnhof)"
+          value="Mögglingen Bahnhof"
+          style="width:100%;padding:10px 12px 10px 36px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;color:var(--text);font-size:14px;font-family:inherit;outline:none;-webkit-appearance:none">
+      </div>
+      <!-- Swap -->
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="flex:1;height:1px;background:var(--border)"></div>
+        <button onclick="swapConStops()" style="width:30px;height:30px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--text2)" title="Tauschen"><i class="ti ti-arrows-up-down"></i></button>
+        <div style="flex:1;height:1px;background:var(--border)"></div>
+      </div>
+      <!-- Nach -->
+      <div style="position:relative">
+        <i class="ti ti-flag" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--text3)"></i>
+        <input type="text" id="con-to" placeholder="Nach (z.B. Aalen ZOB)"
+          style="width:100%;padding:10px 12px 10px 36px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;color:var(--text);font-size:14px;font-family:inherit;outline:none;-webkit-appearance:none">
+      </div>
+      <!-- Datum/Zeit -->
+      <div style="display:flex;gap:8px">
+        <input type="date" id="con-date" style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;color:var(--text);padding:8px 12px;font-size:13px;font-family:inherit;outline:none;-webkit-appearance:none">
+        <input type="time" id="con-time" style="width:90px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;color:var(--text);padding:8px 10px;font-size:13px;font-family:inherit;outline:none;-webkit-appearance:none">
+      </div>
+      <button onclick="searchConnection()" class="btn-primary" style="margin-top:2px">
+        <i class="ti ti-search" style="margin-right:6px;vertical-align:-1px"></i>Verbindung suchen
+      </button>
     </div>
+    <div id="con-container"></div>
   </div>
-  <div style="padding:0 16px 10px;display:flex;gap:8px;align-items:center">
-    <input type="date" id="bus-date" onchange="updateBusTime()" style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;color:var(--text);padding:8px 12px;font-size:13px;font-family:inherit;outline:none;-webkit-appearance:none">
-    <input type="time" id="bus-time" onchange="updateBusTime()" style="width:90px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;color:var(--text);padding:8px 10px;font-size:13px;font-family:inherit;outline:none;-webkit-appearance:none">
-    <button onclick="resetToNow()" style="width:36px;height:36px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:15px;flex-shrink:0" title="Jetzt"><i class="ti ti-clock-hour-3"></i></button>
-  </div>
-  <div style="display:flex;gap:6px;padding:0 16px 10px;overflow-x:auto;scrollbar-width:none">
-    <button class="chip active" id="dir-all" onclick="setDirection('all')">Alle</button>
-    <button class="chip" id="dir-aalen" onclick="setDirection('aalen')">→ Aalen</button>
-    <button class="chip" id="dir-schorndorf" onclick="setDirection('schorndorf')">→ Schorndorf</button>
-    <button class="chip" id="dir-stuttgart" onclick="setDirection('stuttgart')">→ Stuttgart</button>
-    <button class="chip" id="dir-gmuend" onclick="setDirection('gmuend')">→ Gmünd</button>
-  </div>
-  <div id="bus-container">
-    <div class="empty-state"><i class="ti ti-loader-2" style="font-size:28px"></i><p style="font-size:13px">Lade Abfahrten…</p></div>
-  </div>
+
 </div>
 
 <!-- ═══ MEHR ═══ -->
@@ -630,10 +689,10 @@ function switchTab(tab){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   const ni=document.getElementById('nav-'+tab);if(ni)ni.classList.add('active');
   document.getElementById('header-title').innerHTML=tab==='home'?`<span id="greeting-text" class="greeting-text">${GREETINGS[greetIdx]}</span>`:TAB_TITLES[tab]||'';
-  if(tab==='home'){renderHome();}
+  if(tab==='home'){renderHome();stopAutoRefresh();}
   if(tab==='muell'){renderMuell();}
   if(tab==='sprit'&&tkKey){loadSprit();}
-  if(tab==='bus'){loadFavoriteOnOpen();renderStationTabs();loadDepartures();}
+  if(tab==='bus'){loadFavoriteOnOpen();renderStationTabs();loadDepartures(true);startAutoRefresh();}
   if(tab==='mehr'){renderVisibilitySettings();}
   checkOnboarding();
 }
@@ -1071,33 +1130,127 @@ const BUS_STATIONS=[
   {key:'bruhlfeld',     name:'Im Brühlfeld',            type:'bus'},
   {key:'gollenhof',     name:'Gollenhof',               type:'bus'},
 ];
-let activeBusStation=0,allDepartures=[],activeDirection='all';
+let activeBusStation=0, allDepartures=[], activeDirection='all';
 let favStation=lsGet('favBusStation',0);
+let busMode='dep'; // 'dep' or 'con'
+let autoRefreshTimer=null;
+let lastRefreshTime=null;
 const DIRECTIONS={aalen:['aalen'],schorndorf:['schorndorf','waiblingen'],stuttgart:['stuttgart','waiblingen','schorndorf'],gmuend:['gmünd','gmuend','schwäbisch']};
 
+// ── Mode toggle ──
+function setBusMode(mode){
+  busMode=mode;
+  const depBtn=document.getElementById('bus-mode-dep');
+  const conBtn=document.getElementById('bus-mode-con');
+  const depPanel=document.getElementById('bus-dep-panel');
+  const conPanel=document.getElementById('bus-con-panel');
+  if(mode==='dep'){
+    depBtn.style.background='var(--bg2)';depBtn.style.color='var(--text)';
+    conBtn.style.background='transparent';conBtn.style.color='var(--text3)';
+    depPanel.style.display='block';conPanel.style.display='none';
+  } else {
+    conBtn.style.background='var(--bg2)';conBtn.style.color='var(--text)';
+    depBtn.style.background='transparent';depBtn.style.color='var(--text3)';
+    depPanel.style.display='none';conPanel.style.display='block';
+    // Init connection date/time
+    const n=new Date();
+    const dateEl=document.getElementById('con-date');
+    const timeEl=document.getElementById('con-time');
+    if(dateEl&&!dateEl.value) dateEl.value=n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');
+    if(timeEl&&!timeEl.value) timeEl.value=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+  }
+}
+
+// ── Station tabs ──
 function renderStationTabs(){
   const sel=document.getElementById('bus-station-select');
-  if(sel)sel.innerHTML=BUS_STATIONS.map((s,i)=>`<option value="${i}" ${i===activeBusStation?'selected':''}>${s.type==='train'?'🚆':'🚌'} ${s.name}${i===favStation?' ★':''}</option>`).join('');
-  document.getElementById('bus-station-name').textContent=BUS_STATIONS[activeBusStation].name;
+  if(sel) sel.innerHTML=BUS_STATIONS.map((s,i)=>`<option value="${i}" ${i===activeBusStation?'selected':''}>${s.type==='train'?'🚆':'🚌'} ${s.name}${i===favStation?' ★':''}</option>`).join('');
+  const nameEl=document.getElementById('bus-station-name');
+  if(nameEl) nameEl.textContent=BUS_STATIONS[activeBusStation].name;
   updateFavBtn();
-  const n=new Date(),dateEl=document.getElementById('bus-date'),timeEl=document.getElementById('bus-time');
-  if(dateEl&&!dateEl.value)dateEl.value=n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');
-  if(timeEl&&!timeEl.value)timeEl.value=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+  const n=new Date();
+  const dateEl=document.getElementById('bus-date'),timeEl=document.getElementById('bus-time');
+  if(dateEl&&!dateEl.value) dateEl.value=n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');
+  if(timeEl&&!timeEl.value) timeEl.value=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
 }
-function selectStation(i){activeBusStation=parseInt(i);renderStationTabs();loadDepartures();}
-function updateBusTime(){loadDepartures();}
-function resetToNow(){const n=new Date();document.getElementById('bus-date').value=n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');document.getElementById('bus-time').value=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');loadDepartures();}
-function toggleFavorite(){favStation=favStation===activeBusStation?0:activeBusStation;try{localStorage.setItem('favBusStation',favStation);}catch(e){}updateFavBtn();renderStationTabs();showToast(favStation===activeBusStation?'★ Als Favorit gespeichert':'Favorit entfernt');}
-function updateFavBtn(){const icon=document.getElementById('fav-icon');if(!icon)return;const isFav=favStation===activeBusStation;icon.className=isFav?'ti ti-star-filled':'ti ti-star';document.getElementById('fav-btn').style.color=isFav?'#B08830':'';}
-function loadFavoriteOnOpen(){if(favStation!==activeBusStation)activeBusStation=favStation;}
-function setDirection(dir){activeDirection=dir;['all','aalen','schorndorf','stuttgart','gmuend'].forEach(d=>{const el=document.getElementById('dir-'+d);if(el)el.classList.toggle('active',d===dir);});applyDirectionFilter();}
-function applyDirectionFilter(){if(!allDepartures.length)return;let filtered=allDepartures;if(activeDirection!=='all'){const kw=DIRECTIONS[activeDirection]||[];filtered=allDepartures.filter(d=>kw.some(k=>(d.dest||'').toLowerCase().includes(k)));}if(!filtered.length){document.getElementById('bus-container').innerHTML='<div class="empty-state"><i class="ti ti-map-pin-off"></i><p style="font-size:13px">Keine Abfahrten in diese Richtung</p></div>';return;}renderDepartureList(filtered,new Date());}
 
-async function loadDepartures(){
+function selectStation(i){activeBusStation=parseInt(i);renderStationTabs();loadDepartures(true);}
+function updateBusTime(){stopAutoRefresh();loadDepartures(true);}
+function resetToNow(){
+  const n=new Date();
+  document.getElementById('bus-date').value=n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');
+  document.getElementById('bus-time').value=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+  loadDepartures(true);startAutoRefresh();
+}
+function toggleFavorite(){
+  favStation=favStation===activeBusStation?0:activeBusStation;
+  try{localStorage.setItem('favBusStation',favStation);}catch(e){}
+  updateFavBtn();renderStationTabs();
+  showToast(favStation===activeBusStation?'★ Als Favorit gespeichert':'Favorit entfernt');
+}
+function updateFavBtn(){
+  const icon=document.getElementById('fav-icon');
+  if(!icon)return;
+  const isFav=favStation===activeBusStation;
+  icon.className=isFav?'ti ti-star-filled':'ti ti-star';
+  const btn=document.getElementById('fav-btn');
+  if(btn)btn.style.color=isFav?'#B08830':'';
+}
+function loadFavoriteOnOpen(){if(favStation!==activeBusStation)activeBusStation=favStation;}
+function setDirection(dir){
+  activeDirection=dir;
+  ['all','aalen','schorndorf','stuttgart','gmuend'].forEach(d=>{
+    const el=document.getElementById('dir-'+d);if(el)el.classList.toggle('active',d===dir);
+  });
+  applyDirectionFilter();
+}
+function applyDirectionFilter(){
+  if(!allDepartures.length)return;
+  let filtered=allDepartures;
+  if(activeDirection!=='all'){
+    const kw=DIRECTIONS[activeDirection]||[];
+    filtered=allDepartures.filter(d=>kw.some(k=>(d.dest||'').toLowerCase().includes(k)));
+  }
+  if(!filtered.length){
+    document.getElementById('bus-container').innerHTML='<div class="empty-state"><i class="ti ti-map-pin-off"></i><p style="font-size:13px">Keine Abfahrten in diese Richtung</p></div>';
+    return;
+  }
+  renderDepartureList(filtered,new Date());
+}
+
+// ── Auto-refresh ──
+function startAutoRefresh(){
+  stopAutoRefresh();
+  autoRefreshTimer=setInterval(()=>{
+    if(activeTab!=='bus'||busMode!=='dep'){stopAutoRefresh();return;}
+    // Only auto-refresh if viewing current time (not a future time)
+    const dateEl=document.getElementById('bus-date');
+    const today=new Date(),todayStr=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+    if(dateEl&&dateEl.value===todayStr){
+      loadDepartures(false); // silent refresh
+    }
+  }, 60000);
+}
+function stopAutoRefresh(){if(autoRefreshTimer){clearInterval(autoRefreshTimer);autoRefreshTimer=null;}}
+
+function updateRefreshLabel(){
+  const lbl=document.getElementById('bus-autoupdate-lbl');
+  if(!lbl||!lastRefreshTime)return;
+  const sec=Math.round((Date.now()-lastRefreshTime)/1000);
+  lbl.textContent=sec<10?'gerade aktualisiert':sec<60?`vor ${sec}s aktuell`:'';
+}
+
+// ── Load departures ──
+async function loadDepartures(showLoader=true){
   const container=document.getElementById('bus-container');
+  if(!container)return;
   const icon=document.getElementById('bus-refresh-icon');
-  if(icon){icon.style.transition='transform 0.6s';icon.style.transform='rotate(360deg)';setTimeout(()=>{icon.style.transition='';icon.style.transform='';},600);}
-  container.innerHTML='<div class="empty-state"><i class="ti ti-loader-2" style="font-size:28px"></i><p style="font-size:13px">Lade Abfahrten…</p></div>';
+  if(icon&&showLoader){
+    icon.style.transition='transform 0.6s';icon.style.transform='rotate(360deg)';
+    setTimeout(()=>{icon.style.transition='';icon.style.transform='';},600);
+  }
+  if(showLoader) container.innerHTML='<div class="empty-state"><i class="ti ti-loader-2" style="font-size:28px"></i><p style="font-size:13px">Lade Abfahrten…</p></div>';
+
   const stop=BUS_STATIONS[activeBusStation];
   try{
     const dateEl=document.getElementById('bus-date'),timeEl=document.getElementById('bus-time');
@@ -1106,21 +1259,57 @@ async function loadDepartures(){
     const nowTime=String(today.getHours()).padStart(2,'0')+':'+String(today.getMinutes()).padStart(2,'0');
     const isNow=(!dateVal||dateVal===todayStr)&&(!timeVal||timeVal===nowTime);
     let fetchUrl=`${WORKER_URL}/departures?stop=${stop.key}&limit=25`;
-    if(dateVal&&dateVal!==todayStr)fetchUrl+=`&date=${dateVal}`;
-    if(timeVal&&!isNow)fetchUrl+=`&time=${timeVal}`;
+    if(dateVal&&dateVal!==todayStr) fetchUrl+=`&date=${dateVal}`;
+    if(timeVal&&!isNow) fetchUrl+=`&time=${timeVal}`;
+
     const ctrl=new AbortController(),tid=setTimeout(()=>ctrl.abort(),10000);
     const res=await fetch(fetchUrl,{signal:ctrl.signal});clearTimeout(tid);
     if(!res.ok)throw new Error('HTTP '+res.status);
     const data=await res.json();
     if(data.error)throw new Error(data.error);
+
     allDepartures=data.departures||[];
+    lastRefreshTime=Date.now();
+    updateRefreshLabel();
+    updateNextBanner();
     applyDirectionFilter();
+
   }catch(e){
     allDepartures=[];
-    container.innerHTML=`<div style="margin:16px"><div style="padding:14px 16px;background:rgba(154,58,58,0.1);border-radius:12px;font-size:13px;color:#9A3A3A;margin-bottom:12px"><i class="ti ti-alert-circle" style="margin-right:6px"></i>${e.message}</div><button class="btn-secondary" onclick="loadDepartures()"><i class="ti ti-refresh"></i>Nochmal versuchen</button></div>`;
+    if(showLoader) container.innerHTML=`<div style="margin:16px">
+      <div style="padding:14px 16px;background:rgba(154,58,58,0.1);border-radius:12px;font-size:13px;color:#9A3A3A;margin-bottom:12px">
+        <i class="ti ti-alert-circle" style="margin-right:6px"></i>${e.message}
+      </div>
+      <button class="btn-secondary" onclick="loadDepartures(true)"><i class="ti ti-refresh"></i>Nochmal versuchen</button>
+    </div>`;
   }
 }
 
+// ── Next departure banner ──
+function updateNextBanner(){
+  const banner=document.getElementById('bus-next-banner');
+  if(!banner||!allDepartures.length){if(banner)banner.style.display='none';return;}
+  const now=new Date();
+  // Find soonest departure
+  const upcoming=allDepartures.filter(d=>d.diffMin>=-1).slice(0,1);
+  if(!upcoming.length){banner.style.display='none';return;}
+  const d=upcoming[0];
+  const planned=new Date(d.planned);
+  const hhmm=planned.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+  const diffMin=d.diffMin!==undefined?d.diffMin:Math.round((new Date(d.realtime||d.planned)-now)/60000);
+  const inText=diffMin<=0?'jetzt':diffMin===1?'in 1 Min':`in ${diffMin} Min`;
+  const lc=getBusLineColor(d.line);
+  banner.style.display='block';
+  document.getElementById('bus-next-line').textContent=d.line;
+  document.getElementById('bus-next-line').style.background=lc.bg;
+  document.getElementById('bus-next-line').style.color=lc.text;
+  document.getElementById('bus-next-dest').textContent=d.dest;
+  document.getElementById('bus-next-sub').textContent=BUS_STATIONS[activeBusStation].name+(d.platform?' · Gleis '+d.platform:'');
+  document.getElementById('bus-next-time').textContent=hhmm;
+  document.getElementById('bus-next-in').textContent=inText;
+}
+
+// ── Render departures ──
 function renderDepartureList(deps,now){
   const container=document.getElementById('bus-container');
   const lines=deps.map(d=>{
@@ -1129,41 +1318,140 @@ function renderDepartureList(deps,now){
     const hhmm=planned.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
     return{...d,diffMin,hhmm};
   }).filter(d=>d.diffMin>-5).slice(0,15);
+
   if(!lines.length){container.innerHTML='<div class="empty-state"><i class="ti ti-bus-off"></i><p>Keine Abfahrten gefunden</p></div>';return;}
+
   const ts=new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
-  container.innerHTML=`<div style="font-size:11px;color:var(--text3);padding:0 20px 8px">Stand: ${ts} Uhr · EFA-BW Echtzeit</div>
-  <div class="card" style="margin:0 16px;border-radius:14px;overflow:hidden">
-    ${lines.map((d,i)=>{
-      const dc=d.delayMin>1?'#9A3A3A':'#3A7A55';
-      const dt=d.delayMin>1?`+${d.delayMin} min`:'pünktlich';
-      const difc=d.diffMin<=0?'#3A7A55':d.diffMin<=5?'#B08830':'var(--text2)';
-      const dift=d.diffMin<=0?'jetzt':d.diffMin===1?'1 Min':`${d.diffMin} Min`;
-      const lc=getBusLineColor(d.line);
-      const plat=d.platform?`<div style="font-size:11px;color:var(--text3)">Gleis ${d.platform}</div>`:'';
-      return `<div class="pickup-row" style="animation:cardIn 0.3s ease ${i*35}ms both">
-        <div style="width:44px;height:28px;border-radius:7px;background:${lc.bg};color:${lc.text};display:flex;align-items:center;justify-content:center;font-size:${d.line.length>5?'10':'12'}px;font-weight:700;flex-shrink:0">${d.line}</div>
-        <div class="pickup-info"><div class="pickup-type">${d.dest}</div>${plat}</div>
-        <div style="text-align:right;flex-shrink:0;min-width:58px">
-          <div style="font-size:18px;font-weight:600;font-variant-numeric:tabular-nums">${d.hhmm}</div>
-          <div style="font-size:11px;color:${dc}">${dt}</div>
-          <div style="font-size:11px;color:${difc};font-weight:500">in ${dift}</div>
+  container.innerHTML=`
+    <div style="font-size:11px;color:var(--text3);padding:0 20px 8px">Stand: ${ts} Uhr · EFA-BW · Auto-Refresh alle 60s</div>
+    <div class="card" style="margin:0 16px;border-radius:14px;overflow:hidden">
+      ${lines.map((d,i)=>{
+        const dc=d.delayMin>1?'#9A3A3A':'#3A7A55';
+        const dt=d.delayMin>1?`+${d.delayMin} min`:'pünktlich';
+        const difc=d.diffMin<=0?'#3A7A55':d.diffMin<=5?'#B08830':'var(--text2)';
+        const dift=d.diffMin<=0?'jetzt':d.diffMin===1?'1 Min':`${d.diffMin} Min`;
+        const lc=getBusLineColor(d.line);
+        const plat=d.platform?`<div style="font-size:11px;color:var(--text3)">Gleis ${d.platform}</div>`:'';
+        return `<div class="pickup-row" style="animation:cardIn 0.3s ease ${i*30}ms both">
+          <div style="width:44px;height:28px;border-radius:7px;background:${lc.bg};color:${lc.text};display:flex;align-items:center;justify-content:center;font-size:${d.line.length>5?'10':'12'}px;font-weight:700;flex-shrink:0">${d.line}</div>
+          <div class="pickup-info"><div class="pickup-type">${d.dest}</div>${plat}</div>
+          <div style="text-align:right;flex-shrink:0;min-width:58px">
+            <div style="font-size:18px;font-weight:600;font-variant-numeric:tabular-nums">${d.hhmm}</div>
+            <div style="font-size:11px;color:${dc}">${dt}</div>
+            <div style="font-size:11px;color:${difc};font-weight:500">in ${dift}</div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+function getBusLineColor(name){
+  const n=(name||'').toUpperCase();
+  if(n.startsWith('RE')||n.startsWith('RB')||n.startsWith('MEX'))return{bg:'rgba(176,100,40,0.15)',text:'#B06428'};
+  if(n.startsWith('IC')||n.startsWith('EC'))return{bg:'rgba(154,58,58,0.15)',text:'#9A3A3A'};
+  if(n.startsWith('S'))return{bg:'rgba(58,122,85,0.15)',text:'#3A7A55'};
+  if(n.startsWith('SEV'))return{bg:'rgba(176,136,48,0.15)',text:'#B08830'};
+  const num=parseInt((name||'').replace(/\D/g,''))||0;
+  if(num>=7900&&num<=7999)return{bg:'rgba(176,136,48,0.15)',text:'#B08830'};
+  if(num>=260&&num<=270)return{bg:'rgba(42,90,138,0.15)',text:'#2A5A8A'};
+  return{bg:'rgba(107,104,96,0.12)',text:'#6B6860'};
+}
+
+// ── Connection search ──
+function swapConStops(){
+  const from=document.getElementById('con-from');
+  const to=document.getElementById('con-to');
+  const tmp=from.value;from.value=to.value;to.value=tmp;
+}
+
+async function searchConnection(){
+  const from=document.getElementById('con-from').value.trim();
+  const to=document.getElementById('con-to').value.trim();
+  const dateVal=document.getElementById('con-date').value;
+  const timeVal=document.getElementById('con-time').value;
+  if(!from||!to){showToast('Bitte Start und Ziel eingeben');return;}
+
+  const container=document.getElementById('con-container');
+  container.innerHTML='<div class="empty-state"><i class="ti ti-loader-2" style="font-size:28px"></i><p style="font-size:13px">Suche Verbindungen…</p></div>';
+
+  try{
+    let fetchUrl=`${WORKER_URL}/trip?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
+    if(dateVal) fetchUrl+=`&date=${dateVal}`;
+    if(timeVal) fetchUrl+=`&time=${timeVal}`;
+
+    const ctrl=new AbortController(),tid=setTimeout(()=>ctrl.abort(),15000);
+    const res=await fetch(fetchUrl,{signal:ctrl.signal});clearTimeout(tid);
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    const data=await res.json();
+    if(data.error)throw new Error(data.error);
+    renderConnections(data.trips||[],from,to);
+  }catch(e){
+    container.innerHTML=`<div style="margin-top:12px;padding:14px 16px;background:rgba(154,58,58,0.1);border-radius:12px;font-size:13px;color:#9A3A3A">
+      <i class="ti ti-alert-circle" style="margin-right:6px"></i>${e.message}
+    </div>`;
+  }
+}
+
+function renderConnections(trips,from,to){
+  const container=document.getElementById('con-container');
+  if(!trips.length){
+    container.innerHTML='<div class="empty-state"><i class="ti ti-route-off"></i><p>Keine Verbindungen gefunden</p></div>';
+    return;
+  }
+  container.innerHTML=`<div class="card" style="margin-top:12px;border-radius:14px;overflow:hidden">
+    ${trips.slice(0,5).map((trip,i)=>{
+      const dep=new Date(trip.departure);
+      const arr=new Date(trip.arrival);
+      const depStr=dep.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+      const arrStr=arr.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+      const dur=Math.round((arr-dep)/60000);
+      const durStr=dur>=60?`${Math.floor(dur/60)}h ${dur%60}m`:`${dur} Min`;
+      const legs=trip.legs||[];
+      const changes=Math.max(0,legs.length-1);
+      const linesUsed=legs.map(l=>l.line||'').filter(Boolean);
+      return `<div class="pickup-row" style="animation:cardIn 0.35s ease ${i*60}ms both;cursor:pointer" onclick="toggleTripDetail(${i})">
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+            <span style="font-size:18px;font-weight:600;font-variant-numeric:tabular-nums">${depStr}</span>
+            <i class="ti ti-arrow-right" style="font-size:14px;color:var(--text3)"></i>
+            <span style="font-size:18px;font-weight:600;font-variant-numeric:tabular-nums">${arrStr}</span>
+            <span style="font-size:12px;color:var(--text3);margin-left:4px">${durStr}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            ${linesUsed.map(l=>{const lc=getBusLineColor(l);return`<span style="font-size:11px;font-weight:700;padding:2px 7px;border-radius:5px;background:${lc.bg};color:${lc.text}">${l}</span>`;}).join('<i class="ti ti-arrow-right" style="font-size:10px;color:var(--text3)"></i>')}
+            ${changes>0?`<span style="font-size:11px;color:var(--text3)">${changes} Umstieg${changes>1?'e':''}</span>`:'<span style="font-size:11px;color:#3A7A55">Direkt</span>'}
+          </div>
+          <div id="trip-detail-${i}" style="display:none;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">
+            ${legs.map(leg=>{
+              const ldep=new Date(leg.departure);
+              const larr=new Date(leg.arrival);
+              const lc=getBusLineColor(leg.line||'');
+              return `<div style="display:flex;gap:8px;margin-bottom:6px;font-size:12px">
+                <div style="width:3px;background:${lc.text||'var(--text3)'};border-radius:2px;flex-shrink:0;margin:2px 0"></div>
+                <div>
+                  <div style="font-weight:500;color:var(--text)">${leg.origin||'—'} <span style="color:var(--text3)">${ldep.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})}</span></div>
+                  <div style="color:var(--text3);margin:2px 0">${leg.line?`<span style="font-weight:600;color:${lc.text}">${leg.line}</span> Richtung ${leg.direction||'—'}`:'Fußweg'}</div>
+                  <div style="font-weight:500;color:var(--text)">${leg.destination||'—'} <span style="color:var(--text3)">${larr.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})}</span></div>
+                </div>
+              </div>`;
+            }).join('')}
+          </div>
         </div>
+        <i class="ti ti-chevron-down" style="font-size:16px;color:var(--text3);flex-shrink:0" id="trip-chevron-${i}"></i>
       </div>`;
     }).join('')}
   </div>`;
 }
 
-function getBusLineColor(name){
-  const n=(name||'').toUpperCase();
-  if(n.startsWith('RE')||n.startsWith('RB')||n.startsWith('MEX'))return{bg:'rgba(176,100,40,0.12)',text:'#B06428'};
-  if(n.startsWith('IC')||n.startsWith('EC'))return{bg:'rgba(154,58,58,0.12)',text:'#9A3A3A'};
-  if(n.startsWith('S'))return{bg:'rgba(58,122,85,0.12)',text:'#3A7A55'};
-  if(n.startsWith('SEV'))return{bg:'rgba(176,136,48,0.12)',text:'#B08830'};
-  const num=parseInt((name||'').replace(/\D/g,''))||0;
-  if(num>=7900&&num<=7999)return{bg:'rgba(176,136,48,0.12)',text:'#B08830'};
-  if(num>=260&&num<=270)return{bg:'rgba(42,90,138,0.12)',text:'#2A5A8A'};
-  return{bg:'rgba(107,104,96,0.12)',text:'#6B6860'};
+function toggleTripDetail(i){
+  const el=document.getElementById('trip-detail-'+i);
+  const ch=document.getElementById('trip-chevron-'+i);
+  if(!el)return;
+  const open=el.style.display==='block';
+  el.style.display=open?'none':'block';
+  if(ch)ch.style.transform=open?'':'rotate(180deg)';
 }
+
 
 // ══════════════════════════════════════════
 // NOTIFICATIONS
