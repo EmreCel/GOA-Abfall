@@ -403,9 +403,14 @@ select option{background:var(--bg2)}
       <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em">Haltestelle</div>
       <div style="font-size:16px;font-weight:500;margin-top:2px" id="bus-station-name">Mögglingen Bahnhof</div>
     </div>
-    <button class="icon-btn" onclick="loadDepartures()" aria-label="Aktualisieren">
-      <i class="ti ti-refresh" id="bus-refresh-icon"></i>
-    </button>
+    <div style="display:flex;gap:8px">
+      <button class="icon-btn" onclick="toggleFavorite()" id="fav-btn" aria-label="Favorit">
+        <i class="ti ti-star" id="fav-icon"></i>
+      </button>
+      <button class="icon-btn" onclick="loadDepartures()" aria-label="Aktualisieren">
+        <i class="ti ti-refresh" id="bus-refresh-icon"></i>
+      </button>
+    </div>
   </div>
   <!-- Station dropdown -->
   <div style="padding:0 16px 10px;display:flex;gap:8px;align-items:center">
@@ -425,6 +430,14 @@ select option{background:var(--bg2)}
     <button onclick="resetToNow()" style="width:36px;height:36px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:15px;flex-shrink:0" title="Jetzt">
       <i class="ti ti-clock-hour-3"></i>
     </button>
+  </div>
+  <!-- Richtungsfilter -->
+  <div style="display:flex;gap:6px;padding:0 16px 10px;overflow-x:auto;scrollbar-width:none">
+    <button class="chip active" id="dir-all"        onclick="setDirection('all')">Alle</button>
+    <button class="chip"        id="dir-aalen"      onclick="setDirection('aalen')">→ Aalen</button>
+    <button class="chip"        id="dir-schorndorf" onclick="setDirection('schorndorf')">→ Schorndorf</button>
+    <button class="chip"        id="dir-stuttgart"  onclick="setDirection('stuttgart')">→ Stuttgart</button>
+    <button class="chip"        id="dir-gmuend"     onclick="setDirection('gmuend')">→ Gmünd</button>
   </div>
   <div id="bus-container">
     <div class="empty-state"><i class="ti ti-loader-2" style="font-size:28px"></i><p>Lade Abfahrten…</p></div>
@@ -717,7 +730,7 @@ function switchTab(tab){
   if(tab==='home'){renderHome();}
   if(tab==='muell'){renderMuell();}
   if(tab==='sprit'&&tkKey){loadSprit();}
-  if(tab==='bus'){renderStationTabs();loadDepartures();}
+  if(tab==='bus'){loadFavoriteOnOpen();renderStationTabs();loadDepartures();}
   if(tab==='mehr'){renderVisibilitySettings();}
   checkOnboarding();
 }
@@ -1027,18 +1040,31 @@ const BUS_STATIONS = [
   { key:'bruhlfeld',     name:'Im Brühlfeld',                  type:'bus'   },
   { key:'gollenhof',     name:'Gollenhof',                     type:'bus'   },
 ];
+
 let activeBusStation = 0;
-let busDateTime = { date:'', time:'' };
+let busDateTime       = { date:'', time:'' };
+let activeDirection   = 'all';
+let allDepartures     = []; // cached for filter
+let favStation        = lsGet('favBusStation', 0);
+
+// Direction keywords
+const DIRECTIONS = {
+  'aalen':      ['aalen'],
+  'schorndorf': ['schorndorf','waiblingen','stuttgart'],
+  'stuttgart':  ['stuttgart','waiblingen','schorndorf'],
+  'gmuend':     ['gmünd','gmuend','schwäbisch gmünd'],
+};
 
 function renderStationTabs(){
   const sel = document.getElementById('bus-station-select');
-  if(sel) {
-    sel.innerHTML = BUS_STATIONS.map((s,i) =>
-      `<option value="${i}" ${i===activeBusStation?'selected':''}>${s.type==='train'?'🚆':'🚌'} ${s.name}</option>`
+  if(sel){
+    sel.innerHTML = BUS_STATIONS.map((s,i)=>
+      `<option value="${i}" ${i===activeBusStation?'selected':''}>${s.type==='train'?'🚆':'🚌'} ${s.name}${i===favStation?' ★':''}</option>`
     ).join('');
   }
   document.getElementById('bus-station-name').textContent = BUS_STATIONS[activeBusStation].name;
-  // Sync date/time pickers to current values
+  updateFavBtn();
+  // Init date/time
   const dateEl = document.getElementById('bus-date');
   const timeEl = document.getElementById('bus-time');
   if(dateEl && !dateEl.value) {
@@ -1064,11 +1090,76 @@ function updateBusTime(){
 }
 
 function resetToNow(){
-  document.getElementById('bus-date').value = new Date().toISOString().split('T')[0];
-  const now = new Date();
-  document.getElementById('bus-time').value = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-  busDateTime = {date:'', time:''};
+  const n = new Date();
+  document.getElementById('bus-date').value = n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');
+  document.getElementById('bus-time').value = String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+  busDateTime = {date:'',time:''};
   loadDepartures();
+}
+
+// ── FAVORITEN ──
+function toggleFavorite(){
+  if(favStation === activeBusStation){
+    favStation = 0; // reset to default
+  } else {
+    favStation = activeBusStation;
+  }
+  try{ localStorage.setItem('favBusStation', favStation); }catch(e){}
+  updateFavBtn();
+  renderStationTabs();
+  showToast(favStation === activeBusStation ? '★ Als Favorit gespeichert' : 'Favorit entfernt');
+}
+
+function updateFavBtn(){
+  const icon = document.getElementById('fav-icon');
+  const btn  = document.getElementById('fav-btn');
+  if(!icon || !btn) return;
+  const isFav = favStation === activeBusStation;
+  icon.className = isFav ? 'ti ti-star-filled' : 'ti ti-star';
+  btn.style.color = isFav ? 'var(--amber)' : '';
+}
+
+function loadFavoriteOnOpen(){
+  // Load favorite station when bus tab opens
+  if(favStation !== activeBusStation){
+    activeBusStation = favStation;
+  }
+}
+
+// ── RICHTUNGSFILTER ──
+function setDirection(dir){
+  activeDirection = dir;
+  ['all','aalen','schorndorf','stuttgart','gmuend'].forEach(d=>{
+    const el = document.getElementById('dir-'+d);
+    if(el) el.classList.toggle('active', d===dir);
+  });
+  applyDirectionFilter();
+}
+
+function applyDirectionFilter(){
+  const container = document.getElementById('bus-container');
+  if(!allDepartures.length) return;
+  const now = new Date();
+
+  let filtered = allDepartures;
+  if(activeDirection !== 'all'){
+    const keywords = DIRECTIONS[activeDirection] || [];
+    filtered = allDepartures.filter(d => {
+      const dest = (d.dest || '').toLowerCase();
+      return keywords.some(k => dest.includes(k));
+    });
+  }
+
+  if(!filtered.length){
+    container.innerHTML = `<div class="empty-state"><i class="ti ti-map-pin-off"></i><p style="font-size:13px">Keine Abfahrten Richtung<br>${getDirectionLabel(activeDirection)}</p></div>`;
+    return;
+  }
+  renderDepartureList(filtered, now);
+}
+
+function getDirectionLabel(dir){
+  const labels = {all:'Alle',aalen:'Aalen',schorndorf:'Schorndorf/Waiblingen',stuttgart:'Stuttgart',gmuend:'Schwäbisch Gmünd'};
+  return labels[dir]||dir;
 }
 
 async function loadDepartures(){
@@ -1079,25 +1170,31 @@ async function loadDepartures(){
 
   const stop = BUS_STATIONS[activeBusStation];
   try {
-    const ctrl = new AbortController();
-    const tid = setTimeout(()=>ctrl.abort(),10000);
     const dateEl = document.getElementById('bus-date');
     const timeEl = document.getElementById('bus-time');
     const dateVal = dateEl?.value || '';
     const timeVal = timeEl?.value || '';
-    const today = new Date().toISOString().split('T')[0];
-    const nowTime = new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
-    const isNow = (!dateVal || dateVal === today) && (!timeVal || timeVal === nowTime.replace(':','').slice(0,5));
-    let fetchUrl = `${WORKER_URL}/departures?stop=${stop.key}&limit=20`;
-    if(dateVal && dateVal !== today) fetchUrl += `&date=${dateVal}`;
+    const today = new Date();
+    const todayStr = today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+    const nowTime = String(today.getHours()).padStart(2,'0')+':'+String(today.getMinutes()).padStart(2,'0');
+    const isNow = (!dateVal || dateVal === todayStr) && (!timeVal || timeVal === nowTime);
+    let fetchUrl = `${WORKER_URL}/departures?stop=${stop.key}&limit=25`;
+    if(dateVal && dateVal !== todayStr) fetchUrl += `&date=${dateVal}`;
     if(timeVal && !isNow) fetchUrl += `&time=${timeVal}`;
-    const res = await fetch(fetchUrl, {signal:ctrl.signal});
+
+    const ctrl = new AbortController();
+    const tid  = setTimeout(()=>ctrl.abort(), 10000);
+    const res  = await fetch(fetchUrl, {signal:ctrl.signal});
     clearTimeout(tid);
     if(!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     if(data.error) throw new Error(data.error);
-    renderDepartures(data.departures || [], data.stop);
+
+    allDepartures = data.departures || [];
+    applyDirectionFilter();
+
   } catch(e) {
+    allDepartures = [];
     container.innerHTML = `<div style="margin:16px">
       <div style="padding:14px 16px;background:var(--red-bg);border-radius:12px;font-size:13px;color:var(--red);margin-bottom:12px">
         <i class="ti ti-alert-circle" style="margin-right:6px"></i>${e.message}
@@ -1108,45 +1205,49 @@ async function loadDepartures(){
 }
 
 function renderDepartures(deps, stopName){
+  // kept for compatibility - not used directly anymore
+  allDepartures = deps;
+  applyDirectionFilter();
+}
+
+function renderDepartureList(deps, now){
   const container = document.getElementById('bus-container');
-  const now = new Date();
 
   const lines = deps.map(d => {
-    const planned  = new Date(d.planned);   // UTC from EFA
+    const planned  = new Date(d.planned);
     const realtime = new Date(d.realtime || d.planned);
-    // diffMin already calculated server-side, but recalculate with local now
     const diffMin  = d.diffMin !== undefined ? d.diffMin : Math.round((realtime - now) / 60000);
-    // toLocaleTimeString handles UTC→local automatically
     const hhmm     = planned.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
     return { ...d, diffMin, hhmm, planned };
   }).filter(d => d.diffMin > -5).slice(0, 15);
 
   if(!lines.length){
-    container.innerHTML = '<div class="empty-state"><i class="ti ti-bus-off"></i><p>Keine Abfahrten in den<br>nächsten 2 Stunden</p></div>';
+    container.innerHTML = '<div class="empty-state"><i class="ti ti-bus-off"></i><p>Keine Abfahrten gefunden</p></div>';
     return;
   }
 
-  const ts = now.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+  // Group: show "Verbindung" hint for multi-leg
+  const ts = new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
   container.innerHTML = `
     <div style="font-size:11px;color:var(--text3);padding:0 20px 8px">Stand: ${ts} Uhr · EFA-BW Echtzeit</div>
     <div class="card" style="margin:0 16px;border-radius:14px;overflow:hidden">
-      ${lines.map(d => {
+      ${lines.map(d=>{
         const delayColor = d.delayMin > 1 ? 'var(--red)' : 'var(--green)';
         const delayText  = d.delayMin > 1 ? `+${d.delayMin} min` : 'pünktlich';
-        const diffText   = d.diffMin <= 0 ? 'jetzt' : d.diffMin <= 2 ? `in ${d.diffMin} Min` : `in ${d.diffMin} Min`;
+        const diffText   = d.diffMin <= 0 ? 'jetzt' : d.diffMin === 1 ? '1 Min' : `${d.diffMin} Min`;
         const diffColor  = d.diffMin <= 0 ? 'var(--green)' : d.diffMin <= 5 ? 'var(--amber)' : 'var(--text2)';
         const lineColors = getBusLineColor(d.line);
         const platform   = d.platform ? `<div class="type-sub">Gleis ${d.platform}</div>` : '';
         return `<div class="pickup-row">
-          <div style="width:44px;height:28px;border-radius:7px;background:${lineColors.bg};color:${lineColors.text};display:flex;align-items:center;justify-content:center;font-size:${d.line.length>4?'10':'12'}px;font-weight:700;flex-shrink:0">${d.line}</div>
+          <div style="width:44px;height:28px;border-radius:7px;background:${lineColors.bg};color:${lineColors.text};display:flex;align-items:center;justify-content:center;font-size:${d.line.length>5?'10':'12'}px;font-weight:700;flex-shrink:0">${d.line}</div>
           <div class="type-info">
             <div class="type-name">${d.dest}</div>
             ${platform}
           </div>
-          <div style="text-align:right;flex-shrink:0">
+          <div style="text-align:right;flex-shrink:0;min-width:58px">
             <div style="font-size:18px;font-weight:600;font-variant-numeric:tabular-nums">${d.hhmm}</div>
             <div style="font-size:11px;color:${delayColor}">${delayText}</div>
-            <div style="font-size:11px;color:${diffColor};font-weight:500">${diffText}</div>
+            <div style="font-size:11px;color:${diffColor};font-weight:500">in ${diffText}</div>
           </div>
         </div>`;
       }).join('')}
@@ -1154,11 +1255,12 @@ function renderDepartures(deps, stopName){
 }
 
 function getBusLineColor(name){
-  const n = name.toUpperCase();
-  if(n.startsWith('RE')||n.startsWith('RB')||n.startsWith('IRE')) return {bg:'rgba(255,120,50,0.15)',text:'#ff8844'};
-  if(n.startsWith('S'))  return {bg:'rgba(80,160,80,0.15)',text:'#50c850'};
+  const n = (name||'').toUpperCase();
+  if(n.startsWith('RE')||n.startsWith('RB')||n.startsWith('IRE')||n.startsWith('MEX')) return {bg:'rgba(255,120,50,0.15)',text:'#ff8844'};
   if(n.startsWith('IC')||n.startsWith('EC')) return {bg:'rgba(220,50,50,0.15)',text:'#e05555'};
-  const num = parseInt(name.replace(/\D/g,'')) || 0;
+  if(n.startsWith('S')) return {bg:'rgba(80,160,80,0.15)',text:'#50c850'};
+  if(n.startsWith('SEV')) return {bg:'rgba(212,168,32,0.15)',text:'#d4a820'};
+  const num = parseInt((name||'').replace(/\D/g,''))||0;
   if(num>=7900&&num<=7999) return {bg:'rgba(212,168,32,0.15)',text:'#d4a820'};
   if(num>=260&&num<=270)   return {bg:'rgba(74,123,196,0.15)',text:'#4a7bc4'};
   if(num>=76&&num<=80)     return {bg:'rgba(74,158,107,0.15)',text:'#4a9e6b'};
@@ -1298,7 +1400,7 @@ function startGreeting(){
       el.style.opacity = '1';
       el.style.transform = 'translateY(0)';
     }, 400);
-  }, 15000);
+  }, 5000);
 }
 
 // ══════════════════════════════════════════
