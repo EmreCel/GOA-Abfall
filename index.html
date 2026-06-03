@@ -354,12 +354,12 @@ let hiddenTypes = JSON.parse(localStorage.getItem('hiddenTypes') || '[]');
 let activeFilter = 'alle';
 let activeStation = 0;
 let activeFuel = 'e5';
-let tkKey = localStorage.getItem('tkKey') || '';
+let tkKey = localStorage.getItem('tkKey') || '6a7afae6-ab0c-4c82-9317-c1dbeb735619';
 
 document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
 document.getElementById('reminder-days').value = settings.reminderDays;
 document.getElementById('reminder-time').value = settings.reminderTime;
-if(tkKey) document.getElementById('tk-key-input').value = '••••••••••••••••';
+if(tkKey){ document.getElementById('tk-key-input').value='••••••••••••••••'; document.getElementById('sprit-key-section').style.display='none'; }
 
 // ══════════════════════════════════════════
 // TAB NAVIGATION
@@ -463,12 +463,11 @@ function loadGOAData(){
 // ══════════════════════════════════════════
 // BUS & BAHN
 // ══════════════════════════════════════════
-// Mögglingen stop IDs (pre-resolved via DB API)
-// 8005700 = Mögglingen (b Gmünd) Bahnhof (DB station code 4150)
+// Haltestellen mit EVA-Nummern (DB)
 const STATIONS = [
-  {id:'8005700', name:'Mögglingen (Gmünd)', short:'Bahnhof/Zug'},
-  {id:'721359',  name:'Mögglingen Bahnhof Bus', short:'Bahnhof Bus'},
-  {id:'721361',  name:'Mögglingen Mitte', short:'Mitte'},
+  {name:'Mögglingen (b Gmünd)', short:'Bahnhof/Zug', eva:'8005700'},
+  {name:'Mögglingen Bahnhofstr.', short:'Bahnhof Bus', eva:'721359'},
+  {name:'Mögglingen Mitte', short:'Mitte', eva:'721361'},
 ];
 
 function renderStationTabs(){
@@ -487,91 +486,128 @@ function selectStation(i){
 async function loadDepartures(){
   const container=document.getElementById('dep-container');
   container.innerHTML='<div class="loading-state"><div class="loading-spinner">⏳</div><div style="font-size:13px;color:var(--text3);margin-top:6px">Lade Abfahrten…</div></div>';
+  const station=STATIONS[activeStation];
   
-  // First try: search for stop by name, then get departures
+  // Use DB Streckenagent / bahnhof.de widget API via allorigins CORS proxy
+  const now = new Date();
+  const dateStr = now.toISOString().slice(0,16);
+  const apiUrl = `https://www.bahnhof.de/api/boards/departures?evaNumbers=${station.eva}&duration=120&limit=20`;
+  const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(apiUrl)}`;
+  
   try {
-    const station = STATIONS[activeStation];
-    // Search for the stop first to get correct ID
-    const searchUrl = `https://v6.db.transport.rest/locations?query=${encodeURIComponent(station.name)}&results=3&stops=true&addresses=false&poi=false`;
-    const searchRes = await fetch(searchUrl);
-    if(!searchRes.ok) throw new Error('Search failed');
-    const stops = await searchRes.json();
-    if(!stops.length) throw new Error('Haltestelle nicht gefunden');
-    
-    // Use first result
-    const stopId = stops[0].id;
-    document.getElementById('active-station-name').textContent = stops[0].name;
-    
-    const depUrl = `https://v6.db.transport.rest/stops/${encodeURIComponent(stopId)}/departures?results=15&duration=120&language=de`;
-    const depRes = await fetch(depUrl);
-    if(!depRes.ok) throw new Error('HTTP '+depRes.status);
-    const data = await depRes.json();
-    const deps = Array.isArray(data) ? data : (data.departures || []);
-    if(!deps.length) {
-      container.innerHTML='<div class="loading-state" style="color:var(--text3)"><div style="font-size:28px;margin-bottom:8px">🚌</div><div style="font-size:13px">Keine Abfahrten in den nächsten 2 Std.</div></div>';
-      return;
-    }
-    renderDepartures(deps);
+    const res = await fetch(proxyUrl, {signal: AbortSignal.timeout(10000)});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const outer = await res.json();
+    const data = JSON.parse(outer.contents);
+    const deps = data?.entries || data?.departures || data || [];
+    if(!deps.length) throw new Error('empty');
+    renderDepartures(deps, 'bahnhof');
   } catch(e) {
-    container.innerHTML=`<div class="error-state">⚠️ ${e.message}<br><small style="opacity:0.7;margin-top:4px;display:block">DB Transport API · ${new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr</small><br><button class="btn-sm" onclick="loadDepartures()" style="margin-top:8px">Nochmal versuchen</button></div>`;
+    // Fallback: use bahn.expert open API
+    try {
+      const fallUrl = `https://api.bahn.expert/api/hafas/v1/departureBoard?stopId=${station.eva}&lookAhead=120&results=20`;
+      const fallProxy = `https://api.allorigins.win/get?url=${encodeURIComponent(fallUrl)}`;
+      const res2 = await fetch(fallProxy, {signal: AbortSignal.timeout(10000)});
+      const outer2 = await res2.json();
+      const deps2 = JSON.parse(outer2.contents);
+      if(Array.isArray(deps2) && deps2.length) {
+        renderDepartures(deps2, 'expert');
+        return;
+      }
+    } catch(e2){}
+    
+    // Final fallback: show link to bahn.de
+    container.innerHTML=`<div style="padding:20px 16px">
+      <div class="error-state" style="margin:0 0 16px">
+        ⚠️ Echtzeit-API nicht erreichbar.<br>
+        <small style="opacity:0.7">Öffne die DB-Website direkt:</small>
+      </div>
+      <a href="https://www.bahn.de/buchung/fahrplan/suche#sts=true&so=${encodeURIComponent(station.name)}&hd=${now.toISOString().slice(0,10)}&hz=[]&ar=false&s=true&d=false&vm=00,01,02,03,04,05,06,07,08,09&fm=false&nav=1" 
+         target="_blank"
+         style="display:block;background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--text);font-size:14px;font-weight:500">
+        🚆 DB Abfahrten für ${station.name} →
+      </a>
+      <a href="https://reiseauskunft.bahn.de/bin/bhftafel.exe/dn?input=${encodeURIComponent(station.name)}&boardType=dep&time=actual&productsFilter=1111101111&start=yes"
+         target="_blank"
+         style="display:block;background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--text);font-size:14px;font-weight:500;margin-top:8px">
+        🚌 Bahnhofstafel ${station.name} →
+      </a>
+      <button class="btn-secondary" onclick="loadDepartures()" style="margin-top:8px">↻ Nochmal versuchen</button>
+    </div>`;
   }
 }
 
-function renderDepartures(deps){
+function renderDepartures(deps, source){
   const container=document.getElementById('dep-container');
   const now=new Date();
-  const lines = deps.map(dep=>{
-    const line=dep.line||{};
-    const name=line.name||'?';
-    const dest=(dep.destination?.name||dep.direction||'–').replace(/\s*\(.*?\)\s*/g,' ').trim();
-    const planned=new Date(dep.plannedWhen||dep.when);
-    const actual=dep.when ? new Date(dep.when) : planned;
-    const delayMin=dep.delay ? Math.round(dep.delay/60) : 0;
-    const diffMin=Math.round((actual-now)/60000);
-    const hhmm=planned.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
-    const product=line.product||'bus';
-    const colors=getLineColor(name,product);
-    const platform=dep.platform||dep.plannedPlatform||'';
-    return {name,dest,hhmm,delayMin,diffMin,colors,platform,product,cancelled:dep.cancelled};
-  }).filter(d=>d.diffMin>=-2 && !d.cancelled);
+  
+  const lines = deps.slice(0,15).map(dep=>{
+    // Handle different API response formats
+    let name, dest, plannedTime, actualTime, delayMin, platform, cancelled;
+    
+    if(source==='bahnhof'){
+      name = dep.train?.name || dep.category || '?';
+      dest = dep.destination?.name || dep.directionText || '–';
+      plannedTime = new Date(dep.time?.scheduled || dep.plannedTime || dep.scheduledTime);
+      actualTime = dep.time?.realtime ? new Date(dep.time.realtime) : plannedTime;
+      delayMin = Math.round((actualTime - plannedTime) / 60000);
+      platform = dep.platform?.scheduled || dep.track || '';
+      cancelled = dep.cancelled || false;
+    } else {
+      name = dep.train?.name || dep.label || dep.line || '?';
+      dest = dep.destination || dep.direction || '–';
+      plannedTime = new Date(dep.scheduledTime || dep.plannedDeparture || dep.time);
+      actualTime = dep.time ? new Date(dep.time) : plannedTime;
+      delayMin = dep.delay ? Math.round(dep.delay/60) : Math.round((actualTime-plannedTime)/60000);
+      platform = dep.platform || dep.track || '';
+      cancelled = dep.isCancelled || dep.cancelled || false;
+    }
+    
+    if(isNaN(plannedTime)) return null;
+    const diffMin = Math.round((actualTime - now) / 60000);
+    const hhmm = plannedTime.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+    const colors = getLineColor(name, dep.train?.category||dep.type||'bus');
+    return {name, dest, hhmm, delayMin, diffMin, colors, platform, cancelled};
+  }).filter(d => d && !d.cancelled && d.diffMin > -3);
 
   if(!lines.length){
-    container.innerHTML='<div class="loading-state" style="color:var(--text3)"><div style="font-size:28px;margin-bottom:8px">🚌</div><div>Keine Abfahrten gefunden</div></div>';
+    container.innerHTML='<div class="loading-state" style="color:var(--text3)"><div style="font-size:28px;margin-bottom:8px">🚌</div><div>Keine Abfahrten in den nächsten 2 Std.</div></div>';
     return;
   }
 
-  const now2=new Date();
-  container.innerHTML=`<div style="font-size:11px;color:var(--text3);padding:6px 20px 8px">Stand: ${now2.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr · Quelle: Deutsche Bahn</div><div class="dep-list">${lines.map(d=>{
-    const delayHtml = d.delayMin>0
-      ? `<div class="dep-time-delay" style="color:#c44a4a">+${d.delayMin} min</div>`
-      : `<div class="dep-time-delay" style="color:#4a9e6b">pünktlich</div>`;
-    const diffHtml = d.diffMin<=0
-      ? `<div class="dep-min" style="color:#4a9e6b;font-weight:600">jetzt</div>`
-      : d.diffMin<=2
-      ? `<div class="dep-min" style="color:#d4a820;font-weight:600">in ${d.diffMin} Min</div>`
-      : `<div class="dep-min" style="color:var(--text2)">in ${d.diffMin} Min</div>`;
-    const platformHtml = d.platform ? `<div class="dep-platform">Gleis ${d.platform}</div>` : '';
-    return`<div class="dep-card">
-      <div class="dep-line" style="background:${d.colors.bg};color:${d.colors.text};font-size:${d.name.length>4?'10px':'12px'}">${d.name}</div>
-      <div class="dep-info"><div class="dep-dest">${d.dest}</div>${platformHtml}</div>
-      <div class="dep-time"><div class="dep-time-main">${d.hhmm}</div>${delayHtml}${diffHtml}</div>
-    </div>`;
-  }).join('')}</div>`;
+  const ts = now.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+  container.innerHTML=`
+    <div style="font-size:11px;color:var(--text3);padding:6px 20px 8px">Stand: ${ts} Uhr · Deutsche Bahn Echtzeit</div>
+    <div class="dep-list">${lines.map(d=>{
+      const delayHtml = d.delayMin > 1
+        ? `<div class="dep-time-delay" style="color:#c44a4a">+${d.delayMin} min</div>`
+        : `<div class="dep-time-delay" style="color:#4a9e6b">pünktlich</div>`;
+      const diffHtml = d.diffMin <= 0
+        ? `<div class="dep-min" style="color:#4a9e6b;font-weight:600">jetzt</div>`
+        : d.diffMin <= 2
+        ? `<div class="dep-min" style="color:#d4a820;font-weight:600">in ${d.diffMin} Min</div>`
+        : `<div class="dep-min" style="color:var(--text2)">in ${d.diffMin} Min</div>`;
+      const platformHtml = d.platform ? `<div class="dep-platform">Gleis ${d.platform}</div>` : '';
+      const fontSize = d.name.length > 5 ? '10px' : d.name.length > 3 ? '11px' : '12px';
+      return `<div class="dep-card">
+        <div class="dep-line" style="background:${d.colors.bg};color:${d.colors.text};font-size:${fontSize}">${d.name}</div>
+        <div class="dep-info"><div class="dep-dest">${d.dest}</div>${platformHtml}</div>
+        <div class="dep-time"><div class="dep-time-main">${d.hhmm}</div>${delayHtml}${diffHtml}</div>
+      </div>`;
+    }).join('')}</div>`;
 }
 
-function getLineColor(name,product){
-  if(product==='nationalExpress'||product==='national') return {bg:'rgba(220,50,50,0.18)',text:'#e05555'};
-  if(product==='regionalExp'||product==='regional') return {bg:'rgba(255,120,50,0.15)',text:'#ff8844'};
-  if(product==='suburban') return {bg:'rgba(80,160,80,0.15)',text:'#50c850'};
-  if(product==='subway') return {bg:'rgba(74,123,196,0.15)',text:'#4a9ee8'};
-  if(product==='tram') return {bg:'rgba(212,100,50,0.15)',text:'#d46432'};
-  const num=parseInt(name.replace(/\D/g,''))||0;
+function getLineColor(name, product){
+  const p = (product||'').toLowerCase();
+  if(p.includes('ice')||p.includes('national')) return {bg:'rgba(220,50,50,0.18)',text:'#e05555'};
+  if(p.includes('ic')||p.includes('ec')||p.includes('regional')) return {bg:'rgba(255,120,50,0.15)',text:'#ff8844'};
+  if(p.includes('s-bahn')||p.includes('suburban')) return {bg:'rgba(80,160,80,0.15)',text:'#50c850'};
+  const num = parseInt((name||'').replace(/\D/g,'')) || 0;
   if(num>=260&&num<=270) return {bg:'rgba(74,123,196,0.18)',text:'#5b8fd4'};
-  if(num>=76&&num<=80) return {bg:'rgba(74,158,107,0.18)',text:'#4ab87a'};
   if(num>=7900&&num<=7999) return {bg:'rgba(212,168,32,0.18)',text:'#d4a820'};
+  if(num>=76&&num<=80) return {bg:'rgba(74,158,107,0.18)',text:'#4ab87a'};
   return {bg:'rgba(136,136,136,0.15)',text:'#999'};
 }
-
 // ══════════════════════════════════════════
 // SPRITPREISE
 // ══════════════════════════════════════════
