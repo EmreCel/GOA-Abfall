@@ -1,262 +1,776 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Mögglingen">
-<meta name="theme-color" content="#111111">
+<meta name="theme-color" content="#F7F6F2">
 <title>Mögglingen App</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#111;--bg2:#1a1a1a;--bg3:#222;--bg4:#2a2a2a;--text:#f0ede8;--text2:#999;--text3:#555;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14)}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;min-height:100vh;max-width:430px;margin:0 auto}
-.header{padding:52px 20px 14px;border-bottom:1px solid var(--border)}
-.header-top{display:flex;align-items:flex-start;justify-content:space-between}
-.header-sub{font-size:11px;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:3px}
-.header-title{font-size:26px;font-weight:300;letter-spacing:-0.5px}
-.header-title span{font-weight:600}
-.icon-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:50%;width:38px;height:38px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
-.nav{display:flex;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
-.nav::-webkit-scrollbar{display:none}
-.nav-tab{flex-shrink:0;padding:13px 16px 11px;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
-.nav-tab.active{color:var(--text);border-bottom-color:var(--text)}
-.view{display:none;padding-bottom:100px}
-.view.active{display:block}
+/* ── THEME ── */
+:root {
+  --bg:       #F7F6F2;
+  --bg2:      #FFFFFF;
+  --bg3:      #EEECEA;
+  --bg4:      #E5E3DF;
+  --text:     #1A1A18;
+  --text2:    #6B6B67;
+  --text3:    #A8A8A3;
+  --border:   rgba(0,0,0,0.07);
+  --border2:  rgba(0,0,0,0.12);
+  --shadow:   0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --nav-h:    68px;
+  --safe-b:   env(safe-area-inset-bottom, 0px);
 
-/* ── MÜLL ── */
-.filter-bar{display:flex;gap:6px;padding:12px 16px;overflow-x:auto;scrollbar-width:none}
-.filter-bar::-webkit-scrollbar{display:none}
-.chip{flex-shrink:0;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid var(--border2);background:var(--bg2);color:var(--text2);cursor:pointer}
-.chip.active{background:var(--text);color:var(--bg);border-color:var(--text)}
-.next-banner{margin:0 16px 12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border2);border-radius:14px}
-.next-label{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:10px}
-.next-item{display:flex;align-items:center;gap:9px;margin-bottom:6px}
-.next-item:last-child{margin-bottom:0}
-.next-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-.next-item-name{font-size:14px;font-weight:500;flex:1}
-.next-item-days{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;flex-shrink:0}
-.stats-bar{display:flex;margin:0 16px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
-.stat-item{flex:1;text-align:center;padding:10px 6px;border-right:1px solid var(--border)}
-.stat-item:last-child{border-right:none}
-.stat-num{font-size:18px;font-weight:600}
-.stat-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-top:1px}
-.section-label{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);padding:14px 20px 6px}
-.month-divider{padding:14px 20px 6px;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3)}
-.pickup-list{padding:0 16px;display:flex;flex-direction:column;gap:5px}
-.pickup-card{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;position:relative;overflow:hidden}
-.pickup-card.past{opacity:0.3}
-.pickup-card.today{border-color:rgba(255,255,255,0.22);background:var(--bg3)}
-.pickup-color-bar{position:absolute;left:0;top:0;bottom:0;width:3px}
-.pickup-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
-.pickup-info{flex:1;min-width:0}
-.pickup-type{font-size:14px;font-weight:500}
-.pickup-date{font-size:12px;color:var(--text2);margin-top:1px}
-.pickup-badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;flex-shrink:0}
-.delete-btn{background:none;border:none;color:var(--text3);cursor:pointer;padding:4px;font-size:14px;opacity:0.4}
+  --c-green:  #2D6A4F;
+  --c-green-bg: #D8F3DC;
+  --c-amber:  #92400E;
+  --c-amber-bg: #FEF3C7;
+  --c-blue:   #1E40AF;
+  --c-blue-bg: #DBEAFE;
+  --c-gray:   #4B5563;
+  --c-gray-bg: #F3F4F6;
+  --c-purple: #5B21B6;
+  --c-purple-bg: #EDE9FE;
+  --c-red:    #9B1C1C;
+  --c-red-bg: #FEE2E2;
+}
+[data-theme="dark"] {
+  --bg:       #111110;
+  --bg2:      #1C1C1A;
+  --bg3:      #252523;
+  --bg4:      #2E2E2C;
+  --text:     #F0EDE8;
+  --text2:    #8A8A85;
+  --text3:    #55554F;
+  --border:   rgba(255,255,255,0.07);
+  --border2:  rgba(255,255,255,0.12);
+  --shadow:   0 1px 3px rgba(0,0,0,0.3);
 
-/* ── BUS ── */
-.bus-header{padding:14px 16px 8px;display:flex;align-items:center;justify-content:space-between}
-.bus-station-label{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3)}
-.bus-station-name{font-size:16px;font-weight:500;margin-top:2px}
-.refresh-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif}
-.refresh-btn:active{background:var(--bg4)}
-.dep-list{padding:0 16px;display:flex;flex-direction:column;gap:5px}
-.dep-card{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:12px}
-.dep-line{min-width:42px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
-.dep-info{flex:1;min-width:0}
-.dep-dest{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.dep-platform{font-size:11px;color:var(--text3);margin-top:1px}
-.dep-time{text-align:right;flex-shrink:0}
-.dep-time-main{font-size:18px;font-weight:600;font-variant-numeric:tabular-nums}
-.dep-time-delay{font-size:11px;margin-top:1px}
-.dep-min{font-size:11px;color:var(--text2);margin-top:2px}
-.station-tabs{display:flex;gap:6px;padding:0 16px 12px;overflow-x:auto;scrollbar-width:none}
-.station-tabs::-webkit-scrollbar{display:none}
-.station-chip{flex-shrink:0;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid var(--border2);background:var(--bg2);color:var(--text2);cursor:pointer}
-.station-chip.active{background:var(--text);color:var(--bg);border-color:var(--text)}
-.loading-state{text-align:center;padding:40px 20px;color:var(--text3)}
-.loading-spinner{font-size:28px;margin-bottom:10px;animation:spin 1s linear infinite;display:inline-block}
-@keyframes spin{to{transform:rotate(360deg)}}
-.error-state{margin:16px;padding:14px 16px;background:rgba(196,74,74,0.1);border:1px solid rgba(196,74,74,0.25);border-radius:12px;font-size:13px;color:#c44a4a}
+  --c-green:  #6EE7B7;
+  --c-green-bg: #064E3B;
+  --c-amber:  #FCD34D;
+  --c-amber-bg: #451A03;
+  --c-blue:   #93C5FD;
+  --c-blue-bg: #1E3A5F;
+  --c-gray:   #D1D5DB;
+  --c-gray-bg: #1F2937;
+  --c-purple: #C4B5FD;
+  --c-purple-bg: #2E1065;
+  --c-red:    #FCA5A5;
+  --c-red-bg: #450A0A;
+}
+
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  min-height: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  overflow-x: hidden;
+}
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+input, select { font-family: inherit; }
+a { color: inherit; text-decoration: none; }
+
+/* ── LAYOUT ── */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 52px 20px 14px;
+}
+.header-inner {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.header-location {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text3);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+.header-title {
+  font-size: 24px;
+  font-weight: 300;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+.header-title strong { font-weight: 600; }
+.header-actions { display: flex; gap: 8px; }
+.icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border2);
+  background: var(--bg3);
+  color: var(--text2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  transition: background 0.15s;
+}
+.icon-btn:active { background: var(--bg4); }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 430px;
+  height: calc(var(--nav-h) + var(--safe-b));
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  padding-top: 8px;
+  z-index: 100;
+}
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 0 4px;
+  position: relative;
+}
+.nav-item.locked { opacity: 0.35; cursor: default; }
+.nav-icon-wrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: var(--text3);
+  transition: all 0.15s;
+}
+.nav-item.active .nav-icon-wrap {
+  background: var(--bg3);
+  color: var(--text);
+}
+.nav-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text3);
+  letter-spacing: 0.02em;
+}
+.nav-item.active .nav-label { color: var(--text); }
+.nav-lock {
+  position: absolute;
+  top: 14px;
+  right: calc(50% - 22px);
+  font-size: 9px;
+  color: var(--text3);
+}
+
+/* ── VIEWS ── */
+.view { display: none; padding: 0 0 calc(var(--nav-h) + var(--safe-b) + 8px); }
+.view.active { display: block; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--bg2);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.card-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text3);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.card-meta { font-size: 12px; color: var(--text3); }
+.card-body { padding: 14px 16px; }
+.card-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+.card-row + .card-row { border-top: 1px solid var(--border); }
+
+/* ── TYPE ICON ── */
+.type-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.type-info { flex: 1; min-width: 0; }
+.type-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.type-sub { font-size: 12px; color: var(--text3); margin-top: 1px; }
+
+/* ── BADGES ── */
+.badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.badge-today  { background: #D8F3DC; color: #2D6A4F; }
+.badge-tom    { background: #FEF3C7; color: #92400E; }
+.badge-soon   { background: var(--bg3); color: var(--text2); }
+[data-theme="dark"] .badge-today { background: #064E3B; color: #6EE7B7; }
+[data-theme="dark"] .badge-tom   { background: #451A03; color: #FCD34D; }
+
+/* ── SECTION LABEL ── */
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text3);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 20px 20px 8px;
+}
+.month-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text3);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 16px 20px 6px;
+}
+
+/* ── PICKUP LIST CARDS ── */
+.pickup-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 16px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.pickup-row:last-child { border-bottom: none; }
+.pickup-row.past { opacity: 0.3; }
+.pickup-accent {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+}
+.pickup-delete {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--bg3);
+  color: var(--text3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.pickup-delete:active { background: var(--c-red-bg); color: var(--c-red); }
+
+/* ── STATS ── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.stat-box { text-align: center; }
+.stat-num { font-size: 22px; font-weight: 600; color: var(--text); }
+.stat-lbl { font-size: 10px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 1px; }
+
+/* ── FILTER CHIPS ── */
+.chip-bar { display: flex; gap: 6px; padding: 12px 16px; overflow-x: auto; scrollbar-width: none; }
+.chip-bar::-webkit-scrollbar { display: none; }
+.chip {
+  flex-shrink: 0;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid var(--border2);
+  background: var(--bg2);
+  color: var(--text2);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.chip.active { background: var(--text); color: var(--bg); border-color: var(--text); }
 
 /* ── SPRIT ── */
-.sprit-header{padding:14px 16px 4px}
-.sprit-key-section{margin:0 16px 12px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:14px}
-.sprit-key-section h3{font-size:13px;color:var(--text2);margin-bottom:10px;font-weight:500}
-.sprit-key-row{display:flex;gap:8px}
-input[type=text],input[type=password]{flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:9px;color:var(--text);padding:9px 12px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;-webkit-appearance:none}
-.btn-sm-green{background:rgba(74,158,107,0.15);color:#4a9e6b;border:1px solid rgba(74,158,107,0.3);border-radius:9px;padding:9px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap}
-.sprit-filter{display:flex;gap:6px;padding:0 16px 10px}
-.fuel-chip{flex:1;text-align:center;padding:8px;border-radius:10px;font-size:12px;font-weight:600;border:1px solid var(--border2);background:var(--bg2);color:var(--text2);cursor:pointer}
-.fuel-chip.active{border-color:rgba(212,168,32,0.5);background:rgba(212,168,32,0.1);color:#d4a820}
-.sprit-list{padding:0 16px;display:flex;flex-direction:column;gap:5px}
-.sprit-card{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:12px}
-.sprit-rank{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
-.sprit-rank.gold{background:rgba(212,168,32,0.2);color:#d4a820}
-.sprit-rank.silver{background:rgba(136,136,136,0.2);color:#aaa}
-.sprit-rank.bronze{background:rgba(196,114,74,0.2);color:#c47a4a}
-.sprit-rank.other{background:var(--bg3);color:var(--text3)}
-.sprit-info{flex:1;min-width:0}
-.sprit-name{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sprit-dist{font-size:11px;color:var(--text3);margin-top:1px}
-.sprit-price{font-size:20px;font-weight:600;color:#d4a820;flex-shrink:0}
-.sprit-price-sub{font-size:10px;color:var(--text3);text-align:right;margin-top:1px}
-.sprit-updated{font-size:11px;color:var(--text3);text-align:center;padding:10px 16px 0}
-.no-key-hint{margin:16px;padding:16px;background:var(--bg2);border:1px dashed var(--border2);border-radius:14px;text-align:center}
-.no-key-hint-icon{font-size:32px;margin-bottom:8px}
-.no-key-hint-text{font-size:13px;color:var(--text2);line-height:1.6}
-.no-key-hint a{color:#4a9e6b;text-decoration:none}
+.sprit-price-big { font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.sprit-price-big sup { font-size: 13px; font-weight: 500; }
+.rank-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
 
-/* ── ADD ── */
-.add-section{margin:14px 16px;padding:18px;background:var(--bg2);border:1px solid var(--border);border-radius:14px}
-.add-section h3{font-size:13px;font-weight:500;color:var(--text2);margin-bottom:14px}
-.form-row{margin-bottom:10px}
-.form-label{font-size:12px;color:var(--text2);margin-bottom:5px;display:block}
-select,input[type=date]{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:9px;color:var(--text);padding:10px 12px;font-size:14px;font-family:'DM Sans',sans-serif;-webkit-appearance:none;appearance:none;outline:none}
-select option{background:#222}
-.btn-primary{width:100%;background:var(--text);color:var(--bg);border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer}
-.btn-secondary{width:100%;background:var(--bg3);color:var(--text);border:1px solid var(--border2);border-radius:10px;padding:11px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:7px}
-.ics-drop{border:2px dashed var(--border2);border-radius:10px;padding:20px;text-align:center;cursor:pointer;margin-top:8px}
-.ics-drop:hover{border-color:rgba(74,158,107,0.5)}
-#ics-file-input{display:none}
+/* ── FUEL SELECTOR ── */
+.fuel-bar { display: flex; gap: 6px; padding: 12px 16px; }
+.fuel-chip {
+  flex: 1;
+  text-align: center;
+  padding: 8px 4px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--border2);
+  background: var(--bg2);
+  color: var(--text2);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.fuel-chip.active {
+  background: var(--c-amber-bg);
+  color: var(--c-amber);
+  border-color: transparent;
+}
+
+/* ── WERTSTOFFHOF ── */
+.wsh-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+}
+.wsh-status-open  { font-size: 12px; font-weight: 500; color: var(--c-green); }
+.wsh-status-closed { font-size: 12px; font-weight: 500; color: var(--c-red); }
+.wsh-hours {
+  font-size: 11px;
+  color: var(--text3);
+  margin-top: 1px;
+}
+
+/* ── WEATHER ── */
+.weather-temp { font-size: 36px; font-weight: 300; color: var(--text); line-height: 1; }
+.weather-range { font-size: 12px; color: var(--text3); margin-top: 3px; font-variant-numeric: tabular-nums; }
 
 /* ── SETTINGS ── */
-.settings-section{margin:0 16px 4px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden}
-.settings-row{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border);gap:12px}
-.settings-row:last-child{border-bottom:none}
-.settings-icon{font-size:18px;flex-shrink:0;width:26px;text-align:center}
-.settings-info{flex:1}
-.settings-title{font-size:14px;font-weight:500}
-.settings-desc{font-size:11px;color:var(--text2);margin-top:2px}
-.toggle{position:relative;width:44px;height:24px;flex-shrink:0}
-.toggle input{opacity:0;width:0;height:0}
-.toggle-track{position:absolute;inset:0;background:var(--bg4);border-radius:12px;cursor:pointer;border:1px solid var(--border2)}
-.toggle input:checked+.toggle-track{background:#4a9e6b;border-color:#4a9e6b}
-.toggle-track::after{content:'';position:absolute;left:3px;top:50%;transform:translateY(-50%);width:16px;height:16px;border-radius:50%;background:var(--text3);transition:all 0.2s}
-.toggle input:checked+.toggle-track::after{left:calc(100% - 19px);background:#fff}
-select.reminder-select{width:auto;padding:5px 9px;font-size:12px;border-radius:7px}
-.btn-sm{background:var(--bg3);color:var(--text);border:1px solid var(--border2);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer}
-.notif-banner{margin:12px 16px;padding:12px 14px;background:rgba(74,158,107,0.1);border:1px solid rgba(74,158,107,0.25);border-radius:10px;font-size:13px;color:#4a9e6b;cursor:pointer;display:flex;align-items:center;gap:9px}
-.notif-banner.hidden{display:none}
-.install-hint{margin:0 16px 14px;padding:14px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;font-size:13px;color:var(--text2);line-height:1.6;display:none}
-.install-hint strong{color:var(--text)}
-.empty-state{text-align:center;padding:48px 20px;color:var(--text3)}
-.empty-state-icon{font-size:36px;margin-bottom:10px}
-.empty-state-text{font-size:14px;line-height:1.6}
-.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--bg4);color:var(--text);padding:9px 18px;border-radius:20px;font-size:13px;border:1px solid var(--border2);z-index:100;opacity:0;transition:opacity 0.2s;white-space:nowrap}
-.toast.show{opacity:1}
+.settings-section { margin: 0 16px 4px; background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+.settings-row { display: flex; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--border); gap: 12px; }
+.settings-row:last-child { border-bottom: none; }
+.settings-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--bg3); display: flex; align-items: center; justify-content: center; font-size: 15px; color: var(--text2); flex-shrink: 0; }
+.settings-info { flex: 1; }
+.settings-title { font-size: 14px; font-weight: 500; color: var(--text); }
+.settings-desc { font-size: 12px; color: var(--text3); margin-top: 1px; }
+
+/* ── TOGGLE ── */
+.toggle { position: relative; width: 44px; height: 26px; flex-shrink: 0; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-track {
+  position: absolute; inset: 0;
+  background: var(--bg4);
+  border-radius: 13px;
+  cursor: pointer;
+  border: 1px solid var(--border2);
+  transition: all 0.2s;
+}
+.toggle input:checked + .toggle-track { background: var(--c-green); border-color: transparent; }
+.toggle-track::after {
+  content: '';
+  position: absolute;
+  left: 3px; top: 50%;
+  transform: translateY(-50%);
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--bg2);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  transition: all 0.2s;
+}
+.toggle input:checked + .toggle-track::after { left: calc(100% - 21px); }
+
+/* ── FORM ── */
+.form-section { margin: 14px 16px; background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 18px; }
+.form-section h3 { font-size: 13px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 14px; }
+.form-row { margin-bottom: 10px; }
+.form-label { font-size: 12px; font-weight: 500; color: var(--text2); margin-bottom: 5px; display: block; }
+select, input[type=date], input[type=text], input[type=password] {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  color: var(--text);
+  padding: 10px 14px;
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+select:focus, input:focus { border-color: var(--text2); }
+select option { background: var(--bg2); }
+.btn-primary {
+  width: 100%;
+  background: var(--text);
+  color: var(--bg);
+  border: none;
+  border-radius: 12px;
+  padding: 13px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.btn-primary:active { opacity: 0.8; }
+.btn-secondary {
+  width: 100%;
+  background: var(--bg3);
+  color: var(--text);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: 11px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  margin-top: 8px;
+}
+.btn-sm {
+  background: var(--bg3);
+  color: var(--text);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+}
+.btn-sm-green {
+  background: var(--c-green-bg);
+  color: var(--c-green);
+  border: none;
+  border-radius: 8px;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* ── ICS DROP ── */
+.ics-drop {
+  border: 1.5px dashed var(--border2);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-top: 8px;
+}
+.ics-drop:hover { border-color: var(--c-green); background: var(--c-green-bg); }
+#ics-file-input { display: none; }
+
+/* ── NOTIF BANNER ── */
+.notif-banner {
+  margin: 12px 16px;
+  padding: 12px 16px;
+  background: var(--c-blue-bg);
+  border: 1px solid transparent;
+  border-radius: 12px;
+  font-size: 13px;
+  color: var(--c-blue);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+}
+.notif-banner.hidden { display: none; }
+
+/* ── COMING SOON ── */
+.coming-soon {
+  margin: 40px 20px;
+  text-align: center;
+  padding: 40px 20px;
+  background: var(--bg2);
+  border-radius: 20px;
+  border: 1px solid var(--border);
+}
+.coming-soon-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: var(--bg3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin: 0 auto 16px;
+  color: var(--text3);
+}
+.coming-soon h2 { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.coming-soon p { font-size: 14px; color: var(--text3); line-height: 1.6; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed;
+  bottom: calc(var(--nav-h) + var(--safe-b) + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--text);
+  color: var(--bg);
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 200;
+  opacity: 0;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; }
+
+/* ── EMPTY STATE ── */
+.empty-state { text-align: center; padding: 48px 24px; color: var(--text3); }
+.empty-state i { font-size: 36px; margin-bottom: 12px; display: block; }
+.empty-state p { font-size: 14px; line-height: 1.6; }
+
+/* ── INSTALL HINT ── */
+.install-hint {
+  margin: 0 16px 14px;
+  padding: 14px 16px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.6;
+  display: none;
+}
+.install-hint strong { color: var(--text); font-weight: 600; }
+
+/* ── SPRIT KEY ROW ── */
+.key-row { display: flex; gap: 8px; }
+.key-row input { flex: 1; }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="header-top">
+<!-- ═══ HEADER ═══ -->
+<header class="app-header" id="app-header">
+  <div class="header-inner">
     <div>
-      <div class="header-sub">Bahnhofstraße · 73563 Mögglingen</div>
-      <div class="header-title">Mögglingen <span>App</span></div>
+      <div class="header-location">73563 · Mögglingen</div>
+      <div class="header-title" id="header-title">Home</div>
     </div>
-    <button class="icon-btn" id="header-action-btn">🔔</button>
+    <div class="header-actions">
+      <button class="icon-btn" id="theme-btn" onclick="toggleTheme()" aria-label="Design wechseln">
+        <i class="ti ti-sun" id="theme-icon"></i>
+      </button>
+      <button class="icon-btn" id="notif-btn" onclick="refreshReminders()" aria-label="Erinnerungen">
+        <i class="ti ti-bell"></i>
+      </button>
+    </div>
   </div>
-</div>
-
-<div class="nav">
-  <div class="nav-tab active" onclick="switchTab('muell')">🗑️ Müll</div>
-  <div class="nav-tab" onclick="switchTab('bus')">🚌 Bus & Bahn</div>
-  <div class="nav-tab" onclick="switchTab('sprit')">⛽ Sprit</div>
-  <div class="nav-tab" onclick="switchTab('add')">➕ Hinzufügen</div>
-  <div class="nav-tab" onclick="switchTab('settings')">⚙️ Einstellungen</div>
-</div>
+</header>
 
 <div id="notif-banner" class="notif-banner hidden" onclick="requestNotifications()">
-  🔔 <span>Benachrichtigungen aktivieren</span>
+  <i class="ti ti-bell-ringing"></i>
+  <span>Benachrichtigungen aktivieren</span>
 </div>
 
-<!-- ═══════════════ MÜLL ═══════════════ -->
-<div id="view-muell" class="view active">
-  <div class="filter-bar" id="filter-bar"></div>
-  <div id="next-banner" class="next-banner" style="display:none">
-    <div class="next-label">Als nächstes rausstellen</div>
-    <div id="next-items"></div>
-  </div>
-  <div id="stats-bar"></div>
-  <div id="pickup-container"></div>
-  <div class="section-label" id="past-label" style="display:none">Vergangene Termine</div>
-  <div class="pickup-list" id="past-list"></div>
-</div>
+<!-- ═══════════════════════════════════════
+     HOME
+═══════════════════════════════════════ -->
+<div id="view-home" class="view active">
+  <div style="padding: 16px 16px 0; display: flex; flex-direction: column; gap: 12px;">
 
-<!-- ═══════════════ BUS ═══════════════ -->
-<div id="view-bus" class="view">
-  <div class="bus-header">
-    <div>
-      <div class="bus-station-label">Haltestelle</div>
-      <div class="bus-station-name" id="active-station-name">Mögglingen Bahnhof</div>
+    <!-- Next Pickups -->
+    <div class="card" id="home-muell-card">
+      <div class="card-header">
+        <span class="card-label">Nächste Abholung</span>
+        <span class="card-meta" id="home-muell-meta"></span>
+      </div>
+      <div class="card-body" id="home-muell-body" style="padding:0">
+        <div class="empty-state" style="padding:24px">
+          <i class="ti ti-calendar-off" style="font-size:24px;margin-bottom:6px"></i>
+          <p style="font-size:13px">Keine Termine — jetzt laden</p>
+        </div>
+      </div>
     </div>
-    <button class="refresh-btn" onclick="loadDepartures()">↻ Aktualisieren</button>
-  </div>
-  <div class="station-tabs" id="station-tabs"></div>
-  <div id="dep-container">
-    <div class="loading-state"><div class="loading-spinner">⏳</div><div style="font-size:13px;color:var(--text3);margin-top:6px">Lade Abfahrten…</div></div>
+
+    <!-- Sprit preview -->
+    <div class="card" id="home-sprit-card">
+      <div class="card-header">
+        <span class="card-label">Spritpreise</span>
+        <span class="card-meta" id="home-sprit-fuel-label">Super E5</span>
+      </div>
+      <div class="card-body" id="home-sprit-body" style="padding:0">
+        <div class="card-row" style="padding:14px 16px">
+          <div class="type-icon" style="background:var(--bg3); color:var(--text3)">
+            <i class="ti ti-gas-station"></i>
+          </div>
+          <div class="type-info">
+            <div class="type-name" style="color:var(--text3)">Warte auf API-Key…</div>
+            <div class="type-sub">Tankerkönig wird geladen</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wertstoffhof -->
+    <div class="card" id="home-wsh-card">
+      <div class="wsh-row">
+        <div class="type-icon" style="background:var(--c-green-bg); color:var(--c-green)">
+          <i class="ti ti-building-warehouse"></i>
+        </div>
+        <div class="type-info">
+          <div class="type-name">Wertstoffhof Ellert</div>
+          <div id="wsh-status" class="wsh-status-open">Wird geprüft…</div>
+          <div id="wsh-hours" class="wsh-hours"></div>
+        </div>
+        <i class="ti ti-chevron-right" style="color:var(--text3);font-size:16px"></i>
+      </div>
+    </div>
+
+    <!-- Wetter -->
+    <div class="card" id="home-weather-card">
+      <div class="card-header">
+        <span class="card-label">Wetter · Mögglingen</span>
+        <span class="card-meta" id="weather-desc">—</span>
+      </div>
+      <div style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:14px">
+          <div class="type-icon" style="background:var(--c-blue-bg);color:var(--c-blue);width:48px;height:48px;border-radius:12px;font-size:22px">
+            <i class="ti ti-cloud-sun" id="weather-icon"></i>
+          </div>
+          <div>
+            <div class="weather-temp" id="weather-temp">—°</div>
+            <div class="weather-range" id="weather-range"></div>
+          </div>
+        </div>
+        <div style="text-align:right;display:flex;flex-direction:column;gap:6px" id="weather-extras"></div>
+      </div>
+    </div>
+
   </div>
 </div>
 
-<!-- ═══════════════ SPRIT ═══════════════ -->
+<!-- ═══════════════════════════════════════
+     MÜLL
+═══════════════════════════════════════ -->
+<div id="view-muell" class="view">
+  <div class="chip-bar" id="filter-bar"></div>
+  <div id="muell-stats"></div>
+  <div id="muell-upcoming"></div>
+  <div class="section-label" id="past-label" style="display:none">Vergangene Termine</div>
+  <div id="muell-past"></div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SPRIT
+═══════════════════════════════════════ -->
 <div id="view-sprit" class="view">
-  <div class="sprit-header">
-    <div class="section-label" style="padding:14px 0 4px">Tankstellen in der Nähe</div>
+  <div class="fuel-bar">
+    <button class="fuel-chip active" id="fchip-e5" onclick="setFuel('e5')">Super E5</button>
+    <button class="fuel-chip" id="fchip-e10" onclick="setFuel('e10')">Super E10</button>
+    <button class="fuel-chip" id="fchip-diesel" onclick="setFuel('diesel')">Diesel</button>
   </div>
-  <div class="sprit-key-section" id="sprit-key-section">
+  <div id="sprit-key-section" class="form-section" style="margin-top:4px">
     <h3>Tankerkönig API-Key</h3>
-    <div class="sprit-key-row">
+    <div class="key-row">
       <input type="password" id="tk-key-input" placeholder="API-Key eingeben…">
       <button class="btn-sm-green" onclick="saveTKKey()">Speichern</button>
     </div>
-    <div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.5">
-      Kostenlos auf <a href="https://creativecommons.tankerkoenig.de" style="color:#4a9e6b">creativecommons.tankerkoenig.de</a> registrieren
-    </div>
+    <p style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.5">Kostenlos auf <a href="https://creativecommons.tankerkoenig.de" style="color:var(--c-green)">creativecommons.tankerkoenig.de</a></p>
   </div>
-  <div class="sprit-filter" id="sprit-filter">
-    <div class="fuel-chip active" onclick="setFuel('e5')" id="chip-e5">Super E5</div>
-    <div class="fuel-chip" onclick="setFuel('e10')" id="chip-e10">Super E10</div>
-    <div class="fuel-chip" onclick="setFuel('diesel')" id="chip-diesel">Diesel</div>
-  </div>
-  <div id="sprit-container">
-    <div class="no-key-hint">
-      <div class="no-key-hint-icon">⛽</div>
-      <div class="no-key-hint-text">API-Key eingeben um Echtzeit-Spritpreise<br>für Tankstellen rund um Mögglingen zu sehen.<br><br>Kostenlos auf <a href="https://creativecommons.tankerkoenig.de">creativecommons.tankerkoenig.de</a></div>
-    </div>
-  </div>
-  <div class="sprit-updated" id="sprit-updated"></div>
+  <div id="sprit-list-wrap"></div>
+  <div id="sprit-updated" style="font-size:11px;color:var(--text3);text-align:center;padding:8px 16px 0"></div>
 </div>
 
-<!-- ═══════════════ HINZUFÜGEN ═══════════════ -->
-<div id="view-add" class="view">
-  <div class="add-section">
-    <h3>ICS-Datei der GOA importieren</h3>
+<!-- ═══════════════════════════════════════
+     BUS (COMING SOON)
+═══════════════════════════════════════ -->
+<div id="view-bus" class="view">
+  <div class="coming-soon">
+    <div class="coming-soon-icon">
+      <i class="ti ti-bus"></i>
+    </div>
+    <h2>Bus & Bahn</h2>
+    <p>Echtzeit-Abfahrten für Mögglingen Bahnhof folgen bald. Wir arbeiten an der Integration.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     MEHR (Hinzufügen + Einstellungen)
+═══════════════════════════════════════ -->
+<div id="view-mehr" class="view">
+
+  <div class="form-section" style="margin-top:16px">
+    <h3>ICS importieren</h3>
     <div class="ics-drop" onclick="document.getElementById('ics-file-input').click()">
-      <div style="font-size:26px;margin-bottom:6px">📅</div>
-      <div style="font-size:13px;color:var(--text2)">ICS-Datei hier antippen</div>
-      <div style="font-size:11px;color:var(--text3);margin-top:3px">Von goa-online.de → Abfuhrkalender herunterladen</div>
+      <i class="ti ti-upload" style="font-size:24px;color:var(--text3);margin-bottom:6px;display:block"></i>
+      <div style="font-size:13px;color:var(--text2)">ICS-Datei von goa-online.de hier ablegen</div>
     </div>
     <input type="file" id="ics-file-input" accept=".ics">
   </div>
-  <div class="add-section">
-    <h3>Termin manuell eintragen</h3>
+
+  <div class="form-section">
+    <h3>Termin hinzufügen</h3>
     <div class="form-row">
       <label class="form-label">Abfallart</label>
       <select id="add-type">
-        <option value="restmuell">🗑️ Hausmüll (HM)</option>
-        <option value="bio">🌿 Bioabfälle (Bio)</option>
-        <option value="papier">📰 Blaue Tonne (BT)</option>
-        <option value="gelb">♻️ Gelber Sack (GS)</option>
-        <option value="gartentonne">🌱 Gartentonne (GT)</option>
-        <option value="gruenabfuhr">🌳 Grünabfuhr (GA)</option>
-        <option value="altpapier_verein">📦 AV Holsammlung (AVH)</option>
-        <option value="christbaum">🎄 Christbaumsammlung (CS)</option>
+        <option value="restmuell">Hausmüll (HM)</option>
+        <option value="bio">Bioabfälle (Bio)</option>
+        <option value="papier">Blaue Tonne (BT)</option>
+        <option value="gelb">Gelber Sack (GS)</option>
+        <option value="gartentonne">Gartentonne (GT)</option>
+        <option value="gruenabfuhr">Grünabfuhr (GA)</option>
+        <option value="altpapier_verein">AV Holsammlung (AVH)</option>
+        <option value="christbaum">Christbaumsammlung (CS)</option>
       </select>
     </div>
     <div class="form-row">
@@ -264,34 +778,42 @@ select.reminder-select{width:auto;padding:5px 9px;font-size:12px;border-radius:7
       <input type="date" id="add-date">
     </div>
     <button class="btn-primary" onclick="addPickup()">Termin hinzufügen</button>
-    <button class="btn-secondary" onclick="loadGOAData()">📋 Alle GOA-Termine 2026/2027 laden</button>
+    <button class="btn-secondary" onclick="loadGOAData()">
+      <i class="ti ti-calendar-plus" style="margin-right:6px;vertical-align:-1px"></i>
+      Alle GOA-Termine 2026/2027 laden
+    </button>
   </div>
-</div>
 
-<!-- ═══════════════ EINSTELLUNGEN ═══════════════ -->
-<div id="view-settings" class="view">
   <div class="section-label">Erinnerungen</div>
   <div class="settings-section">
     <div class="settings-row">
-      <div class="settings-icon">🔔</div>
-      <div class="settings-info"><div class="settings-title">Benachrichtigungen</div><div class="settings-desc" id="notif-status">Wird geprüft…</div></div>
+      <div class="settings-icon"><i class="ti ti-bell"></i></div>
+      <div class="settings-info">
+        <div class="settings-title">Benachrichtigungen</div>
+        <div class="settings-desc" id="notif-status">Wird geprüft…</div>
+      </div>
       <label class="toggle"><input type="checkbox" id="toggle-notifs" onchange="toggleNotifications(this.checked)"><div class="toggle-track"></div></label>
     </div>
     <div class="settings-row">
-      <div class="settings-icon">⏰</div>
-      <div class="settings-info"><div class="settings-title">Wie früh erinnern?</div><div class="settings-desc">Vor dem Abholtermin</div></div>
-      <select class="reminder-select" id="reminder-days" onchange="saveSettings()">
+      <div class="settings-icon"><i class="ti ti-clock"></i></div>
+      <div class="settings-info">
+        <div class="settings-title">Wie früh erinnern?</div>
+        <div class="settings-desc">Vor dem Abholtermin</div>
+      </div>
+      <select style="width:auto;padding:5px 10px;font-size:12px;border-radius:8px" id="reminder-days" onchange="saveSettings()">
         <option value="0">Selber Tag</option>
-        <option value="1">1 Tag vorher</option>
-        <option value="2" selected>2 Tage vorher</option>
-        <option value="3">3 Tage vorher</option>
-        <option value="7">1 Woche vorher</option>
+        <option value="1">1 Tag</option>
+        <option value="2" selected>2 Tage</option>
+        <option value="3">3 Tage</option>
+        <option value="7">1 Woche</option>
       </select>
     </div>
     <div class="settings-row">
-      <div class="settings-icon">🕗</div>
-      <div class="settings-info"><div class="settings-title">Uhrzeit</div><div class="settings-desc">Wann kommt die Erinnerung?</div></div>
-      <select class="reminder-select" id="reminder-time" onchange="saveSettings()">
+      <div class="settings-icon"><i class="ti ti-clock-hour-8"></i></div>
+      <div class="settings-info">
+        <div class="settings-title">Uhrzeit</div>
+      </div>
+      <select style="width:auto;padding:5px 10px;font-size:12px;border-radius:8px" id="reminder-time" onchange="saveSettings()">
         <option value="07:00">07:00</option>
         <option value="08:00" selected>08:00</option>
         <option value="17:00">17:00</option>
@@ -301,81 +823,306 @@ select.reminder-select{width:auto;padding:5px 9px;font-size:12px;border-radius:7
       </select>
     </div>
     <div class="settings-row">
-      <div class="settings-icon">🧪</div>
-      <div class="settings-info"><div class="settings-title">Test-Benachrichtigung</div><div class="settings-desc">Sofort eine Probe schicken</div></div>
-      <button class="btn-sm" onclick="testNotification()">Testen</button>
+      <div class="settings-icon"><i class="ti ti-test-pipe"></i></div>
+      <div class="settings-info">
+        <div class="settings-title">Test-Benachrichtigung</div>
+      </div>
+      <button class="btn-sm" onclick="testNotification()">Senden</button>
     </div>
   </div>
 
-  <div class="section-label">Tonnen anzeigen</div>
+  <div class="section-label">Tonnen filtern</div>
   <div class="settings-section" id="visibility-settings"></div>
 
   <div class="section-label">App</div>
   <div class="settings-section">
     <div class="settings-row">
-      <div class="settings-icon">📲</div>
-      <div class="settings-info"><div class="settings-title">Zum Homescreen hinzufügen</div><div class="settings-desc">Als PWA installieren</div></div>
+      <div class="settings-icon"><i class="ti ti-device-mobile"></i></div>
+      <div class="settings-info">
+        <div class="settings-title">Zum Homescreen hinzufügen</div>
+        <div class="settings-desc">Als PWA installieren</div>
+      </div>
       <button class="btn-sm" onclick="showInstallHint()">Anleitung</button>
     </div>
     <div class="settings-row">
-      <div class="settings-icon">🗑️</div>
-      <div class="settings-info"><div class="settings-title">Alle Termine löschen</div><div class="settings-desc">App zurücksetzen</div></div>
-      <button class="btn-sm" style="color:#c44;border-color:rgba(204,68,68,0.3)" onclick="clearAll()">Löschen</button>
+      <div class="settings-icon"><i class="ti ti-trash"></i></div>
+      <div class="settings-info">
+        <div class="settings-title">Alle Termine löschen</div>
+        <div class="settings-desc">App zurücksetzen</div>
+      </div>
+      <button class="btn-sm" style="color:var(--c-red);border-color:var(--c-red-bg)" onclick="clearAll()">Löschen</button>
     </div>
   </div>
+
   <div class="install-hint" id="install-hint">
-    <strong>iPhone/iPad (Safari):</strong><br>Teilen → „Zum Home-Bildschirm"<br><br>
-    <strong>Android (Chrome):</strong><br>Menü ⋮ → „App installieren"
+    <strong>iPhone/iPad:</strong> Safari → Teilen → „Zum Home-Bildschirm"<br><br>
+    <strong>Android:</strong> Chrome → Menü ⋮ → „App installieren"
   </div>
+
 </div>
+
+<!-- ═══ BOTTOM NAV ═══ -->
+<nav class="bottom-nav">
+  <div class="nav-item active" id="nav-home" onclick="switchTab('home')">
+    <div class="nav-icon-wrap"><i class="ti ti-home-2"></i></div>
+    <span class="nav-label">Home</span>
+  </div>
+  <div class="nav-item" id="nav-muell" onclick="switchTab('muell')">
+    <div class="nav-icon-wrap"><i class="ti ti-trash"></i></div>
+    <span class="nav-label">Müll</span>
+  </div>
+  <div class="nav-item" id="nav-sprit" onclick="switchTab('sprit')">
+    <div class="nav-icon-wrap"><i class="ti ti-gas-station"></i></div>
+    <span class="nav-label">Sprit</span>
+  </div>
+  <div class="nav-item locked" id="nav-bus" onclick="switchTab('bus')">
+    <div class="nav-icon-wrap"><i class="ti ti-bus"></i></div>
+    <i class="ti ti-lock nav-lock"></i>
+    <span class="nav-label">Bus</span>
+  </div>
+  <div class="nav-item" id="nav-mehr" onclick="switchTab('mehr')">
+    <div class="nav-icon-wrap"><i class="ti ti-dots"></i></div>
+    <span class="nav-label">Mehr</span>
+  </div>
+</nav>
 
 <div class="toast" id="toast"></div>
 
 <script>
 // ══════════════════════════════════════════
-// TYPEN
+// DATEN & TYPEN
 // ══════════════════════════════════════════
 const TYPES = {
-  restmuell:       {label:'Hausmüll',           kuerzel:'HM',  emoji:'🗑️', color:'#888',    bg:'rgba(136,136,136,0.14)'},
-  bio:             {label:'Bioabfälle',          kuerzel:'Bio', emoji:'🌿', color:'#4a9e6b', bg:'rgba(74,158,107,0.14)'},
-  papier:          {label:'Blaue Tonne',         kuerzel:'BT',  emoji:'📰', color:'#4a7bc4', bg:'rgba(74,123,196,0.14)'},
-  gelb:            {label:'Gelber Sack',         kuerzel:'GS',  emoji:'♻️', color:'#d4a820', bg:'rgba(212,168,32,0.14)'},
-  gartentonne:     {label:'Gartentonne',         kuerzel:'GT',  emoji:'🌱', color:'#5daa3a', bg:'rgba(93,170,58,0.14)'},
-  gruenabfuhr:     {label:'Grünabfuhr',          kuerzel:'GA',  emoji:'🌳', color:'#2e7d32', bg:'rgba(46,125,50,0.14)'},
-  altpapier_verein:{label:'AV Holsammlung',      kuerzel:'AVH', emoji:'📦', color:'#7b5ea7', bg:'rgba(123,94,167,0.14)'},
-  christbaum:      {label:'Christbaumsammlung',  kuerzel:'CS',  emoji:'🎄', color:'#c0392b', bg:'rgba(192,57,43,0.14)'}
+  restmuell:       {label:'Hausmüll',          kuerzel:'HM',  icon:'ti-trash',          color:'#6B7280', bg:'#F3F4F6', darkBg:'#1F2937'},
+  bio:             {label:'Bioabfälle',         kuerzel:'Bio', icon:'ti-leaf',            color:'#2D6A4F', bg:'#D8F3DC', darkBg:'#064E3B'},
+  papier:          {label:'Blaue Tonne',        kuerzel:'BT',  icon:'ti-file-text',       color:'#1E40AF', bg:'#DBEAFE', darkBg:'#1E3A5F'},
+  gelb:            {label:'Gelber Sack',        kuerzel:'GS',  icon:'ti-recycle',         color:'#92400E', bg:'#FEF3C7', darkBg:'#451A03'},
+  gartentonne:     {label:'Gartentonne',        kuerzel:'GT',  icon:'ti-plant-2',         color:'#166534', bg:'#DCFCE7', darkBg:'#14532D'},
+  gruenabfuhr:     {label:'Grünabfuhr',         kuerzel:'GA',  icon:'ti-trees',           color:'#14532D', bg:'#F0FDF4', darkBg:'#052E16'},
+  altpapier_verein:{label:'AV Holsammlung',     kuerzel:'AVH', icon:'ti-box',             color:'#5B21B6', bg:'#EDE9FE', darkBg:'#2E1065'},
+  christbaum:      {label:'Christbaumsammlung', kuerzel:'CS',  icon:'ti-christmas-tree',  color:'#9B1C1C', bg:'#FEE2E2', darkBg:'#450A0A'}
 };
 
 const GOA_TERMINE = [{"type":"bio","date":"2026-03-07"},{"type":"bio","date":"2026-03-20"},{"type":"papier","date":"2026-03-20"},{"type":"gelb","date":"2026-03-20"},{"type":"gartentonne","date":"2026-03-20"},{"type":"gartentonne","date":"2026-04-04"},{"type":"bio","date":"2026-04-07"},{"type":"restmuell","date":"2026-04-14"},{"type":"gartentonne","date":"2026-04-17"},{"type":"bio","date":"2026-04-20"},{"type":"papier","date":"2026-04-23"},{"type":"gelb","date":"2026-04-23"},{"type":"restmuell","date":"2026-04-28"},{"type":"gartentonne","date":"2026-05-02"},{"type":"bio","date":"2026-05-04"},{"type":"gruenabfuhr","date":"2026-05-04"},{"type":"bio","date":"2026-05-11"},{"type":"restmuell","date":"2026-05-12"},{"type":"gartentonne","date":"2026-05-16"},{"type":"bio","date":"2026-05-18"},{"type":"papier","date":"2026-05-21"},{"type":"gelb","date":"2026-05-21"},{"type":"bio","date":"2026-05-26"},{"type":"restmuell","date":"2026-05-27"},{"type":"gartentonne","date":"2026-05-30"},{"type":"bio","date":"2026-06-01"},{"type":"bio","date":"2026-06-08"},{"type":"restmuell","date":"2026-06-09"},{"type":"gartentonne","date":"2026-06-12"},{"type":"altpapier_verein","date":"2026-06-13"},{"type":"bio","date":"2026-06-15"},{"type":"papier","date":"2026-06-16"},{"type":"papier","date":"2026-06-18"},{"type":"gelb","date":"2026-06-18"},{"type":"bio","date":"2026-06-22"},{"type":"restmuell","date":"2026-06-23"},{"type":"gartentonne","date":"2026-06-26"},{"type":"bio","date":"2026-06-29"},{"type":"bio","date":"2026-07-06"},{"type":"restmuell","date":"2026-07-07"},{"type":"gartentonne","date":"2026-07-10"},{"type":"bio","date":"2026-07-13"},{"type":"papier","date":"2026-07-16"},{"type":"gelb","date":"2026-07-16"},{"type":"bio","date":"2026-07-20"},{"type":"restmuell","date":"2026-07-21"},{"type":"gartentonne","date":"2026-07-24"},{"type":"bio","date":"2026-07-27"},{"type":"bio","date":"2026-08-03"},{"type":"restmuell","date":"2026-08-04"},{"type":"gartentonne","date":"2026-08-07"},{"type":"bio","date":"2026-08-10"},{"type":"papier","date":"2026-08-13"},{"type":"gelb","date":"2026-08-13"},{"type":"bio","date":"2026-08-17"},{"type":"restmuell","date":"2026-08-18"},{"type":"gartentonne","date":"2026-08-21"},{"type":"bio","date":"2026-08-24"},{"type":"bio","date":"2026-08-31"},{"type":"restmuell","date":"2026-09-01"},{"type":"gartentonne","date":"2026-09-04"},{"type":"altpapier_verein","date":"2026-09-05"},{"type":"bio","date":"2026-09-07"},{"type":"papier","date":"2026-09-10"},{"type":"gelb","date":"2026-09-10"},{"type":"bio","date":"2026-09-14"},{"type":"restmuell","date":"2026-09-15"},{"type":"gartentonne","date":"2026-09-18"},{"type":"bio","date":"2026-09-21"},{"type":"bio","date":"2026-09-28"},{"type":"restmuell","date":"2026-09-29"},{"type":"gartentonne","date":"2026-10-02"},{"type":"bio","date":"2026-10-05"},{"type":"papier","date":"2026-10-08"},{"type":"gelb","date":"2026-10-08"},{"type":"bio","date":"2026-10-12"},{"type":"restmuell","date":"2026-10-13"},{"type":"gartentonne","date":"2026-10-16"},{"type":"bio","date":"2026-10-19"},{"type":"bio","date":"2026-10-26"},{"type":"restmuell","date":"2026-10-27"},{"type":"gartentonne","date":"2026-10-30"},{"type":"bio","date":"2026-11-02"},{"type":"papier","date":"2026-11-05"},{"type":"gelb","date":"2026-11-05"},{"type":"bio","date":"2026-11-09"},{"type":"restmuell","date":"2026-11-10"},{"type":"gartentonne","date":"2026-11-13"},{"type":"bio","date":"2026-11-16"},{"type":"gruenabfuhr","date":"2026-11-20"},{"type":"bio","date":"2026-11-23"},{"type":"restmuell","date":"2026-11-24"},{"type":"gartentonne","date":"2026-11-27"},{"type":"bio","date":"2026-11-30"},{"type":"bio","date":"2026-12-02"},{"type":"papier","date":"2026-12-03"},{"type":"gelb","date":"2026-12-03"},{"type":"restmuell","date":"2026-12-08"},{"type":"gartentonne","date":"2026-12-11"},{"type":"bio","date":"2026-12-14"},{"type":"bio","date":"2026-12-21"},{"type":"restmuell","date":"2026-12-22"},{"type":"bio","date":"2026-12-29"},{"type":"papier","date":"2027-01-02"},{"type":"gelb","date":"2027-01-02"},{"type":"bio","date":"2027-01-05"},{"type":"restmuell","date":"2027-01-07"},{"type":"christbaum","date":"2027-01-11"},{"type":"bio","date":"2027-01-12"},{"type":"bio","date":"2027-01-18"},{"type":"restmuell","date":"2027-01-19"},{"type":"bio","date":"2027-01-25"},{"type":"papier","date":"2027-01-28"},{"type":"gelb","date":"2027-01-28"},{"type":"bio","date":"2027-02-01"},{"type":"restmuell","date":"2027-02-02"},{"type":"bio","date":"2027-02-08"},{"type":"bio","date":"2027-02-15"},{"type":"restmuell","date":"2027-02-16"},{"type":"bio","date":"2027-02-22"},{"type":"papier","date":"2027-02-25"},{"type":"gelb","date":"2027-02-25"},{"type":"bio","date":"2027-03-01"},{"type":"restmuell","date":"2027-03-02"},{"type":"altpapier_verein","date":"2027-03-06"},{"type":"bio","date":"2027-03-08"},{"type":"bio","date":"2027-03-15"},{"type":"restmuell","date":"2027-03-16"},{"type":"bio","date":"2027-03-22"},{"type":"papier","date":"2027-03-25"},{"type":"gelb","date":"2027-03-25"},{"type":"bio","date":"2027-03-30"},{"type":"restmuell","date":"2027-03-31"}];
 
-let pickups = JSON.parse(localStorage.getItem('pickups') || '[]');
-let settings = JSON.parse(localStorage.getItem('settings') || '{"reminderDays":2,"reminderTime":"08:00","notificationsEnabled":false}');
-let hiddenTypes = JSON.parse(localStorage.getItem('hiddenTypes') || '[]');
-let activeFilter = 'alle';
-let activeStation = 0;
-let activeFuel = 'e5';
-let tkKey = localStorage.getItem('tkKey') || '6a7afae6-ab0c-4c82-9317-c1dbeb735619';
+// Wertstoffhof Ellert Öffnungszeiten (Sommer: bis 31.10, Winter: ab 01.11)
+const WSH_SCHEDULE = {
+  sommer: { weekday:'07:30–18:00', sa:'08:00–13:00', so:null },
+  winter: { weekday:'07:30–17:00', sa:'08:00–13:00', so:null }
+};
 
+let pickups     = JSON.parse(localStorage.getItem('pickups') || '[]');
+let settings    = JSON.parse(localStorage.getItem('settings') || '{"reminderDays":2,"reminderTime":"08:00","notificationsEnabled":false}');
+let hiddenTypes = JSON.parse(localStorage.getItem('hiddenTypes') || '[]');
+let tkKey       = localStorage.getItem('tkKey') || '6a7afae6-ab0c-4c82-9317-c1dbeb735619';
+let activeFilter= 'alle';
+let activeFuel  = 'e5';
+let activeTab   = 'home';
+let isDark      = localStorage.getItem('theme') === 'dark';
+let spritCache  = null;
+
+// ── Init ──
 document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
 document.getElementById('reminder-days').value = settings.reminderDays;
 document.getElementById('reminder-time').value = settings.reminderTime;
-if(tkKey){ document.getElementById('tk-key-input').value='••••••••••••••••'; document.getElementById('sprit-key-section').style.display='none'; }
+if(tkKey) {
+  document.getElementById('tk-key-input').value = '••••••••••••••••';
+  document.getElementById('sprit-key-section').style.display = 'none';
+}
+applyTheme();
+checkNotifStatus();
+renderHome();
+loadWeather();
+renderWSH();
 
 // ══════════════════════════════════════════
-// TAB NAVIGATION
+// THEME
 // ══════════════════════════════════════════
+function applyTheme() {
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  document.getElementById('theme-icon').className = isDark ? 'ti ti-moon' : 'ti ti-sun';
+  document.querySelector('meta[name="theme-color"]').content = isDark ? '#111110' : '#F7F6F2';
+}
+function toggleTheme() {
+  isDark = !isDark;
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  applyTheme();
+}
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+const TAB_TITLES = { home:'Home', muell:'Müll', sprit:'Spritpreise', bus:'Bus & Bahn', mehr:'Mehr' };
 function switchTab(tab) {
-  document.querySelectorAll('.nav-tab').forEach((t,i) => {
-    t.classList.toggle('active', ['muell','bus','sprit','add','settings'][i] === tab);
-  });
+  if(tab === 'bus') { showToast('Bus & Bahn kommt bald'); return; }
+  activeTab = tab;
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('view-' + tab).classList.add('active');
-  if(tab === 'bus') { renderStationTabs(); loadDepartures(); }
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const ni = document.getElementById('nav-' + tab);
+  if(ni) ni.classList.add('active');
+  document.getElementById('header-title').textContent = TAB_TITLES[tab] || '';
   if(tab === 'sprit' && tkKey) loadSprit();
-  if(tab === 'settings') renderVisibilitySettings();
-  const btn = document.getElementById('header-action-btn');
-  btn.textContent = tab === 'bus' ? '↻' : '🔔';
-  btn.onclick = tab === 'bus' ? loadDepartures : refreshReminders;
+  if(tab === 'mehr') renderVisibilitySettings();
+  if(tab === 'home') renderHome();
+}
+
+// ══════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════
+function daysUntil(ds) {
+  const t=new Date(); t.setHours(0,0,0,0);
+  const d=new Date(ds+'T00:00:00'); d.setHours(0,0,0,0);
+  return Math.round((d-t)/86400000);
+}
+function fmtDate(ds) {
+  return new Date(ds+'T12:00:00').toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'});
+}
+function fmtDateShort(ds) {
+  return new Date(ds+'T12:00:00').toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'});
+}
+function getMonthKey(ds) {
+  return new Date(ds+'T12:00:00').toLocaleDateString('de-DE',{month:'long',year:'numeric'});
+}
+function typeIcon(type) {
+  const t = TYPES[type] || TYPES.restmuell;
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const bg = dark ? t.darkBg : t.bg;
+  return `<div class="type-icon" style="background:${bg};color:${t.color}"><i class="ti ${t.icon}"></i></div>`;
+}
+
+// ══════════════════════════════════════════
+// HOME
+// ══════════════════════════════════════════
+function renderHome() {
+  renderHomePickups();
+  if(tkKey) loadSpritPreview();
+  renderWSH();
+}
+
+function renderHomePickups() {
+  const upcoming = pickups.filter(p => !hiddenTypes.includes(p.type) && daysUntil(p.date) >= 0);
+  const body = document.getElementById('home-muell-body');
+  const meta = document.getElementById('home-muell-meta');
+
+  if(!upcoming.length) {
+    meta.textContent = '';
+    body.innerHTML = `<div class="empty-state" style="padding:20px">
+      <i class="ti ti-calendar-off" style="font-size:24px;margin-bottom:6px;color:var(--text3)"></i>
+      <p style="font-size:13px">Keine Termine — jetzt laden</p>
+    </div>`;
+    return;
+  }
+
+  // Group upcoming by date, show next date
+  const byDate = {};
+  upcoming.forEach(p => { (byDate[p.date] = byDate[p.date]||[]).push(p); });
+  const dates = Object.keys(byDate).sort();
+  const nextDate = dates[0];
+  const days = daysUntil(nextDate);
+  meta.textContent = days === 0 ? 'Heute!' : days === 1 ? 'Morgen' : `in ${days} Tagen`;
+
+  // Show next date + one more if exists
+  const showDates = dates.slice(0, 2);
+  body.innerHTML = showDates.map(date => {
+    const d = daysUntil(date);
+    const items = byDate[date];
+    return items.map((p,i) => {
+      const t = TYPES[p.type] || TYPES.restmuell;
+      const dark = isDark;
+      const bg = dark ? t.darkBg : t.bg;
+      let badge = '';
+      if(i === 0) {
+        if(d === 0) badge = `<span class="badge badge-today">Heute</span>`;
+        else if(d === 1) badge = `<span class="badge badge-tom">Morgen</span>`;
+        else if(d <= 3) badge = `<span class="badge badge-soon">in ${d} d</span>`;
+      }
+      return `<div class="card-row" style="padding:12px 16px">
+        <div class="type-icon" style="background:${bg};color:${t.color}"><i class="ti ${t.icon}"></i></div>
+        <div class="type-info">
+          <div class="type-name">${t.label}</div>
+          <div class="type-sub">${fmtDateShort(date)} · ${t.kuerzel}</div>
+        </div>
+        ${badge}
+      </div>`;
+    }).join('');
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+// WERTSTOFFHOF
+// ══════════════════════════════════════════
+function renderWSH() {
+  const now = new Date();
+  const dow = now.getDay(); // 0=So, 1=Mo...6=Sa
+  const h = now.getHours() + now.getMinutes()/60;
+  const month = now.getMonth() + 1;
+  const isSummer = month >= 3 && month <= 10;
+  const sched = isSummer ? WSH_SCHEDULE.sommer : WSH_SCHEDULE.winter;
+
+  const statusEl = document.getElementById('wsh-status');
+  const hoursEl = document.getElementById('wsh-hours');
+
+  if(dow === 0) { // Sonntag
+    statusEl.className = 'wsh-status-closed';
+    statusEl.textContent = 'Heute geschlossen';
+    hoursEl.textContent = 'Sonntags geschlossen';
+    return;
+  }
+  if(dow === 6) { // Samstag
+    const [open,close] = sched.sa.split('–').map(t => { const [hh,mm]=t.split(':'); return parseInt(hh)+parseInt(mm)/60; });
+    const isOpen = h >= open && h < close;
+    statusEl.className = isOpen ? 'wsh-status-open' : 'wsh-status-closed';
+    statusEl.textContent = isOpen ? `Geöffnet · bis ${sched.sa.split('–')[1]} Uhr` : `Heute geschlossen (Sa ${sched.sa})`;
+    hoursEl.textContent = 'Sa ' + sched.sa + ' Uhr';
+  } else { // Werktag
+    const [open,close] = sched.weekday.split('–').map(t => { const [hh,mm]=t.split(':'); return parseInt(hh)+parseInt(mm)/60; });
+    const isOpen = h >= open && h < close;
+    statusEl.className = isOpen ? 'wsh-status-open' : 'wsh-status-closed';
+    statusEl.textContent = isOpen ? `Geöffnet · bis ${sched.weekday.split('–')[1]} Uhr` : `Heute geschlossen`;
+    hoursEl.textContent = `Mo–Fr ${sched.weekday} Uhr`;
+  }
+}
+
+// ══════════════════════════════════════════
+// WETTER (Open-Meteo, kein Key)
+// ══════════════════════════════════════════
+async function loadWeather() {
+  try {
+    const url = 'https://api.open-meteo.com/v1/forecast?latitude=48.825&longitude=9.9589&current=temperature_2m,weathercode,windspeed_10m&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=Europe%2FBerlin&forecast_days=1';
+    const res = await fetch(url);
+    const data = await res.json();
+    const cur = data.current;
+    const day = data.daily;
+    const temp = Math.round(cur.temperature_2m);
+    const max  = Math.round(day.temperature_2m_max[0]);
+    const min  = Math.round(day.temperature_2m_min[0]);
+    const code = cur.weathercode;
+    const { desc, icon } = weatherCode(code);
+    document.getElementById('weather-temp').textContent  = temp + '°';
+    document.getElementById('weather-desc').textContent  = desc;
+    document.getElementById('weather-range').textContent = `↑${max}°  ↓${min}°`;
+    document.getElementById('weather-icon').className    = `ti ${icon}`;
+    const wind = Math.round(cur.windspeed_10m);
+    document.getElementById('weather-extras').innerHTML  =
+      `<div style="font-size:12px;color:var(--text3)"><i class="ti ti-wind" style="margin-right:3px"></i>${wind} km/h</div>`;
+  } catch(e) {
+    document.getElementById('weather-temp').textContent = '—';
+    document.getElementById('weather-desc').textContent = 'Nicht verfügbar';
+  }
+}
+
+function weatherCode(code) {
+  if(code === 0) return {desc:'Sonnig',icon:'ti-sun'};
+  if(code <= 2)  return {desc:'Überwiegend klar',icon:'ti-cloud-sun'};
+  if(code <= 3)  return {desc:'Bewölkt',icon:'ti-cloud'};
+  if(code <= 48) return {desc:'Neblig',icon:'ti-mist'};
+  if(code <= 57) return {desc:'Nieselregen',icon:'ti-cloud-drizzle'};
+  if(code <= 67) return {desc:'Regen',icon:'ti-cloud-rain'};
+  if(code <= 77) return {desc:'Schnee',icon:'ti-snowflake'};
+  if(code <= 82) return {desc:'Regenschauer',icon:'ti-cloud-rain'};
+  if(code <= 86) return {desc:'Schneeschauer',icon:'ti-snowflake'};
+  return {desc:'Gewitter',icon:'ti-bolt'};
 }
 
 // ══════════════════════════════════════════
@@ -384,308 +1131,221 @@ function switchTab(tab) {
 function addPickup() {
   const type = document.getElementById('add-type').value;
   const date = document.getElementById('add-date').value;
-  if(!date){showToast('Bitte ein Datum auswählen');return}
+  if(!date){showToast('Bitte ein Datum wählen');return;}
   pickups.push({id:Date.now(),type,date});
   pickups.sort((a,b)=>a.date.localeCompare(b.date));
-  save(); renderMuell(); showToast('Termin hinzugefügt ✓');
+  save(); renderMuell(); renderHomePickups();
+  showToast('Termin hinzugefügt');
 }
-function deletePickup(id){pickups=pickups.filter(p=>p.id!==id);save();renderMuell();}
-function save(){localStorage.setItem('pickups',JSON.stringify(pickups));scheduleAllReminders();}
-function formatDate(ds){const d=new Date(ds+'T12:00:00');return d.toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'});}
-function formatDateShort(ds){const d=new Date(ds+'T12:00:00');return d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'});}
-function daysUntil(ds){const t=new Date();t.setHours(0,0,0,0);const d=new Date(ds+'T00:00:00');d.setHours(0,0,0,0);return Math.round((d-t)/86400000);}
-function getMonthKey(ds){return new Date(ds+'T12:00:00').toLocaleDateString('de-DE',{month:'long',year:'numeric'});}
+function deletePickup(id) {
+  pickups = pickups.filter(p=>p.id!==id);
+  save(); renderMuell(); renderHomePickups();
+}
+function save() {
+  localStorage.setItem('pickups',JSON.stringify(pickups));
+  scheduleAllReminders();
+}
+function loadGOAData() {
+  const existing = new Set(pickups.map(p=>`${p.type}-${p.date}`));
+  const newOnes = GOA_TERMINE.filter(e=>!existing.has(`${e.type}-${e.date}`)).map((e,i)=>({...e,id:Date.now()+i}));
+  pickups = [...pickups,...newOnes].sort((a,b)=>a.date.localeCompare(b.date));
+  save(); renderMuell(); renderHomePickups();
+  showToast(`${newOnes.length} GOA-Termine geladen`);
+  switchTab('muell');
+}
+function setFilter(f) { activeFilter=f; renderMuell(); }
 
 function renderMuell() {
-  const visible = pickups.filter(p=>!hiddenTypes.includes(p.type));
+  const visible  = pickups.filter(p=>!hiddenTypes.includes(p.type));
   const filtered = activeFilter==='alle' ? visible : visible.filter(p=>p.type===activeFilter);
   const upcoming = filtered.filter(p=>daysUntil(p.date)>=0);
-  const past = filtered.filter(p=>daysUntil(p.date)<0);
+  const past     = filtered.filter(p=>daysUntil(p.date)<0);
 
+  // Filter chips
   const types = [...new Set(pickups.map(p=>p.type))];
   document.getElementById('filter-bar').innerHTML =
-    `<div class="chip ${activeFilter==='alle'?'active':''}" onclick="setFilter('alle')">Alle</div>` +
-    types.map(t=>{const d=TYPES[t]||TYPES.restmuell;return`<div class="chip ${activeFilter===t?'active':''}" onclick="setFilter('${t}')">${d.emoji} ${d.kuerzel}</div>`;}).join('');
+    `<button class="chip ${activeFilter==='alle'?'active':''}" onclick="setFilter('alle')">Alle</button>` +
+    types.map(t=>{const d=TYPES[t]||TYPES.restmuell;return`<button class="chip ${activeFilter===t?'active':''}" onclick="setFilter('${t}')">${d.kuerzel}</button>`;}).join('');
 
-  if(pickups.length){
-    const soon=pickups.filter(p=>daysUntil(p.date)>=0&&daysUntil(p.date)<=7).length;
-    const total=pickups.filter(p=>daysUntil(p.date)>=0).length;
-    const done=pickups.filter(p=>daysUntil(p.date)<0).length;
-    document.getElementById('stats-bar').innerHTML=`<div class="stats-bar"><div class="stat-item"><div class="stat-num">${soon}</div><div class="stat-label">Diese Woche</div></div><div class="stat-item"><div class="stat-num">${total}</div><div class="stat-label">Ausstehend</div></div><div class="stat-item"><div class="stat-num">${done}</div><div class="stat-label">Erledigt</div></div></div>`;
-  } else document.getElementById('stats-bar').innerHTML='';
-
-  const nb=document.getElementById('next-banner');
-  const imminent=visible.filter(p=>daysUntil(p.date)>=0&&daysUntil(p.date)<=7);
-  if(imminent.length){
-    nb.style.display='block';
-    const byDate={};imminent.forEach(p=>{(byDate[p.date]=byDate[p.date]||[]).push(p);});
-    const first=Object.keys(byDate).sort()[0];
-    document.getElementById('next-items').innerHTML=byDate[first].map(p=>{
-      const t=TYPES[p.type]||TYPES.restmuell,days=daysUntil(p.date);
-      const dc=days===0?'#4a9e6b':days===1?'#d4a820':'#888';
-      const db=days===0?'rgba(74,158,107,0.18)':days===1?'rgba(212,168,32,0.18)':'rgba(136,136,136,0.15)';
-      return`<div class="next-item"><div class="next-dot" style="background:${t.color}"></div><div class="next-item-name">${t.emoji} ${t.label}</div><div style="font-size:12px;color:var(--text2);flex:1;text-align:right">${formatDateShort(p.date)}</div><div class="next-item-days" style="background:${db};color:${dc};margin-left:6px">${days===0?'Heute':days===1?'Morgen':'in '+days+' d'}</div></div>`;
-    }).join('');
-  } else nb.style.display='none';
-
-  const container=document.getElementById('pickup-container');
-  if(!upcoming.length){
-    container.innerHTML='<div class="empty-state"><div class="empty-state-icon">📅</div><div class="empty-state-text">Keine Termine.<br>Wechsle zu „➕ Hinzufügen".</div></div>';
-  } else {
-    const byMonth={};upcoming.forEach(p=>{const m=getMonthKey(p.date);(byMonth[m]=byMonth[m]||[]).push(p);});
-    container.innerHTML=Object.entries(byMonth).map(([month,items])=>`<div class="month-divider">${month}</div><div class="pickup-list">${items.map(p=>renderCard(p,false)).join('')}</div>`).join('');
-  }
-
-  const pastLabel=document.getElementById('past-label');
-  const pastList=document.getElementById('past-list');
-  if(past.length){pastLabel.style.display='block';pastList.innerHTML=past.slice().reverse().slice(0,8).map(p=>renderCard(p,true)).join('');}
-  else{pastLabel.style.display='none';pastList.innerHTML='';}
-}
-
-function renderCard(p,isPast){
-  const t=TYPES[p.type]||TYPES.restmuell,days=daysUntil(p.date);
-  let badge='';
-  if(!isPast){
-    if(days===0)badge=`<div class="pickup-badge" style="background:rgba(74,158,107,0.2);color:#4a9e6b">Heute!</div>`;
-    else if(days===1)badge=`<div class="pickup-badge" style="background:rgba(212,168,32,0.2);color:#d4a820">Morgen</div>`;
-    else if(days<=3)badge=`<div class="pickup-badge" style="background:rgba(136,136,136,0.15);color:#888">in ${days} d</div>`;
-  }
-  return`<div class="pickup-card ${isPast?'past':''} ${days===0?'today':''}"><div class="pickup-color-bar" style="background:${t.color}"></div><div class="pickup-icon" style="background:${t.bg}">${t.emoji}</div><div class="pickup-info"><div class="pickup-type">${t.label} <span style="font-size:11px;color:var(--text3);font-weight:400">${t.kuerzel}</span></div><div class="pickup-date">${formatDate(p.date)}</div></div><div style="display:flex;gap:5px;align-items:center">${badge}<button class="delete-btn" onclick="deletePickup(${p.id})">✕</button></div></div>`;
-}
-function setFilter(f){activeFilter=f;renderMuell();}
-function loadGOAData(){
-  const existing=new Set(pickups.map(p=>`${p.type}-${p.date}`));
-  const newOnes=GOA_TERMINE.filter(e=>!existing.has(`${e.type}-${e.date}`)).map((e,i)=>({...e,id:Date.now()+i}));
-  pickups=[...pickups,...newOnes].sort((a,b)=>a.date.localeCompare(b.date));
-  save();renderMuell();showToast(`${newOnes.length} GOA-Termine geladen ✓`);switchTab('muell');
-}
-
-// ══════════════════════════════════════════
-// BUS & BAHN
-// ══════════════════════════════════════════
-// Haltestellen mit EVA-Nummern (DB)
-const STATIONS = [
-  {name:'Mögglingen (b Gmünd)', short:'Bahnhof/Zug', eva:'8005700'},
-  {name:'Mögglingen Bahnhofstr.', short:'Bahnhof Bus', eva:'721359'},
-  {name:'Mögglingen Mitte', short:'Mitte', eva:'721361'},
-];
-
-function renderStationTabs(){
-  document.getElementById('station-tabs').innerHTML = STATIONS.map((s,i)=>
-    `<div class="station-chip ${i===activeStation?'active':''}" onclick="selectStation(${i})">${s.short}</div>`
-  ).join('');
-}
-
-function selectStation(i){
-  activeStation=i;
-  document.getElementById('active-station-name').textContent=STATIONS[i].name;
-  renderStationTabs();
-  loadDepartures();
-}
-
-async function loadDepartures(){
-  const container=document.getElementById('dep-container');
-  container.innerHTML='<div class="loading-state"><div class="loading-spinner">⏳</div><div style="font-size:13px;color:var(--text3);margin-top:6px">Lade Abfahrten…</div></div>';
-  const station=STATIONS[activeStation];
-  
-  // Use DB Streckenagent / bahnhof.de widget API via allorigins CORS proxy
-  const now = new Date();
-  const dateStr = now.toISOString().slice(0,16);
-  const apiUrl = `https://www.bahnhof.de/api/boards/departures?evaNumbers=${station.eva}&duration=120&limit=20`;
-  const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(apiUrl)}`;
-  
-  try {
-    const res = await fetch(proxyUrl, {signal: AbortSignal.timeout(10000)});
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const outer = await res.json();
-    const data = JSON.parse(outer.contents);
-    const deps = data?.entries || data?.departures || data || [];
-    if(!deps.length) throw new Error('empty');
-    renderDepartures(deps, 'bahnhof');
-  } catch(e) {
-    // Fallback: use bahn.expert open API
-    try {
-      const fallUrl = `https://api.bahn.expert/api/hafas/v1/departureBoard?stopId=${station.eva}&lookAhead=120&results=20`;
-      const fallProxy = `https://api.allorigins.win/get?url=${encodeURIComponent(fallUrl)}`;
-      const res2 = await fetch(fallProxy, {signal: AbortSignal.timeout(10000)});
-      const outer2 = await res2.json();
-      const deps2 = JSON.parse(outer2.contents);
-      if(Array.isArray(deps2) && deps2.length) {
-        renderDepartures(deps2, 'expert');
-        return;
-      }
-    } catch(e2){}
-    
-    // Final fallback: show link to bahn.de
-    container.innerHTML=`<div style="padding:20px 16px">
-      <div class="error-state" style="margin:0 0 16px">
-        ⚠️ Echtzeit-API nicht erreichbar.<br>
-        <small style="opacity:0.7">Öffne die DB-Website direkt:</small>
+  // Stats
+  const soon  = pickups.filter(p=>daysUntil(p.date)>=0&&daysUntil(p.date)<=7).length;
+  const total = pickups.filter(p=>daysUntil(p.date)>=0).length;
+  const done  = pickups.filter(p=>daysUntil(p.date)<0).length;
+  if(pickups.length) {
+    document.getElementById('muell-stats').innerHTML = `<div class="card" style="margin:0 16px 4px;border-radius:14px">
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-num">${soon}</div><div class="stat-lbl">Diese Woche</div></div>
+        <div class="stat-box"><div class="stat-num">${total}</div><div class="stat-lbl">Ausstehend</div></div>
+        <div class="stat-box"><div class="stat-num">${done}</div><div class="stat-lbl">Erledigt</div></div>
       </div>
-      <a href="https://www.bahn.de/buchung/fahrplan/suche#sts=true&so=${encodeURIComponent(station.name)}&hd=${now.toISOString().slice(0,10)}&hz=[]&ar=false&s=true&d=false&vm=00,01,02,03,04,05,06,07,08,09&fm=false&nav=1" 
-         target="_blank"
-         style="display:block;background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--text);font-size:14px;font-weight:500">
-        🚆 DB Abfahrten für ${station.name} →
-      </a>
-      <a href="https://reiseauskunft.bahn.de/bin/bhftafel.exe/dn?input=${encodeURIComponent(station.name)}&boardType=dep&time=actual&productsFilter=1111101111&start=yes"
-         target="_blank"
-         style="display:block;background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--text);font-size:14px;font-weight:500;margin-top:8px">
-        🚌 Bahnhofstafel ${station.name} →
-      </a>
-      <button class="btn-secondary" onclick="loadDepartures()" style="margin-top:8px">↻ Nochmal versuchen</button>
     </div>`;
-  }
-}
+  } else document.getElementById('muell-stats').innerHTML='';
 
-function renderDepartures(deps, source){
-  const container=document.getElementById('dep-container');
-  const now=new Date();
-  
-  const lines = deps.slice(0,15).map(dep=>{
-    // Handle different API response formats
-    let name, dest, plannedTime, actualTime, delayMin, platform, cancelled;
-    
-    if(source==='bahnhof'){
-      name = dep.train?.name || dep.category || '?';
-      dest = dep.destination?.name || dep.directionText || '–';
-      plannedTime = new Date(dep.time?.scheduled || dep.plannedTime || dep.scheduledTime);
-      actualTime = dep.time?.realtime ? new Date(dep.time.realtime) : plannedTime;
-      delayMin = Math.round((actualTime - plannedTime) / 60000);
-      platform = dep.platform?.scheduled || dep.track || '';
-      cancelled = dep.cancelled || false;
-    } else {
-      name = dep.train?.name || dep.label || dep.line || '?';
-      dest = dep.destination || dep.direction || '–';
-      plannedTime = new Date(dep.scheduledTime || dep.plannedDeparture || dep.time);
-      actualTime = dep.time ? new Date(dep.time) : plannedTime;
-      delayMin = dep.delay ? Math.round(dep.delay/60) : Math.round((actualTime-plannedTime)/60000);
-      platform = dep.platform || dep.track || '';
-      cancelled = dep.isCancelled || dep.cancelled || false;
-    }
-    
-    if(isNaN(plannedTime)) return null;
-    const diffMin = Math.round((actualTime - now) / 60000);
-    const hhmm = plannedTime.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
-    const colors = getLineColor(name, dep.train?.category||dep.type||'bus');
-    return {name, dest, hhmm, delayMin, diffMin, colors, platform, cancelled};
-  }).filter(d => d && !d.cancelled && d.diffMin > -3);
-
-  if(!lines.length){
-    container.innerHTML='<div class="loading-state" style="color:var(--text3)"><div style="font-size:28px;margin-bottom:8px">🚌</div><div>Keine Abfahrten in den nächsten 2 Std.</div></div>';
-    return;
+  // Upcoming grouped by month
+  const upEl = document.getElementById('muell-upcoming');
+  if(!upcoming.length) {
+    upEl.innerHTML=`<div class="empty-state"><i class="ti ti-calendar-off"></i><p>Keine Termine.<br>Unter „Mehr" hinzufügen.</p></div>`;
+  } else {
+    const byMonth={};
+    upcoming.forEach(p=>{const m=getMonthKey(p.date);(byMonth[m]=byMonth[m]||[]).push(p);});
+    upEl.innerHTML = Object.entries(byMonth).map(([month,items])=>`
+      <div class="month-label">${month}</div>
+      <div class="card" style="margin:0 16px;border-radius:14px;overflow:hidden">
+        ${items.map(p=>renderPickupRow(p,false)).join('')}
+      </div>`).join('<div style="height:8px"></div>');
   }
 
-  const ts = now.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
-  container.innerHTML=`
-    <div style="font-size:11px;color:var(--text3);padding:6px 20px 8px">Stand: ${ts} Uhr · Deutsche Bahn Echtzeit</div>
-    <div class="dep-list">${lines.map(d=>{
-      const delayHtml = d.delayMin > 1
-        ? `<div class="dep-time-delay" style="color:#c44a4a">+${d.delayMin} min</div>`
-        : `<div class="dep-time-delay" style="color:#4a9e6b">pünktlich</div>`;
-      const diffHtml = d.diffMin <= 0
-        ? `<div class="dep-min" style="color:#4a9e6b;font-weight:600">jetzt</div>`
-        : d.diffMin <= 2
-        ? `<div class="dep-min" style="color:#d4a820;font-weight:600">in ${d.diffMin} Min</div>`
-        : `<div class="dep-min" style="color:var(--text2)">in ${d.diffMin} Min</div>`;
-      const platformHtml = d.platform ? `<div class="dep-platform">Gleis ${d.platform}</div>` : '';
-      const fontSize = d.name.length > 5 ? '10px' : d.name.length > 3 ? '11px' : '12px';
-      return `<div class="dep-card">
-        <div class="dep-line" style="background:${d.colors.bg};color:${d.colors.text};font-size:${fontSize}">${d.name}</div>
-        <div class="dep-info"><div class="dep-dest">${d.dest}</div>${platformHtml}</div>
-        <div class="dep-time"><div class="dep-time-main">${d.hhmm}</div>${delayHtml}${diffHtml}</div>
-      </div>`;
-    }).join('')}</div>`;
+  // Past
+  const pastLabel = document.getElementById('past-label');
+  const pastEl    = document.getElementById('muell-past');
+  if(past.length) {
+    pastLabel.style.display='block';
+    pastEl.innerHTML = `<div class="card" style="margin:0 16px;border-radius:14px;overflow:hidden">
+      ${past.slice().reverse().slice(0,8).map(p=>renderPickupRow(p,true)).join('')}
+    </div>`;
+  } else { pastLabel.style.display='none'; pastEl.innerHTML=''; }
 }
 
-function getLineColor(name, product){
-  const p = (product||'').toLowerCase();
-  if(p.includes('ice')||p.includes('national')) return {bg:'rgba(220,50,50,0.18)',text:'#e05555'};
-  if(p.includes('ic')||p.includes('ec')||p.includes('regional')) return {bg:'rgba(255,120,50,0.15)',text:'#ff8844'};
-  if(p.includes('s-bahn')||p.includes('suburban')) return {bg:'rgba(80,160,80,0.15)',text:'#50c850'};
-  const num = parseInt((name||'').replace(/\D/g,'')) || 0;
-  if(num>=260&&num<=270) return {bg:'rgba(74,123,196,0.18)',text:'#5b8fd4'};
-  if(num>=7900&&num<=7999) return {bg:'rgba(212,168,32,0.18)',text:'#d4a820'};
-  if(num>=76&&num<=80) return {bg:'rgba(74,158,107,0.18)',text:'#4ab87a'};
-  return {bg:'rgba(136,136,136,0.15)',text:'#999'};
+function renderPickupRow(p, isPast) {
+  const t = TYPES[p.type]||TYPES.restmuell;
+  const days = daysUntil(p.date);
+  const bg = isDark ? t.darkBg : t.bg;
+  let badge = '';
+  if(!isPast) {
+    if(days===0)      badge=`<span class="badge badge-today">Heute</span>`;
+    else if(days===1) badge=`<span class="badge badge-tom">Morgen</span>`;
+    else if(days<=3)  badge=`<span class="badge badge-soon">in ${days} d</span>`;
+  }
+  return `<div class="pickup-row ${isPast?'past':''}">
+    <div class="pickup-accent" style="background:${t.color}"></div>
+    <div class="type-icon" style="background:${bg};color:${t.color};margin-left:6px"><i class="ti ${t.icon}"></i></div>
+    <div class="type-info">
+      <div class="type-name">${t.label} <span style="font-size:11px;color:var(--text3);font-weight:400">${t.kuerzel}</span></div>
+      <div class="type-sub">${fmtDate(p.date)}</div>
+    </div>
+    ${badge}
+    <button class="pickup-delete" onclick="deletePickup(${p.id})" aria-label="Löschen"><i class="ti ti-x"></i></button>
+  </div>`;
 }
+
 // ══════════════════════════════════════════
-// SPRITPREISE
+// SPRIT
 // ══════════════════════════════════════════
-function saveTKKey(){
-  const k=document.getElementById('tk-key-input').value.trim();
-  if(!k||k.includes('•')){showToast('Bitte echten API-Key eingeben');return}
-  tkKey=k;
+function saveTKKey() {
+  const k = document.getElementById('tk-key-input').value.trim();
+  if(!k||k.includes('•')){showToast('Bitte echten Key eingeben');return;}
+  tkKey = k;
   localStorage.setItem('tkKey',k);
   document.getElementById('tk-key-input').value='••••••••••••••••';
-  showToast('Key gespeichert ✓');
+  document.getElementById('sprit-key-section').style.display='none';
+  showToast('Key gespeichert');
   loadSprit();
 }
-
-function setFuel(f){
-  activeFuel=f;
-  ['e5','e10','diesel'].forEach(x=>{
-    document.getElementById('chip-'+x).classList.toggle('active',x===f);
-  });
-  if(tkKey) loadSprit();
+function setFuel(f) {
+  activeFuel = f;
+  ['e5','e10','diesel'].forEach(x=>document.getElementById('fchip-'+x).classList.toggle('active',x===f));
+  document.getElementById('home-sprit-fuel-label').textContent = f==='e5'?'Super E5':f==='e10'?'Super E10':'Diesel';
+  if(tkKey) { spritCache=null; loadSprit(); }
 }
 
-async function loadSprit(){
-  if(!tkKey){return;}
-  const container=document.getElementById('sprit-container');
-  container.innerHTML='<div class="loading-state"><div class="loading-spinner">⏳</div><div style="font-size:13px;color:var(--text3);margin-top:6px">Lade Spritpreise…</div></div>';
-  // Mögglingen coordinates: 48.8250, 9.9589
-  const lat=48.8250,lng=9.9589,rad=10;
-  const url=`https://creativecommons.tankerkoenig.de/json/list.php?lat=${lat}&lng=${lng}&rad=${rad}&sort=price&type=${activeFuel}&apikey=${tkKey}`;
+async function loadSprit() {
+  const wrap = document.getElementById('sprit-list-wrap');
+  if(!tkKey) return;
+  if(spritCache && spritCache.fuel===activeFuel && Date.now()-spritCache.ts < 300000) {
+    renderSpritList(spritCache.data); return;
+  }
+  wrap.innerHTML=`<div style="text-align:center;padding:32px;color:var(--text3)"><i class="ti ti-loader" style="font-size:24px;margin-bottom:8px;display:block"></i>Lade Preise…</div>`;
   try {
-    const res=await fetch(url);
-    const data=await res.json();
+    const url = `https://creativecommons.tankerkoenig.de/json/list.php?lat=48.825&lng=9.9589&rad=10&sort=price&type=${activeFuel}&apikey=${tkKey}`;
+    const res = await fetch(url);
+    const data = await res.json();
     if(!data.ok) throw new Error(data.message||'API Fehler');
-    renderSprit(data.stations||[]);
-    const now=new Date();
-    document.getElementById('sprit-updated').textContent=`Aktualisiert: ${now.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr · Quelle: Tankerkönig / MTS-K`;
+    spritCache = {data:data.stations, fuel:activeFuel, ts:Date.now()};
+    renderSpritList(data.stations);
+    loadSpritPreview();
   } catch(e) {
-    container.innerHTML=`<div class="error-state">⚠️ ${e.message}<br><small style="opacity:0.7">API-Key prüfen oder später nochmal versuchen.</small></div>`;
+    wrap.innerHTML=`<div style="margin:16px"><div style="padding:14px 16px;background:var(--c-red-bg);border-radius:12px;font-size:13px;color:var(--c-red)">Fehler: ${e.message}</div></div>`;
   }
 }
 
-function renderSprit(stations){
-  const container=document.getElementById('sprit-container');
-  if(!stations.length){container.innerHTML='<div class="loading-state" style="color:var(--text3)">Keine Tankstellen gefunden</div>';return;}
-  const top=stations.slice(0,8);
-  container.innerHTML=`<div class="sprit-list">${top.map((s,i)=>{
-    const price=s[activeFuel];
-    if(!price||price<=0) return '';
-    const priceStr=price.toFixed(3)+'€';
-    const dist=s.dist ? (s.dist<1?Math.round(s.dist*1000)+'m':s.dist.toFixed(1)+'km') : '';
-    const rankClass=i===0?'gold':i===1?'silver':i===2?'bronze':'other';
-    const isOpen=s.isOpen;
-    return`<div class="sprit-card" style="${!isOpen?'opacity:0.45':''}">
-      <div class="sprit-rank ${rankClass}">${i+1}</div>
-      <div class="sprit-info">
-        <div class="sprit-name">${s.brand||s.name}</div>
-        <div class="sprit-dist">${s.name}${dist?' · '+dist:''}${!isOpen?' · geschlossen':''}</div>
+async function loadSpritPreview() {
+  if(!tkKey) return;
+  try {
+    if(spritCache && spritCache.fuel===activeFuel) {
+      const top = (spritCache.data||[]).filter(s=>s[activeFuel]>0).slice(0,2);
+      renderSpritPreviewCards(top);
+      return;
+    }
+    const url = `https://creativecommons.tankerkoenig.de/json/list.php?lat=48.825&lng=9.9589&rad=10&sort=price&type=${activeFuel}&apikey=${tkKey}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if(!data.ok) return;
+    spritCache = {data:data.stations, fuel:activeFuel, ts:Date.now()};
+    renderSpritPreviewCards(data.stations.filter(s=>s[activeFuel]>0).slice(0,2));
+  } catch(e) {}
+}
+
+function renderSpritPreviewCards(stations) {
+  const body = document.getElementById('home-sprit-body');
+  if(!stations.length) { body.innerHTML=''; return; }
+  body.innerHTML = stations.map((s,i)=>{
+    const price = s[activeFuel];
+    const priceStr = price.toFixed(3);
+    const dist = s.dist < 1 ? Math.round(s.dist*1000)+'m' : s.dist.toFixed(1)+'km';
+    return `<div class="card-row" style="padding:12px 16px">
+      <div class="type-icon" style="background:var(--bg3);color:var(--text2)"><i class="ti ti-gas-station"></i></div>
+      <div class="type-info">
+        <div class="type-name">${s.brand||s.name} · ${dist}</div>
+        <div class="type-sub">${s.name}${!s.isOpen?' · geschlossen':''}</div>
       </div>
-      <div style="text-align:right">
-        <div class="sprit-price">${priceStr.slice(0,-1)}<sup style="font-size:13px">${priceStr.slice(-1)}</sup></div>
-        <div class="sprit-price-sub">${activeFuel==='e5'?'Super E5':activeFuel==='e10'?'Super E10':'Diesel'}</div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:18px;font-weight:600;color:${i===0?'var(--c-green)':'var(--text)'}">${priceStr.slice(0,-1)}<sup style="font-size:11px">${priceStr.slice(-1)}</sup></div>
+        <div style="font-size:10px;color:var(--text3)">${i===0?'günstigste':''}</div>
       </div>
     </div>`;
-  }).filter(Boolean).join('')}</div>`;
+  }).join('');
+}
+
+function renderSpritList(stations) {
+  const wrap = document.getElementById('sprit-list-wrap');
+  const valid = stations.filter(s=>s[activeFuel]>0);
+  if(!valid.length){wrap.innerHTML='<div style="padding:20px;text-align:center;color:var(--text3)">Keine Daten</div>';return;}
+  const now = new Date();
+  document.getElementById('sprit-updated').textContent = `Aktualisiert: ${now.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr · Quelle: Tankerkönig / MTS-K`;
+  wrap.innerHTML = `<div class="card" style="margin:0 16px;border-radius:14px;overflow:hidden">
+    ${valid.slice(0,8).map((s,i)=>{
+      const price = s[activeFuel];
+      const priceStr = price.toFixed(3);
+      const dist = s.dist<1 ? Math.round(s.dist*1000)+'m' : s.dist.toFixed(1)+'km';
+      const rankBg = i===0?'var(--c-amber-bg)':i===1?'var(--bg3)':i===2?'var(--bg3)':'var(--bg3)';
+      const rankColor = i===0?'var(--c-amber)':'var(--text3)';
+      return `<div class="pickup-row ${!s.isOpen?'past':''}">
+        <div class="rank-dot" style="background:${rankBg};color:${rankColor}">${i+1}</div>
+        <div class="type-info">
+          <div class="type-name">${s.brand||s.name}</div>
+          <div class="type-sub">${s.name} · ${dist}${!s.isOpen?' · geschlossen':''}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div class="sprit-price-big" style="color:${i===0?'var(--c-green)':'var(--text)'}">${priceStr.slice(0,-1)}<sup>${priceStr.slice(-1)}</sup></div>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
 }
 
 // ══════════════════════════════════════════
 // ICS IMPORT
 // ══════════════════════════════════════════
-document.getElementById('ics-file-input').addEventListener('change',e=>{
-  const f=e.target.files[0];if(!f)return;
-  const r=new FileReader();r.onload=ev=>parseICS(ev.target.result);r.readAsText(f);
+document.getElementById('ics-file-input').addEventListener('change', e=>{
+  const f=e.target.files[0]; if(!f)return;
+  const r=new FileReader(); r.onload=ev=>parseICS(ev.target.result); r.readAsText(f);
 });
-function parseICS(text){
+function parseICS(text) {
   const events=[];
   text.split('BEGIN:VEVENT').slice(1).forEach(block=>{
     const sm=block.match(/SUMMARY[^:]*:(.+)/),dm=block.match(/DTSTART[^:]*:(\d{8})/);
-    if(!sm||!dm)return;
-    const s=sm[1].trim().toLowerCase(),raw=dm[1];
+    if(!sm||!dm) return;
+    const s=sm[1].trim().toLowerCase(), raw=dm[1];
     const date=`${raw.slice(0,4)}-${raw.slice(4,6)}-${raw.slice(6,8)}`;
     let type='restmuell';
     if(s.includes('bio')) type='bio';
@@ -697,67 +1357,73 @@ function parseICS(text){
     else if(s.includes('christbaum')) type='christbaum';
     events.push({id:Date.now()+Math.random(),type,date});
   });
-  if(!events.length){showToast('Keine Termine gefunden');return}
+  if(!events.length){showToast('Keine Termine gefunden');return;}
   const existing=new Set(pickups.map(p=>`${p.type}-${p.date}`));
   const newOnes=events.filter(e=>!existing.has(`${e.type}-${e.date}`));
   pickups=[...pickups,...newOnes].sort((a,b)=>a.date.localeCompare(b.date));
-  save();renderMuell();showToast(`${newOnes.length} Termine importiert ✓`);switchTab('muell');
+  save(); renderMuell(); renderHomePickups();
+  showToast(`${newOnes.length} Termine importiert`);
+  switchTab('muell');
 }
 
 // ══════════════════════════════════════════
 // EINSTELLUNGEN
 // ══════════════════════════════════════════
-function saveSettings(){
-  settings.reminderDays=parseInt(document.getElementById('reminder-days').value);
-  settings.reminderTime=document.getElementById('reminder-time').value;
+function saveSettings() {
+  settings.reminderDays = parseInt(document.getElementById('reminder-days').value);
+  settings.reminderTime = document.getElementById('reminder-time').value;
   localStorage.setItem('settings',JSON.stringify(settings));
   scheduleAllReminders();
 }
-function renderVisibilitySettings(){
-  document.getElementById('visibility-settings').innerHTML=Object.entries(TYPES).map(([key,t])=>`
+function renderVisibilitySettings() {
+  document.getElementById('visibility-settings').innerHTML = Object.entries(TYPES).map(([key,t])=>`
     <div class="settings-row">
-      <div class="settings-icon">${t.emoji}</div>
-      <div class="settings-info"><div class="settings-title">${t.label}</div><div class="settings-desc">${t.kuerzel}</div></div>
+      <div class="settings-icon" style="background:${isDark?t.darkBg:t.bg};color:${t.color}"><i class="ti ${t.icon}"></i></div>
+      <div class="settings-info">
+        <div class="settings-title">${t.label}</div>
+        <div class="settings-desc">${t.kuerzel}</div>
+      </div>
       <label class="toggle"><input type="checkbox" ${!hiddenTypes.includes(key)?'checked':''} onchange="toggleType('${key}',this.checked)"><div class="toggle-track"></div></label>
     </div>`).join('');
 }
-function toggleType(key,visible){
-  if(visible)hiddenTypes=hiddenTypes.filter(t=>t!==key);
-  else if(!hiddenTypes.includes(key))hiddenTypes.push(key);
-  localStorage.setItem('hiddenTypes',JSON.stringify(hiddenTypes));renderMuell();
+function toggleType(key,visible) {
+  if(visible) hiddenTypes=hiddenTypes.filter(t=>t!==key);
+  else if(!hiddenTypes.includes(key)) hiddenTypes.push(key);
+  localStorage.setItem('hiddenTypes',JSON.stringify(hiddenTypes));
+  renderMuell(); renderHomePickups();
 }
-function clearAll(){if(!confirm('Wirklich alle Termine löschen?'))return;pickups=[];save();renderMuell();showToast('Alle Termine gelöscht');}
-function showInstallHint(){const el=document.getElementById('install-hint');el.style.display=el.style.display==='none'||!el.style.display?'block':'none';}
+function clearAll(){if(!confirm('Wirklich alle Termine löschen?'))return;pickups=[];save();renderMuell();renderHomePickups();showToast('Alle Termine gelöscht');}
+function showInstallHint(){const el=document.getElementById('install-hint');el.style.display=el.style.display==='block'?'none':'block';}
 
 // ══════════════════════════════════════════
 // NOTIFICATIONS
 // ══════════════════════════════════════════
-async function checkNotifStatus(){
+async function checkNotifStatus() {
   const banner=document.getElementById('notif-banner');
   const toggle=document.getElementById('toggle-notifs');
   const status=document.getElementById('notif-status');
-  if(!('Notification' in window)){status.textContent='Nicht unterstützt';toggle.disabled=true;return}
+  if(!('Notification' in window)){status.textContent='Nicht unterstützt';toggle.disabled=true;return;}
   if(Notification.permission==='granted'){
-    banner.classList.add('hidden');toggle.checked=settings.notificationsEnabled;
+    banner.classList.add('hidden'); toggle.checked=settings.notificationsEnabled;
     status.textContent=settings.notificationsEnabled?'Aktiv':'Deaktiviert';
-    if(settings.notificationsEnabled)scheduleAllReminders();
+    if(settings.notificationsEnabled) scheduleAllReminders();
   } else if(Notification.permission==='denied'){
-    status.textContent='Berechtigung verweigert';toggle.disabled=true;
-  } else {banner.classList.remove('hidden');toggle.checked=false;status.textContent='Berechtigung ausstehend';}
+    status.textContent='Berechtigung verweigert'; toggle.disabled=true;
+  } else { banner.classList.remove('hidden'); toggle.checked=false; status.textContent='Berechtigung ausstehend'; }
 }
-async function requestNotifications(){
+async function requestNotifications() {
   const perm=await Notification.requestPermission();
   if(perm==='granted'){
-    settings.notificationsEnabled=true;localStorage.setItem('settings',JSON.stringify(settings));
+    settings.notificationsEnabled=true; localStorage.setItem('settings',JSON.stringify(settings));
     document.getElementById('toggle-notifs').checked=true;
     document.getElementById('notif-status').textContent='Aktiv';
     document.getElementById('notif-banner').classList.add('hidden');
-    scheduleAllReminders();showToast('Benachrichtigungen aktiv ✓');
+    scheduleAllReminders(); showToast('Benachrichtigungen aktiv');
   }
 }
-function toggleNotifications(enabled){
-  if(enabled&&Notification.permission!=='granted'){requestNotifications();return}
-  settings.notificationsEnabled=enabled;localStorage.setItem('settings',JSON.stringify(settings));
+function toggleNotifications(enabled) {
+  if(enabled&&Notification.permission!=='granted'){requestNotifications();return;}
+  settings.notificationsEnabled=enabled; localStorage.setItem('settings',JSON.stringify(settings));
   document.getElementById('notif-status').textContent=enabled?'Aktiv':'Deaktiviert';
   if(enabled){scheduleAllReminders();showToast('Erinnerungen aktiviert');}
   else{clearScheduled();showToast('Erinnerungen deaktiviert');}
@@ -766,40 +1432,41 @@ let scheduledTimers=[];
 function clearScheduled(){scheduledTimers.forEach(clearTimeout);scheduledTimers=[];}
 function scheduleAllReminders(){
   clearScheduled();
-  if(!settings.notificationsEnabled||Notification.permission!=='granted')return;
-  const [h,m]=settings.reminderTime.split(':').map(Number),now=new Date();
+  if(!settings.notificationsEnabled||Notification.permission!=='granted') return;
+  const [h,m]=settings.reminderTime.split(':').map(Number), now=new Date();
   pickups.forEach(p=>{
     const pd=new Date(p.date+'T12:00:00');
-    const rd=new Date(pd);rd.setDate(rd.getDate()-settings.reminderDays);rd.setHours(h,m,0,0);
+    const rd=new Date(pd); rd.setDate(rd.getDate()-settings.reminderDays); rd.setHours(h,m,0,0);
     const ms=rd-now;
     if(ms>0&&ms<7*24*60*60*1000){
       const t=TYPES[p.type]||TYPES.restmuell;
       const days=settings.reminderDays;
       const timer=setTimeout(()=>{
         if(Notification.permission==='granted'&&settings.notificationsEnabled)
-          new Notification(`${t.emoji} ${t.label} – Tonne rausstellen!`,{
-            body:`Abholung am ${formatDate(p.date)}${days>0?' (in '+days+' Tag'+(days>1?'en':'')+')':' (heute)'}`,
-            icon:'icon-192.png',tag:`pickup-${p.id}`,requireInteraction:true
+          new Notification(`${t.label} – Tonne rausstellen`,{
+            body:`Abholung am ${fmtDate(p.date)}${days>0?' (in '+days+' Tag'+(days>1?'en':'')+')':' (heute)'}`,
+            icon:'icon-192.png', tag:`pickup-${p.id}`, requireInteraction:true
           });
       },ms);
       scheduledTimers.push(timer);
     }
   });
 }
-function refreshReminders(){scheduleAllReminders();showToast('Erinnerungen aktualisiert ✓');}
+function refreshReminders(){scheduleAllReminders();showToast('Erinnerungen aktualisiert');}
 function testNotification(){
-  if(Notification.permission!=='granted'){showToast('Erst Benachrichtigungen aktivieren');return}
-  new Notification('🗑️ Hausmüll – Tonne rausstellen!',{body:'Test-Erinnerung der Mögglingen App.',icon:'icon-192.png'});
+  if(Notification.permission!=='granted'){showToast('Erst Benachrichtigungen aktivieren');return;}
+  new Notification('Hausmüll – Tonne rausstellen',{body:'Test-Erinnerung der Mögglingen App.',icon:'icon-192.png'});
   showToast('Test gesendet');
 }
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
 
 // ══════════════════════════════════════════
-// INIT
+// TOAST & SW
 // ══════════════════════════════════════════
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(console.error);
-checkNotifStatus();
-renderMuell();
+function showToast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg;
+  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2600);
+}
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
 </html>
