@@ -1041,8 +1041,14 @@ function renderStationTabs(){
   // Sync date/time pickers to current values
   const dateEl = document.getElementById('bus-date');
   const timeEl = document.getElementById('bus-time');
-  if(dateEl && !dateEl.value) dateEl.value = new Date().toISOString().split('T')[0];
-  if(timeEl && !timeEl.value) timeEl.value = new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}).replace(':','').slice(0,5);
+  if(dateEl && !dateEl.value) {
+    const n = new Date();
+    dateEl.value = n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');
+  }
+  if(timeEl && !timeEl.value) {
+    const n = new Date();
+    timeEl.value = String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+  }
 }
 
 function selectStation(i){
@@ -1106,12 +1112,14 @@ function renderDepartures(deps, stopName){
   const now = new Date();
 
   const lines = deps.map(d => {
-    const planned  = new Date(d.planned);
+    const planned  = new Date(d.planned);   // UTC from EFA
     const realtime = new Date(d.realtime || d.planned);
-    const diffMin  = Math.round((realtime - now) / 60000);
+    // diffMin already calculated server-side, but recalculate with local now
+    const diffMin  = d.diffMin !== undefined ? d.diffMin : Math.round((realtime - now) / 60000);
+    // toLocaleTimeString handles UTC→local automatically
     const hhmm     = planned.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
     return { ...d, diffMin, hhmm, planned };
-  }).filter(d => d.diffMin > -2).slice(0, 15);
+  }).filter(d => d.diffMin > -5).slice(0, 15);
 
   if(!lines.length){
     container.innerHTML = '<div class="empty-state"><i class="ti ti-bus-off"></i><p>Keine Abfahrten in den<br>nächsten 2 Stunden</p></div>';
