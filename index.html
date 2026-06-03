@@ -6,611 +6,236 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Mögglingen">
-<meta name="theme-color" content="#F7F6F2">
+<meta name="theme-color" id="theme-meta" content="#F7F6F2">
 <title>Mögglingen App</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 <style>
-/* ── THEME ── */
 :root {
-  --bg:       #F7F6F2;
-  --bg2:      #FFFFFF;
-  --bg3:      #EEECEA;
-  --bg4:      #E5E3DF;
-  --text:     #1A1A18;
-  --text2:    #6B6B67;
-  --text3:    #A8A8A3;
-  --border:   rgba(0,0,0,0.07);
-  --border2:  rgba(0,0,0,0.12);
-  --shadow:   0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-  --nav-h:    68px;
-  --safe-b:   env(safe-area-inset-bottom, 0px);
-
-  --c-green:  #2D6A4F;
-  --c-green-bg: #D8F3DC;
-  --c-amber:  #92400E;
-  --c-amber-bg: #FEF3C7;
-  --c-blue:   #1E40AF;
-  --c-blue-bg: #DBEAFE;
-  --c-gray:   #4B5563;
-  --c-gray-bg: #F3F4F6;
-  --c-purple: #5B21B6;
-  --c-purple-bg: #EDE9FE;
-  --c-red:    #9B1C1C;
-  --c-red-bg: #FEE2E2;
+  --bg:#F7F6F2; --bg2:#FFFFFF; --bg3:#EEECEA; --bg4:#E5E3DF;
+  --text:#1A1A18; --text2:#6B6B67; --text3:#A8A8A3;
+  --border:rgba(0,0,0,0.07); --border2:rgba(0,0,0,0.12);
+  --shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+  --nav-h:68px; --safe-b:env(safe-area-inset-bottom,0px);
+  --green:#2D6A4F; --green-bg:#D8F3DC;
+  --amber:#92400E; --amber-bg:#FEF3C7;
+  --blue:#1E40AF; --blue-bg:#DBEAFE;
+  --red:#9B1C1C; --red-bg:#FEE2E2;
+  --purple:#5B21B6; --purple-bg:#EDE9FE;
+  --gray:#4B5563; --gray-bg:#F3F4F6;
 }
 [data-theme="dark"] {
-  --bg:       #111110;
-  --bg2:      #1C1C1A;
-  --bg3:      #252523;
-  --bg4:      #2E2E2C;
-  --text:     #F0EDE8;
-  --text2:    #8A8A85;
-  --text3:    #55554F;
-  --border:   rgba(255,255,255,0.07);
-  --border2:  rgba(255,255,255,0.12);
-  --shadow:   0 1px 3px rgba(0,0,0,0.3);
+  --bg:#111110; --bg2:#1C1C1A; --bg3:#252523; --bg4:#2E2E2C;
+  --text:#F0EDE8; --text2:#8A8A85; --text3:#55554F;
+  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.12);
+  --shadow:0 1px 3px rgba(0,0,0,0.3);
+  --green:#6EE7B7; --green-bg:#064E3B;
+  --amber:#FCD34D; --amber-bg:#451A03;
+  --blue:#93C5FD; --blue-bg:#1E3A5F;
+  --red:#FCA5A5; --red-bg:#450A0A;
+  --purple:#C4B5FD; --purple-bg:#2E1065;
+  --gray:#D1D5DB; --gray-bg:#1F2937;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{height:100%}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.5;min-height:100%;max-width:430px;margin:0 auto;overflow-x:hidden}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+input,select{font-family:inherit}
+a{color:inherit;text-decoration:none}
 
-  --c-green:  #6EE7B7;
-  --c-green-bg: #064E3B;
-  --c-amber:  #FCD34D;
-  --c-amber-bg: #451A03;
-  --c-blue:   #93C5FD;
-  --c-blue-bg: #1E3A5F;
-  --c-gray:   #D1D5DB;
-  --c-gray-bg: #1F2937;
-  --c-purple: #C4B5FD;
-  --c-purple-bg: #2E1065;
-  --c-red:    #FCA5A5;
-  --c-red-bg: #450A0A;
-}
+/* HEADER */
+.app-header{position:sticky;top:0;z-index:50;background:var(--bg2);border-bottom:1px solid var(--border);padding:52px 20px 14px}
+.header-inner{display:flex;align-items:flex-end;justify-content:space-between}
+.header-sub{font-size:11px;font-weight:500;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:3px}
+.header-title{font-size:24px;font-weight:300;letter-spacing:-0.3px}
+.header-title strong{font-weight:600}
+.header-actions{display:flex;gap:8px}
+.icon-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);display:flex;align-items:center;justify-content:center;font-size:17px;transition:background 0.15s}
+.icon-btn:active{background:var(--bg4)}
 
-/* ── RESET ── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html { height: 100%; }
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 15px;
-  line-height: 1.5;
-  min-height: 100%;
-  max-width: 430px;
-  margin: 0 auto;
-  overflow-x: hidden;
-}
-button { font-family: inherit; cursor: pointer; border: none; background: none; }
-input, select { font-family: inherit; }
-a { color: inherit; text-decoration: none; }
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;height:calc(var(--nav-h) + var(--safe-b));background:var(--bg2);border-top:1px solid var(--border);display:flex;align-items:flex-start;padding-top:8px;z-index:100}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:0 4px;position:relative}
+.nav-item.locked{opacity:0.35;cursor:default}
+.nav-icon-wrap{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--text3);transition:all 0.15s}
+.nav-item.active .nav-icon-wrap{background:var(--bg3);color:var(--text)}
+.nav-label{font-size:10px;font-weight:500;color:var(--text3);letter-spacing:0.02em}
+.nav-item.active .nav-label{color:var(--text)}
+.nav-lock{position:absolute;top:14px;right:calc(50% - 22px);font-size:9px;color:var(--text3)}
 
-/* ── LAYOUT ── */
-.app-header {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  background: var(--bg2);
-  border-bottom: 1px solid var(--border);
-  padding: 52px 20px 14px;
-}
-.header-inner {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-}
-.header-location {
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--text3);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: 3px;
-}
-.header-title {
-  font-size: 24px;
-  font-weight: 300;
-  color: var(--text);
-  letter-spacing: -0.3px;
-}
-.header-title strong { font-weight: 600; }
-.header-actions { display: flex; gap: 8px; }
-.icon-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1px solid var(--border2);
-  background: var(--bg3);
-  color: var(--text2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 17px;
-  transition: background 0.15s;
-}
-.icon-btn:active { background: var(--bg4); }
+/* VIEWS */
+.view{display:none;padding:0 0 calc(var(--nav-h) + var(--safe-b) + 8px)}
+.view.active{display:block}
 
-/* ── BOTTOM NAV ── */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 430px;
-  height: calc(var(--nav-h) + var(--safe-b));
-  background: var(--bg2);
-  border-top: 1px solid var(--border);
-  display: flex;
-  align-items: flex-start;
-  padding-top: 8px;
-  z-index: 100;
-}
-.nav-item {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  cursor: pointer;
-  padding: 0 4px;
-  position: relative;
-}
-.nav-item.locked { opacity: 0.35; cursor: default; }
-.nav-icon-wrap {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  color: var(--text3);
-  transition: all 0.15s;
-}
-.nav-item.active .nav-icon-wrap {
-  background: var(--bg3);
-  color: var(--text);
-}
-.nav-label {
-  font-size: 10px;
-  font-weight: 500;
-  color: var(--text3);
-  letter-spacing: 0.02em;
-}
-.nav-item.active .nav-label { color: var(--text); }
-.nav-lock {
-  position: absolute;
-  top: 14px;
-  right: calc(50% - 22px);
-  font-size: 9px;
-  color: var(--text3);
-}
+/* CARDS */
+.card{background:var(--bg2);border-radius:16px;border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow)}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border)}
+.card-label{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:0.07em;text-transform:uppercase}
+.card-meta{font-size:12px;color:var(--text3)}
+.card-row{display:flex;align-items:center;gap:12px;padding:12px 16px}
+.card-row+.card-row{border-top:1px solid var(--border)}
 
-/* ── VIEWS ── */
-.view { display: none; padding: 0 0 calc(var(--nav-h) + var(--safe-b) + 8px); }
-.view.active { display: block; }
+/* TYPE ICON */
+.type-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.type-info{flex:1;min-width:0}
+.type-name{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.type-sub{font-size:12px;color:var(--text3);margin-top:1px}
 
-/* ── CARDS ── */
-.card {
-  background: var(--bg2);
-  border-radius: 16px;
-  border: 1px solid var(--border);
-  overflow: hidden;
-  box-shadow: var(--shadow);
-}
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
-}
-.card-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text3);
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-}
-.card-meta { font-size: 12px; color: var(--text3); }
-.card-body { padding: 14px 16px; }
-.card-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 0;
-}
-.card-row + .card-row { border-top: 1px solid var(--border); }
+/* BADGES */
+.badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.badge-today{background:var(--green-bg);color:var(--green)}
+.badge-tom{background:var(--amber-bg);color:var(--amber)}
+.badge-soon{background:var(--bg3);color:var(--text2)}
+.badge-done{background:var(--blue-bg);color:var(--blue)}
 
-/* ── TYPE ICON ── */
-.type-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 9px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  flex-shrink: 0;
-}
-.type-info { flex: 1; min-width: 0; }
-.type-name {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.type-sub { font-size: 12px; color: var(--text3); margin-top: 1px; }
+/* SECTION / MONTH */
+.section-label{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:0.07em;text-transform:uppercase;padding:20px 20px 8px}
+.month-label{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:0.07em;text-transform:uppercase;padding:16px 20px 6px}
 
-/* ── BADGES ── */
-.badge {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 3px 10px;
-  border-radius: 20px;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-.badge-today  { background: #D8F3DC; color: #2D6A4F; }
-.badge-tom    { background: #FEF3C7; color: #92400E; }
-.badge-soon   { background: var(--bg3); color: var(--text2); }
-[data-theme="dark"] .badge-today { background: #064E3B; color: #6EE7B7; }
-[data-theme="dark"] .badge-tom   { background: #451A03; color: #FCD34D; }
+/* PICKUP ROWS */
+.pickup-row{display:flex;align-items:center;gap:12px;padding:11px 16px;background:var(--bg2);border-bottom:1px solid var(--border);position:relative;overflow:hidden;transition:opacity 0.2s}
+.pickup-row:last-child{border-bottom:none}
+.pickup-row.past{opacity:0.3}
+.pickup-row.done{opacity:0.5}
+.pickup-accent{position:absolute;left:0;top:0;bottom:0;width:3px}
+.check-btn{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border2);background:var(--bg3);color:var(--text3);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;transition:all 0.2s}
+.check-btn.checked{background:var(--green-bg);border-color:var(--green);color:var(--green)}
+.delete-btn{width:28px;height:28px;border-radius:50%;background:transparent;color:var(--text3);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;opacity:0.5}
+.delete-btn:active{opacity:1;color:var(--red)}
 
-/* ── SECTION LABEL ── */
-.section-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text3);
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  padding: 20px 20px 8px;
-}
-.month-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text3);
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  padding: 16px 20px 6px;
-}
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:14px 16px;border-bottom:1px solid var(--border)}
+.stat-box{text-align:center}
+.stat-num{font-size:22px;font-weight:600}
+.stat-lbl{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-top:1px}
 
-/* ── PICKUP LIST CARDS ── */
-.pickup-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 11px 16px;
-  background: var(--bg2);
-  border-bottom: 1px solid var(--border);
-  position: relative;
-  overflow: hidden;
-}
-.pickup-row:last-child { border-bottom: none; }
-.pickup-row.past { opacity: 0.3; }
-.pickup-accent {
-  position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 3px;
-}
-.pickup-delete {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: var(--bg3);
-  color: var(--text3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  flex-shrink: 0;
-}
-.pickup-delete:active { background: var(--c-red-bg); color: var(--c-red); }
+/* FILTER CHIPS */
+.chip-bar{display:flex;gap:6px;padding:12px 16px;overflow-x:auto;scrollbar-width:none}
+.chip-bar::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid var(--border2);background:var(--bg2);color:var(--text2);cursor:pointer;transition:all 0.15s}
+.chip.active{background:var(--text);color:var(--bg);border-color:var(--text)}
 
-/* ── STATS ── */
-.stats-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--border);
-}
-.stat-box { text-align: center; }
-.stat-num { font-size: 22px; font-weight: 600; color: var(--text); }
-.stat-lbl { font-size: 10px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 1px; }
+/* FUEL */
+.fuel-bar{display:flex;gap:6px;padding:12px 16px}
+.fuel-chip{flex:1;text-align:center;padding:8px 4px;border-radius:10px;font-size:12px;font-weight:600;border:1px solid var(--border2);background:var(--bg2);color:var(--text2);cursor:pointer;transition:all 0.15s}
+.fuel-chip.active{background:var(--amber-bg);color:var(--amber);border-color:transparent}
+.sprit-price-big{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+.rank-dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
 
-/* ── FILTER CHIPS ── */
-.chip-bar { display: flex; gap: 6px; padding: 12px 16px; overflow-x: auto; scrollbar-width: none; }
-.chip-bar::-webkit-scrollbar { display: none; }
-.chip {
-  flex-shrink: 0;
-  padding: 5px 14px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 500;
-  border: 1px solid var(--border2);
-  background: var(--bg2);
-  color: var(--text2);
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.chip.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+/* WEATHER */
+.weather-temp{font-size:36px;font-weight:300;line-height:1}
+.weather-range{font-size:12px;color:var(--text3);margin-top:3px}
+.weather-day{text-align:center;flex:1}
+.weather-day-label{font-size:11px;color:var(--text3);font-weight:500;margin-bottom:4px}
+.weather-day-icon{font-size:20px;color:var(--text2);margin-bottom:2px}
+.weather-day-temp{font-size:13px;font-weight:500}
 
-/* ── SPRIT ── */
-.sprit-price-big { font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
-.sprit-price-big sup { font-size: 13px; font-weight: 500; }
-.rank-dot {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  font-weight: 700;
-  flex-shrink: 0;
-}
+/* WERTSTOFFHOF */
+.wsh-status-open{font-size:12px;font-weight:500;color:var(--green)}
+.wsh-status-closed{font-size:12px;font-weight:500;color:var(--red)}
+.wsh-hours{font-size:11px;color:var(--text3);margin-top:1px}
+.wsh-detail-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.wsh-detail-row:last-child{border-bottom:none}
+.wsh-detail-day{font-size:13px;font-weight:500}
+.wsh-detail-time{font-size:13px;color:var(--text2)}
+.wsh-detail-time.today{color:var(--green);font-weight:600}
 
-/* ── FUEL SELECTOR ── */
-.fuel-bar { display: flex; gap: 6px; padding: 12px 16px; }
-.fuel-chip {
-  flex: 1;
-  text-align: center;
-  padding: 8px 4px;
-  border-radius: 10px;
-  font-size: 12px;
-  font-weight: 600;
-  border: 1px solid var(--border2);
-  background: var(--bg2);
-  color: var(--text2);
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.fuel-chip.active {
-  background: var(--c-amber-bg);
-  color: var(--c-amber);
-  border-color: transparent;
-}
+/* QUICK LINKS */
+.quicklinks{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 16px}
+.ql-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px;cursor:pointer;text-decoration:none;transition:background 0.15s;box-shadow:var(--shadow)}
+.ql-card:active{background:var(--bg3)}
+.ql-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.ql-label{font-size:13px;font-weight:500;color:var(--text)}
+.ql-sub{font-size:11px;color:var(--text3);margin-top:1px}
 
-/* ── WERTSTOFFHOF ── */
-.wsh-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-}
-.wsh-status-open  { font-size: 12px; font-weight: 500; color: var(--c-green); }
-.wsh-status-closed { font-size: 12px; font-weight: 500; color: var(--c-red); }
-.wsh-hours {
-  font-size: 11px;
-  color: var(--text3);
-  margin-top: 1px;
-}
+/* ONBOARDING */
+.onboarding-banner{margin:16px;padding:16px;background:var(--blue-bg);border-radius:14px;border:1px solid transparent;display:flex;gap:12px;align-items:flex-start}
+.onboarding-banner.hidden{display:none}
+.onboarding-text{flex:1}
+.onboarding-title{font-size:14px;font-weight:600;color:var(--blue);margin-bottom:3px}
+.onboarding-sub{font-size:12px;color:var(--blue);opacity:0.8;line-height:1.5}
+.onboarding-btn{margin-top:10px;background:var(--blue);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
 
-/* ── WEATHER ── */
-.weather-temp { font-size: 36px; font-weight: 300; color: var(--text); line-height: 1; }
-.weather-range { font-size: 12px; color: var(--text3); margin-top: 3px; font-variant-numeric: tabular-nums; }
+/* SETTINGS */
+.settings-section{margin:0 16px 4px;background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.settings-row{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border);gap:12px}
+.settings-row:last-child{border-bottom:none}
+.settings-icon{width:32px;height:32px;border-radius:8px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--text2);flex-shrink:0}
+.settings-info{flex:1}
+.settings-title{font-size:14px;font-weight:500}
+.settings-desc{font-size:12px;color:var(--text3);margin-top:1px}
+.toggle{position:relative;width:44px;height:26px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-track{position:absolute;inset:0;background:var(--bg4);border-radius:13px;cursor:pointer;border:1px solid var(--border2);transition:all 0.2s}
+.toggle input:checked+.toggle-track{background:var(--green);border-color:transparent}
+.toggle-track::after{content:'';position:absolute;left:3px;top:50%;transform:translateY(-50%);width:18px;height:18px;border-radius:50%;background:var(--bg2);box-shadow:0 1px 3px rgba(0,0,0,0.15);transition:all 0.2s}
+.toggle input:checked+.toggle-track::after{left:calc(100% - 21px)}
+select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:8px;background:var(--bg3);border:1px solid var(--border2);color:var(--text);outline:none;-webkit-appearance:none}
 
-/* ── SETTINGS ── */
-.settings-section { margin: 0 16px 4px; background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
-.settings-row { display: flex; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--border); gap: 12px; }
-.settings-row:last-child { border-bottom: none; }
-.settings-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--bg3); display: flex; align-items: center; justify-content: center; font-size: 15px; color: var(--text2); flex-shrink: 0; }
-.settings-info { flex: 1; }
-.settings-title { font-size: 14px; font-weight: 500; color: var(--text); }
-.settings-desc { font-size: 12px; color: var(--text3); margin-top: 1px; }
+/* FORMS */
+.form-section{margin:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:18px}
+.form-section h3{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:14px}
+.form-row{margin-bottom:10px}
+.form-label{font-size:12px;font-weight:500;color:var(--text2);margin-bottom:5px;display:block}
+select,input[type=date],input[type=text],input[type=password]{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;color:var(--text);padding:10px 14px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;-webkit-appearance:none;appearance:none}
+select:focus,input:focus{border-color:var(--text2)}
+select option{background:var(--bg2)}
+.btn-primary{width:100%;background:var(--text);color:var(--bg);border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:opacity 0.15s}
+.btn-primary:active{opacity:0.8}
+.btn-secondary{width:100%;background:var(--bg3);color:var(--text);border:1px solid var(--border2);border-radius:12px;padding:11px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-sm{background:var(--bg3);color:var(--text);border:1px solid var(--border2);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer}
+.btn-sm-green{background:var(--green-bg);color:var(--green);border:none;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;white-space:nowrap}
+.key-row{display:flex;gap:8px}
+.key-row input{flex:1}
+.ics-drop{border:1.5px dashed var(--border2);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:all 0.15s;margin-top:8px}
+.ics-drop:hover,.ics-drop:active{border-color:var(--green);background:var(--green-bg)}
+#ics-file-input{display:none}
 
-/* ── TOGGLE ── */
-.toggle { position: relative; width: 44px; height: 26px; flex-shrink: 0; }
-.toggle input { opacity: 0; width: 0; height: 0; }
-.toggle-track {
-  position: absolute; inset: 0;
-  background: var(--bg4);
-  border-radius: 13px;
-  cursor: pointer;
-  border: 1px solid var(--border2);
-  transition: all 0.2s;
-}
-.toggle input:checked + .toggle-track { background: var(--c-green); border-color: transparent; }
-.toggle-track::after {
-  content: '';
-  position: absolute;
-  left: 3px; top: 50%;
-  transform: translateY(-50%);
-  width: 18px; height: 18px;
-  border-radius: 50%;
-  background: var(--bg2);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-  transition: all 0.2s;
-}
-.toggle input:checked + .toggle-track::after { left: calc(100% - 21px); }
+/* NOTIF BANNER */
+.notif-banner{margin:12px 16px;padding:12px 16px;background:var(--blue-bg);border-radius:12px;font-size:13px;color:var(--blue);cursor:pointer;display:flex;align-items:center;gap:10px;font-weight:500}
+.notif-banner.hidden{display:none}
 
-/* ── FORM ── */
-.form-section { margin: 14px 16px; background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 18px; }
-.form-section h3 { font-size: 13px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 14px; }
-.form-row { margin-bottom: 10px; }
-.form-label { font-size: 12px; font-weight: 500; color: var(--text2); margin-bottom: 5px; display: block; }
-select, input[type=date], input[type=text], input[type=password] {
-  width: 100%;
-  background: var(--bg3);
-  border: 1px solid var(--border2);
-  border-radius: 10px;
-  color: var(--text);
-  padding: 10px 14px;
-  font-size: 14px;
-  font-family: 'DM Sans', sans-serif;
-  outline: none;
-  -webkit-appearance: none;
-  appearance: none;
-}
-select:focus, input:focus { border-color: var(--text2); }
-select option { background: var(--bg2); }
-.btn-primary {
-  width: 100%;
-  background: var(--text);
-  color: var(--bg);
-  border: none;
-  border-radius: 12px;
-  padding: 13px;
-  font-size: 14px;
-  font-weight: 600;
-  font-family: 'DM Sans', sans-serif;
-  cursor: pointer;
-  transition: opacity 0.15s;
-}
-.btn-primary:active { opacity: 0.8; }
-.btn-secondary {
-  width: 100%;
-  background: var(--bg3);
-  color: var(--text);
-  border: 1px solid var(--border2);
-  border-radius: 12px;
-  padding: 11px;
-  font-size: 13px;
-  font-weight: 500;
-  font-family: 'DM Sans', sans-serif;
-  cursor: pointer;
-  margin-top: 8px;
-}
-.btn-sm {
-  background: var(--bg3);
-  color: var(--text);
-  border: 1px solid var(--border2);
-  border-radius: 8px;
-  padding: 6px 14px;
-  font-size: 12px;
-  font-weight: 500;
-  font-family: 'DM Sans', sans-serif;
-  cursor: pointer;
-}
-.btn-sm-green {
-  background: var(--c-green-bg);
-  color: var(--c-green);
-  border: none;
-  border-radius: 8px;
-  padding: 9px 14px;
-  font-size: 13px;
-  font-weight: 600;
-  font-family: 'DM Sans', sans-serif;
-  cursor: pointer;
-  white-space: nowrap;
-}
+/* COMING SOON */
+.coming-soon{margin:40px 20px;text-align:center;padding:40px 20px;background:var(--bg2);border-radius:20px;border:1px solid var(--border)}
+.coming-soon-icon{width:56px;height:56px;border-radius:16px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 16px;color:var(--text3)}
 
-/* ── ICS DROP ── */
-.ics-drop {
-  border: 1.5px dashed var(--border2);
-  border-radius: 12px;
-  padding: 20px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.15s;
-  margin-top: 8px;
-}
-.ics-drop:hover { border-color: var(--c-green); background: var(--c-green-bg); }
-#ics-file-input { display: none; }
+/* TOAST */
+.toast{position:fixed;bottom:calc(var(--nav-h) + var(--safe-b) + 12px);left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 20px;border-radius:20px;font-size:13px;font-weight:500;z-index:200;opacity:0;transition:opacity 0.2s;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1}
 
-/* ── NOTIF BANNER ── */
-.notif-banner {
-  margin: 12px 16px;
-  padding: 12px 16px;
-  background: var(--c-blue-bg);
-  border: 1px solid transparent;
-  border-radius: 12px;
-  font-size: 13px;
-  color: var(--c-blue);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 500;
-}
-.notif-banner.hidden { display: none; }
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:32px 24px;color:var(--text3)}
+.empty-state i{font-size:32px;margin-bottom:10px;display:block}
+.empty-state p{font-size:14px;line-height:1.6}
 
-/* ── COMING SOON ── */
-.coming-soon {
-  margin: 40px 20px;
-  text-align: center;
-  padding: 40px 20px;
-  background: var(--bg2);
-  border-radius: 20px;
-  border: 1px solid var(--border);
-}
-.coming-soon-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
-  background: var(--bg3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  margin: 0 auto 16px;
-  color: var(--text3);
-}
-.coming-soon h2 { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
-.coming-soon p { font-size: 14px; color: var(--text3); line-height: 1.6; }
+/* INSTALL HINT */
+.install-hint{margin:0 16px 14px;padding:14px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;font-size:13px;color:var(--text2);line-height:1.6;display:none}
+.install-hint strong{color:var(--text);font-weight:600}
 
-/* ── TOAST ── */
-.toast {
-  position: fixed;
-  bottom: calc(var(--nav-h) + var(--safe-b) + 12px);
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--text);
-  color: var(--bg);
-  padding: 10px 20px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 500;
-  z-index: 200;
-  opacity: 0;
-  transition: opacity 0.2s;
-  white-space: nowrap;
-  pointer-events: none;
-}
-.toast.show { opacity: 1; }
-
-/* ── EMPTY STATE ── */
-.empty-state { text-align: center; padding: 48px 24px; color: var(--text3); }
-.empty-state i { font-size: 36px; margin-bottom: 12px; display: block; }
-.empty-state p { font-size: 14px; line-height: 1.6; }
-
-/* ── INSTALL HINT ── */
-.install-hint {
-  margin: 0 16px 14px;
-  padding: 14px 16px;
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  font-size: 13px;
-  color: var(--text2);
-  line-height: 1.6;
-  display: none;
-}
-.install-hint strong { color: var(--text); font-weight: 600; }
-
-/* ── SPRIT KEY ROW ── */
-.key-row { display: flex; gap: 8px; }
-.key-row input { flex: 1; }
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:300;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal-sheet{background:var(--bg2);border-radius:20px 20px 0 0;padding:20px;width:100%;max-width:430px;max-height:80vh;overflow-y:auto;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1)}
+.modal-overlay.open .modal-sheet{transform:translateY(0)}
+.modal-handle{width:36px;height:4px;background:var(--bg4);border-radius:2px;margin:0 auto 16px}
+.modal-title{font-size:17px;font-weight:600;margin-bottom:16px}
 </style>
 </head>
 <body>
 
-<!-- ═══ HEADER ═══ -->
 <header class="app-header" id="app-header">
   <div class="header-inner">
     <div>
-      <div class="header-location">73563 · Mögglingen</div>
+      <div class="header-sub">73563 · Mögglingen</div>
       <div class="header-title" id="header-title">Home</div>
     </div>
     <div class="header-actions">
-      <button class="icon-btn" id="theme-btn" onclick="toggleTheme()" aria-label="Design wechseln">
+      <button class="icon-btn" onclick="toggleTheme()" aria-label="Theme">
         <i class="ti ti-sun" id="theme-icon"></i>
       </button>
-      <button class="icon-btn" id="notif-btn" onclick="refreshReminders()" aria-label="Erinnerungen">
+      <button class="icon-btn" onclick="refreshReminders()" aria-label="Erinnerungen">
         <i class="ti ti-bell"></i>
       </button>
     </div>
@@ -622,11 +247,19 @@ select option { background: var(--bg2); }
   <span>Benachrichtigungen aktivieren</span>
 </div>
 
-<!-- ═══════════════════════════════════════
-     HOME
-═══════════════════════════════════════ -->
+<!-- ONBOARDING -->
+<div id="onboarding-banner" class="onboarding-banner hidden">
+  <i class="ti ti-calendar-plus" style="font-size:22px;color:var(--blue);flex-shrink:0;margin-top:1px"></i>
+  <div class="onboarding-text">
+    <div class="onboarding-title">Abfuhrtermine laden</div>
+    <div class="onboarding-sub">Lade einmalig deinen GOA-Kalender, um alle Abholtermine zu sehen und Erinnerungen zu erhalten.</div>
+    <button class="onboarding-btn" onclick="switchTab('mehr');showToast('ICS-Datei unter „Mehr" hochladen')">Jetzt einrichten</button>
+  </div>
+</div>
+
+<!-- ═══ HOME ═══ -->
 <div id="view-home" class="view active">
-  <div style="padding: 16px 16px 0; display: flex; flex-direction: column; gap: 12px;">
+  <div style="padding:16px 16px 0;display:flex;flex-direction:column;gap:12px">
 
     <!-- Next Pickups -->
     <div class="card" id="home-muell-card">
@@ -634,39 +267,37 @@ select option { background: var(--bg2); }
         <span class="card-label">Nächste Abholung</span>
         <span class="card-meta" id="home-muell-meta"></span>
       </div>
-      <div class="card-body" id="home-muell-body" style="padding:0">
-        <div class="empty-state" style="padding:24px">
-          <i class="ti ti-calendar-off" style="font-size:24px;margin-bottom:6px"></i>
-          <p style="font-size:13px">Keine Termine — jetzt laden</p>
+      <div id="home-muell-body">
+        <div class="empty-state" style="padding:20px">
+          <i class="ti ti-calendar-off" style="font-size:22px;margin-bottom:6px;color:var(--text3)"></i>
+          <p style="font-size:13px">Noch keine Termine geladen</p>
         </div>
       </div>
     </div>
 
-    <!-- Sprit preview -->
-    <div class="card" id="home-sprit-card">
+    <!-- Sprit -->
+    <div class="card">
       <div class="card-header">
         <span class="card-label">Spritpreise</span>
-        <span class="card-meta" id="home-sprit-fuel-label">Super E5</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="card-meta" id="home-sprit-label">Super E5</span>
+          <button onclick="refreshSpritHome()" style="width:24px;height:24px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--text2)" aria-label="Aktualisieren">
+            <i class="ti ti-refresh" id="sprit-refresh-icon"></i>
+          </button>
+        </div>
       </div>
-      <div class="card-body" id="home-sprit-body" style="padding:0">
-        <div class="card-row" style="padding:14px 16px">
-          <div class="type-icon" style="background:var(--bg3); color:var(--text3)">
-            <i class="ti ti-gas-station"></i>
-          </div>
-          <div class="type-info">
-            <div class="type-name" style="color:var(--text3)">Warte auf API-Key…</div>
-            <div class="type-sub">Tankerkönig wird geladen</div>
-          </div>
+      <div id="home-sprit-body">
+        <div class="card-row">
+          <div class="type-icon" style="background:var(--bg3);color:var(--text3)"><i class="ti ti-gas-station"></i></div>
+          <div class="type-info"><div class="type-name" style="color:var(--text3)">Wird geladen…</div></div>
         </div>
       </div>
     </div>
 
     <!-- Wertstoffhof -->
-    <div class="card" id="home-wsh-card">
-      <div class="wsh-row">
-        <div class="type-icon" style="background:var(--c-green-bg); color:var(--c-green)">
-          <i class="ti ti-building-warehouse"></i>
-        </div>
+    <div class="card" onclick="openWSHModal()" style="cursor:pointer">
+      <div class="card-row">
+        <div class="type-icon" style="background:var(--green-bg);color:var(--green)"><i class="ti ti-building-warehouse"></i></div>
         <div class="type-info">
           <div class="type-name">Wertstoffhof Ellert</div>
           <div id="wsh-status" class="wsh-status-open">Wird geprüft…</div>
@@ -677,31 +308,66 @@ select option { background: var(--bg2); }
     </div>
 
     <!-- Wetter -->
-    <div class="card" id="home-weather-card">
+    <div class="card">
       <div class="card-header">
         <span class="card-label">Wetter · Mögglingen</span>
         <span class="card-meta" id="weather-desc">—</span>
       </div>
-      <div style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between">
-        <div style="display:flex;align-items:center;gap:14px">
-          <div class="type-icon" style="background:var(--c-blue-bg);color:var(--c-blue);width:48px;height:48px;border-radius:12px;font-size:22px">
+      <div style="padding:14px 16px">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+          <div class="type-icon" style="background:var(--blue-bg);color:var(--blue);width:48px;height:48px;border-radius:12px;font-size:22px">
             <i class="ti ti-cloud-sun" id="weather-icon"></i>
           </div>
           <div>
             <div class="weather-temp" id="weather-temp">—°</div>
             <div class="weather-range" id="weather-range"></div>
           </div>
+          <div style="margin-left:auto;text-align:right" id="weather-wind"></div>
         </div>
-        <div style="text-align:right;display:flex;flex-direction:column;gap:6px" id="weather-extras"></div>
+        <!-- 3-day forecast -->
+        <div style="display:flex;gap:8px;border-top:1px solid var(--border);padding-top:12px" id="weather-forecast"></div>
+      </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div style="padding-bottom:4px">
+      <div class="section-label" style="padding:0 4px 8px">Schnellzugriff</div>
+      <div class="quicklinks">
+        <a href="https://www.goa-online.de/leistungen/abfuhrkalender/abfuhrkalender-fuer-privathaushalte/" target="_blank" class="ql-card">
+          <div class="ql-icon" style="background:var(--green-bg);color:var(--green)"><i class="ti ti-calendar-event"></i></div>
+          <div>
+            <div class="ql-label">GOA Kalender</div>
+            <div class="ql-sub">ICS herunterladen</div>
+          </div>
+        </a>
+        <a href="https://www.moegglingen.de" target="_blank" class="ql-card">
+          <div class="ql-icon" style="background:var(--blue-bg);color:var(--blue)"><i class="ti ti-building-community"></i></div>
+          <div>
+            <div class="ql-label">Gemeinde</div>
+            <div class="ql-sub">moegglingen.de</div>
+          </div>
+        </a>
+        <a href="tel:+4971742711555" class="ql-card">
+          <div class="ql-icon" style="background:var(--amber-bg);color:var(--amber)"><i class="ti ti-phone"></i></div>
+          <div>
+            <div class="ql-label">GOA Bürgertel.</div>
+            <div class="ql-sub">07174 / 2711-555</div>
+          </div>
+        </a>
+        <a href="https://maps.google.com/?q=Wertstoffhof+Ellert+Mögglingen" target="_blank" class="ql-card">
+          <div class="ql-icon" style="background:var(--gray-bg);color:var(--gray)"><i class="ti ti-map-pin"></i></div>
+          <div>
+            <div class="ql-label">Wertstoffhof</div>
+            <div class="ql-sub">In Maps öffnen</div>
+          </div>
+        </a>
       </div>
     </div>
 
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════
-     MÜLL
-═══════════════════════════════════════ -->
+<!-- ═══ MÜLL ═══ -->
 <div id="view-muell" class="view">
   <div class="chip-bar" id="filter-bar"></div>
   <div id="muell-stats"></div>
@@ -710,50 +376,42 @@ select option { background: var(--bg2); }
   <div id="muell-past"></div>
 </div>
 
-<!-- ═══════════════════════════════════════
-     SPRIT
-═══════════════════════════════════════ -->
+<!-- ═══ SPRIT ═══ -->
 <div id="view-sprit" class="view">
   <div class="fuel-bar">
     <button class="fuel-chip active" id="fchip-e5" onclick="setFuel('e5')">Super E5</button>
     <button class="fuel-chip" id="fchip-e10" onclick="setFuel('e10')">Super E10</button>
     <button class="fuel-chip" id="fchip-diesel" onclick="setFuel('diesel')">Diesel</button>
   </div>
-  <div id="sprit-key-section" class="form-section" style="margin-top:4px">
+  <div class="form-section" id="sprit-key-section" style="margin-top:4px">
     <h3>Tankerkönig API-Key</h3>
     <div class="key-row">
       <input type="password" id="tk-key-input" placeholder="API-Key eingeben…">
       <button class="btn-sm-green" onclick="saveTKKey()">Speichern</button>
     </div>
-    <p style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.5">Kostenlos auf <a href="https://creativecommons.tankerkoenig.de" style="color:var(--c-green)">creativecommons.tankerkoenig.de</a></p>
+    <p style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.5">Kostenlos auf <a href="https://creativecommons.tankerkoenig.de" style="color:var(--green)">creativecommons.tankerkoenig.de</a></p>
   </div>
   <div id="sprit-list-wrap"></div>
   <div id="sprit-updated" style="font-size:11px;color:var(--text3);text-align:center;padding:8px 16px 0"></div>
 </div>
 
-<!-- ═══════════════════════════════════════
-     BUS (COMING SOON)
-═══════════════════════════════════════ -->
+<!-- ═══ BUS ═══ -->
 <div id="view-bus" class="view">
   <div class="coming-soon">
-    <div class="coming-soon-icon">
-      <i class="ti ti-bus"></i>
-    </div>
-    <h2>Bus & Bahn</h2>
-    <p>Echtzeit-Abfahrten für Mögglingen Bahnhof folgen bald. Wir arbeiten an der Integration.</p>
+    <div class="coming-soon-icon"><i class="ti ti-bus"></i></div>
+    <h2 style="font-size:18px;font-weight:600;margin-bottom:8px">Bus & Bahn</h2>
+    <p style="font-size:14px;color:var(--text3);line-height:1.6">Echtzeit-Abfahrten für Mögglingen folgen bald.</p>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════
-     MEHR (Hinzufügen + Einstellungen)
-═══════════════════════════════════════ -->
+<!-- ═══ MEHR ═══ -->
 <div id="view-mehr" class="view">
-
   <div class="form-section" style="margin-top:16px">
     <h3>ICS importieren</h3>
     <div class="ics-drop" onclick="document.getElementById('ics-file-input').click()">
-      <i class="ti ti-upload" style="font-size:24px;color:var(--text3);margin-bottom:6px;display:block"></i>
-      <div style="font-size:13px;color:var(--text2)">ICS-Datei von goa-online.de hier ablegen</div>
+      <i class="ti ti-upload" style="font-size:22px;color:var(--text3);margin-bottom:6px;display:block"></i>
+      <div style="font-size:13px;color:var(--text2)">ICS-Datei von goa-online.de hochladen</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:3px">Antippen oder Datei ablegen</div>
     </div>
     <input type="file" id="ics-file-input" accept=".ics">
   </div>
@@ -779,8 +437,7 @@ select option { background: var(--bg2); }
     </div>
     <button class="btn-primary" onclick="addPickup()">Termin hinzufügen</button>
     <button class="btn-secondary" onclick="loadGOAData()">
-      <i class="ti ti-calendar-plus" style="margin-right:6px;vertical-align:-1px"></i>
-      Alle GOA-Termine 2026/2027 laden
+      <i class="ti ti-calendar-plus"></i>Alle GOA-Termine 2026/2027 laden
     </button>
   </div>
 
@@ -798,9 +455,8 @@ select option { background: var(--bg2); }
       <div class="settings-icon"><i class="ti ti-clock"></i></div>
       <div class="settings-info">
         <div class="settings-title">Wie früh erinnern?</div>
-        <div class="settings-desc">Vor dem Abholtermin</div>
       </div>
-      <select style="width:auto;padding:5px 10px;font-size:12px;border-radius:8px" id="reminder-days" onchange="saveSettings()">
+      <select class="sm" id="reminder-days" onchange="saveSettings()">
         <option value="0">Selber Tag</option>
         <option value="1">1 Tag</option>
         <option value="2" selected>2 Tage</option>
@@ -813,25 +469,34 @@ select option { background: var(--bg2); }
       <div class="settings-info">
         <div class="settings-title">Uhrzeit</div>
       </div>
-      <select style="width:auto;padding:5px 10px;font-size:12px;border-radius:8px" id="reminder-time" onchange="saveSettings()">
+      <select class="sm" id="reminder-time" onchange="saveSettings()">
+        <option value="06:00">06:00</option>
         <option value="07:00">07:00</option>
         <option value="08:00" selected>08:00</option>
+        <option value="09:00">09:00</option>
+        <option value="10:00">10:00</option>
+        <option value="11:00">11:00</option>
+        <option value="12:00">12:00</option>
+        <option value="13:00">13:00</option>
+        <option value="14:00">14:00</option>
+        <option value="15:00">15:00</option>
+        <option value="16:00">16:00</option>
         <option value="17:00">17:00</option>
         <option value="18:00">18:00</option>
         <option value="19:00">19:00</option>
         <option value="20:00">20:00</option>
+        <option value="21:00">21:00</option>
+        <option value="22:00">22:00</option>
       </select>
     </div>
     <div class="settings-row">
       <div class="settings-icon"><i class="ti ti-test-pipe"></i></div>
-      <div class="settings-info">
-        <div class="settings-title">Test-Benachrichtigung</div>
-      </div>
+      <div class="settings-info"><div class="settings-title">Test-Benachrichtigung</div></div>
       <button class="btn-sm" onclick="testNotification()">Senden</button>
     </div>
   </div>
 
-  <div class="section-label">Tonnen filtern</div>
+  <div class="section-label">Tonnen ein-/ausblenden</div>
   <div class="settings-section" id="visibility-settings"></div>
 
   <div class="section-label">App</div>
@@ -848,20 +513,17 @@ select option { background: var(--bg2); }
       <div class="settings-icon"><i class="ti ti-trash"></i></div>
       <div class="settings-info">
         <div class="settings-title">Alle Termine löschen</div>
-        <div class="settings-desc">App zurücksetzen</div>
       </div>
-      <button class="btn-sm" style="color:var(--c-red);border-color:var(--c-red-bg)" onclick="clearAll()">Löschen</button>
+      <button class="btn-sm" style="color:var(--red);border-color:var(--red-bg)" onclick="clearAll()">Löschen</button>
     </div>
   </div>
-
   <div class="install-hint" id="install-hint">
     <strong>iPhone/iPad:</strong> Safari → Teilen → „Zum Home-Bildschirm"<br><br>
     <strong>Android:</strong> Chrome → Menü ⋮ → „App installieren"
   </div>
-
 </div>
 
-<!-- ═══ BOTTOM NAV ═══ -->
+<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <div class="nav-item active" id="nav-home" onclick="switchTab('home')">
     <div class="nav-icon-wrap"><i class="ti ti-home-2"></i></div>
@@ -886,256 +548,188 @@ select option { background: var(--bg2); }
   </div>
 </nav>
 
+<!-- WERTSTOFFHOF MODAL -->
+<div class="modal-overlay" id="wsh-modal" onclick="closeWSHModal(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Wertstoffhof Ellert</div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <i class="ti ti-map-pin" style="color:var(--text3);font-size:15px"></i>
+      <span style="font-size:13px;color:var(--text2)">An der B29, Ausfahrt Mögglingen-Ost</span>
+    </div>
+    <div style="margin-bottom:16px">
+      <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px">Öffnungszeiten Sommer (15. März – 31. Oktober)</div>
+      <div class="wsh-detail-row" id="wsh-mo-fr-sommer"><span class="wsh-detail-day">Mo – Fr</span><span class="wsh-detail-time">07:30 – 18:00 Uhr</span></div>
+      <div class="wsh-detail-row" id="wsh-sa-sommer"><span class="wsh-detail-day">Samstag</span><span class="wsh-detail-time">08:00 – 13:00 Uhr</span></div>
+      <div class="wsh-detail-row"><span class="wsh-detail-day">Sonntag</span><span class="wsh-detail-time" style="color:var(--red)">Geschlossen</span></div>
+    </div>
+    <div style="margin-bottom:20px">
+      <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px">Öffnungszeiten Winter (1. Nov – 14. März)</div>
+      <div class="wsh-detail-row"><span class="wsh-detail-day">Mo – Fr</span><span class="wsh-detail-time">07:30 – 17:00 Uhr</span></div>
+      <div class="wsh-detail-row"><span class="wsh-detail-day">Samstag</span><span class="wsh-detail-time">08:00 – 13:00 Uhr</span></div>
+      <div class="wsh-detail-row"><span class="wsh-detail-day">Sonntag</span><span class="wsh-detail-time" style="color:var(--red)">Geschlossen</span></div>
+    </div>
+    <a href="https://maps.google.com/?q=Wertstoffhof+Ellert+Mögglingen" target="_blank"
+       style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--bg3);border:1px solid var(--border2);border-radius:12px;padding:12px;font-size:14px;font-weight:500;color:var(--text)">
+      <i class="ti ti-map-2"></i> In Google Maps öffnen
+    </a>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 // ══════════════════════════════════════════
-// DATEN & TYPEN
+// TYPES
 // ══════════════════════════════════════════
 const TYPES = {
-  restmuell:       {label:'Hausmüll',          kuerzel:'HM',  icon:'ti-trash',          color:'#6B7280', bg:'#F3F4F6', darkBg:'#1F2937'},
-  bio:             {label:'Bioabfälle',         kuerzel:'Bio', icon:'ti-leaf',            color:'#2D6A4F', bg:'#D8F3DC', darkBg:'#064E3B'},
-  papier:          {label:'Blaue Tonne',        kuerzel:'BT',  icon:'ti-file-text',       color:'#1E40AF', bg:'#DBEAFE', darkBg:'#1E3A5F'},
-  gelb:            {label:'Gelber Sack',        kuerzel:'GS',  icon:'ti-recycle',         color:'#92400E', bg:'#FEF3C7', darkBg:'#451A03'},
-  gartentonne:     {label:'Gartentonne',        kuerzel:'GT',  icon:'ti-plant-2',         color:'#166534', bg:'#DCFCE7', darkBg:'#14532D'},
-  gruenabfuhr:     {label:'Grünabfuhr',         kuerzel:'GA',  icon:'ti-trees',           color:'#14532D', bg:'#F0FDF4', darkBg:'#052E16'},
-  altpapier_verein:{label:'AV Holsammlung',     kuerzel:'AVH', icon:'ti-box',             color:'#5B21B6', bg:'#EDE9FE', darkBg:'#2E1065'},
-  christbaum:      {label:'Christbaumsammlung', kuerzel:'CS',  icon:'ti-christmas-tree',  color:'#9B1C1C', bg:'#FEE2E2', darkBg:'#450A0A'}
+  restmuell:       {label:'Hausmüll',          kuerzel:'HM',  icon:'ti-trash',           color:'#6B7280', bg:'#F3F4F6', darkBg:'#1F2937'},
+  bio:             {label:'Bioabfälle',         kuerzel:'Bio', icon:'ti-leaf',             color:'#2D6A4F', bg:'#D8F3DC', darkBg:'#064E3B'},
+  papier:          {label:'Blaue Tonne',        kuerzel:'BT',  icon:'ti-file-text',        color:'#1E40AF', bg:'#DBEAFE', darkBg:'#1E3A5F'},
+  gelb:            {label:'Gelber Sack',        kuerzel:'GS',  icon:'ti-recycle',          color:'#92400E', bg:'#FEF3C7', darkBg:'#451A03'},
+  gartentonne:     {label:'Gartentonne',        kuerzel:'GT',  icon:'ti-plant-2',          color:'#166534', bg:'#DCFCE7', darkBg:'#14532D'},
+  gruenabfuhr:     {label:'Grünabfuhr',         kuerzel:'GA',  icon:'ti-trees',            color:'#14532D', bg:'#F0FDF4', darkBg:'#052E16'},
+  altpapier_verein:{label:'AV Holsammlung',     kuerzel:'AVH', icon:'ti-box',              color:'#5B21B6', bg:'#EDE9FE', darkBg:'#2E1065'},
+  christbaum:      {label:'Christbaumsammlung', kuerzel:'CS',  icon:'ti-christmas-tree',   color:'#9B1C1C', bg:'#FEE2E2', darkBg:'#450A0A'}
 };
 
 const GOA_TERMINE = [{"type":"bio","date":"2026-03-07"},{"type":"bio","date":"2026-03-20"},{"type":"papier","date":"2026-03-20"},{"type":"gelb","date":"2026-03-20"},{"type":"gartentonne","date":"2026-03-20"},{"type":"gartentonne","date":"2026-04-04"},{"type":"bio","date":"2026-04-07"},{"type":"restmuell","date":"2026-04-14"},{"type":"gartentonne","date":"2026-04-17"},{"type":"bio","date":"2026-04-20"},{"type":"papier","date":"2026-04-23"},{"type":"gelb","date":"2026-04-23"},{"type":"restmuell","date":"2026-04-28"},{"type":"gartentonne","date":"2026-05-02"},{"type":"bio","date":"2026-05-04"},{"type":"gruenabfuhr","date":"2026-05-04"},{"type":"bio","date":"2026-05-11"},{"type":"restmuell","date":"2026-05-12"},{"type":"gartentonne","date":"2026-05-16"},{"type":"bio","date":"2026-05-18"},{"type":"papier","date":"2026-05-21"},{"type":"gelb","date":"2026-05-21"},{"type":"bio","date":"2026-05-26"},{"type":"restmuell","date":"2026-05-27"},{"type":"gartentonne","date":"2026-05-30"},{"type":"bio","date":"2026-06-01"},{"type":"bio","date":"2026-06-08"},{"type":"restmuell","date":"2026-06-09"},{"type":"gartentonne","date":"2026-06-12"},{"type":"altpapier_verein","date":"2026-06-13"},{"type":"bio","date":"2026-06-15"},{"type":"papier","date":"2026-06-16"},{"type":"papier","date":"2026-06-18"},{"type":"gelb","date":"2026-06-18"},{"type":"bio","date":"2026-06-22"},{"type":"restmuell","date":"2026-06-23"},{"type":"gartentonne","date":"2026-06-26"},{"type":"bio","date":"2026-06-29"},{"type":"bio","date":"2026-07-06"},{"type":"restmuell","date":"2026-07-07"},{"type":"gartentonne","date":"2026-07-10"},{"type":"bio","date":"2026-07-13"},{"type":"papier","date":"2026-07-16"},{"type":"gelb","date":"2026-07-16"},{"type":"bio","date":"2026-07-20"},{"type":"restmuell","date":"2026-07-21"},{"type":"gartentonne","date":"2026-07-24"},{"type":"bio","date":"2026-07-27"},{"type":"bio","date":"2026-08-03"},{"type":"restmuell","date":"2026-08-04"},{"type":"gartentonne","date":"2026-08-07"},{"type":"bio","date":"2026-08-10"},{"type":"papier","date":"2026-08-13"},{"type":"gelb","date":"2026-08-13"},{"type":"bio","date":"2026-08-17"},{"type":"restmuell","date":"2026-08-18"},{"type":"gartentonne","date":"2026-08-21"},{"type":"bio","date":"2026-08-24"},{"type":"bio","date":"2026-08-31"},{"type":"restmuell","date":"2026-09-01"},{"type":"gartentonne","date":"2026-09-04"},{"type":"altpapier_verein","date":"2026-09-05"},{"type":"bio","date":"2026-09-07"},{"type":"papier","date":"2026-09-10"},{"type":"gelb","date":"2026-09-10"},{"type":"bio","date":"2026-09-14"},{"type":"restmuell","date":"2026-09-15"},{"type":"gartentonne","date":"2026-09-18"},{"type":"bio","date":"2026-09-21"},{"type":"bio","date":"2026-09-28"},{"type":"restmuell","date":"2026-09-29"},{"type":"gartentonne","date":"2026-10-02"},{"type":"bio","date":"2026-10-05"},{"type":"papier","date":"2026-10-08"},{"type":"gelb","date":"2026-10-08"},{"type":"bio","date":"2026-10-12"},{"type":"restmuell","date":"2026-10-13"},{"type":"gartentonne","date":"2026-10-16"},{"type":"bio","date":"2026-10-19"},{"type":"bio","date":"2026-10-26"},{"type":"restmuell","date":"2026-10-27"},{"type":"gartentonne","date":"2026-10-30"},{"type":"bio","date":"2026-11-02"},{"type":"papier","date":"2026-11-05"},{"type":"gelb","date":"2026-11-05"},{"type":"bio","date":"2026-11-09"},{"type":"restmuell","date":"2026-11-10"},{"type":"gartentonne","date":"2026-11-13"},{"type":"bio","date":"2026-11-16"},{"type":"gruenabfuhr","date":"2026-11-20"},{"type":"bio","date":"2026-11-23"},{"type":"restmuell","date":"2026-11-24"},{"type":"gartentonne","date":"2026-11-27"},{"type":"bio","date":"2026-11-30"},{"type":"bio","date":"2026-12-02"},{"type":"papier","date":"2026-12-03"},{"type":"gelb","date":"2026-12-03"},{"type":"restmuell","date":"2026-12-08"},{"type":"gartentonne","date":"2026-12-11"},{"type":"bio","date":"2026-12-14"},{"type":"bio","date":"2026-12-21"},{"type":"restmuell","date":"2026-12-22"},{"type":"bio","date":"2026-12-29"},{"type":"papier","date":"2027-01-02"},{"type":"gelb","date":"2027-01-02"},{"type":"bio","date":"2027-01-05"},{"type":"restmuell","date":"2027-01-07"},{"type":"christbaum","date":"2027-01-11"},{"type":"bio","date":"2027-01-12"},{"type":"bio","date":"2027-01-18"},{"type":"restmuell","date":"2027-01-19"},{"type":"bio","date":"2027-01-25"},{"type":"papier","date":"2027-01-28"},{"type":"gelb","date":"2027-01-28"},{"type":"bio","date":"2027-02-01"},{"type":"restmuell","date":"2027-02-02"},{"type":"bio","date":"2027-02-08"},{"type":"bio","date":"2027-02-15"},{"type":"restmuell","date":"2027-02-16"},{"type":"bio","date":"2027-02-22"},{"type":"papier","date":"2027-02-25"},{"type":"gelb","date":"2027-02-25"},{"type":"bio","date":"2027-03-01"},{"type":"restmuell","date":"2027-03-02"},{"type":"altpapier_verein","date":"2027-03-06"},{"type":"bio","date":"2027-03-08"},{"type":"bio","date":"2027-03-15"},{"type":"restmuell","date":"2027-03-16"},{"type":"bio","date":"2027-03-22"},{"type":"papier","date":"2027-03-25"},{"type":"gelb","date":"2027-03-25"},{"type":"bio","date":"2027-03-30"},{"type":"restmuell","date":"2027-03-31"}];
 
-// Wertstoffhof Ellert Öffnungszeiten (Sommer: bis 31.10, Winter: ab 01.11)
-const WSH_SCHEDULE = {
-  sommer: { weekday:'07:30–18:00', sa:'08:00–13:00', so:null },
-  winter: { weekday:'07:30–17:00', sa:'08:00–13:00', so:null }
-};
+const WSH_SOMMER = {weekday:'07:30–18:00',sa:'08:00–13:00'};
+const WSH_WINTER = {weekday:'07:30–17:00',sa:'08:00–13:00'};
 
-// ── Persistenter Storage: IndexedDB + localStorage Fallback ──
-const DB_NAME = 'moeggling-app';
-const DB_VERSION = 1;
-const DB_STORE = 'kv';
-let _db = null;
-
-function openDB() {
-  return new Promise((resolve, reject) => {
-    if(_db) { resolve(_db); return; }
-    const req = indexedDB.open(DB_NAME, DB_VERSION);
-    req.onupgradeneeded = e => e.target.result.createObjectStore(DB_STORE);
-    req.onsuccess = e => { _db = e.target.result; resolve(_db); };
-    req.onerror = () => reject(req.error);
+// ── IndexedDB + localStorage Storage ──
+const DB_NAME='moeggling-app', DB_VER=1, DB_STORE='kv';
+let _db=null;
+function openDB(){
+  return new Promise((res,rej)=>{
+    if(_db){res(_db);return;}
+    const r=indexedDB.open(DB_NAME,DB_VER);
+    r.onupgradeneeded=e=>e.target.result.createObjectStore(DB_STORE);
+    r.onsuccess=e=>{_db=e.target.result;res(_db);};
+    r.onerror=()=>rej(r.error);
   });
 }
-async function dbSet(key, value) {
-  try {
-    const db = await openDB();
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(DB_STORE, 'readwrite');
-      tx.objectStore(DB_STORE).put(JSON.stringify(value), key);
-      tx.oncomplete = () => resolve();
-      tx.onerror = () => reject(tx.error);
-    });
-  } catch(e) {}
-  // localStorage fallback
-  try { localStorage.setItem(key, JSON.stringify(value)); } catch(e) {}
+async function dbSet(key,value){
+  try{const db=await openDB();return new Promise((res,rej)=>{const tx=db.transaction(DB_STORE,'readwrite');tx.objectStore(DB_STORE).put(JSON.stringify(value),key);tx.oncomplete=()=>res();tx.onerror=()=>rej();});}catch(e){}
+  try{localStorage.setItem(key,JSON.stringify(value));}catch(e){}
 }
-async function dbGet(key, fallback) {
-  try {
-    const db = await openDB();
-    return new Promise((resolve) => {
-      const tx = db.transaction(DB_STORE, 'readonly');
-      const req = tx.objectStore(DB_STORE).get(key);
-      req.onsuccess = () => {
-        if(req.result !== undefined) resolve(JSON.parse(req.result));
-        else {
-          // Try localStorage fallback
-          try {
-            const v = localStorage.getItem(key);
-            if(v !== null) { dbSet(key, JSON.parse(v)); resolve(JSON.parse(v)); return; }
-          } catch(e) {}
-          resolve(fallback);
-        }
-      };
-      req.onerror = () => resolve(fallback);
-    });
-  } catch(e) {
-    try {
-      const v = localStorage.getItem(key);
-      return v !== null ? JSON.parse(v) : fallback;
-    } catch(e2) { return fallback; }
-  }
+async function dbGet(key,fallback){
+  try{const db=await openDB();return new Promise(res=>{const tx=db.transaction(DB_STORE,'readonly');const r=tx.objectStore(DB_STORE).get(key);r.onsuccess=()=>{if(r.result!==undefined)res(JSON.parse(r.result));else{try{const v=localStorage.getItem(key);if(v!==null){dbSet(key,JSON.parse(v));res(JSON.parse(v));return;}}catch(e){}res(fallback);}};r.onerror=()=>res(fallback);});}catch(e){try{const v=localStorage.getItem(key);return v!==null?JSON.parse(v):fallback;}catch(e2){return fallback;}}
 }
+function lsGet(key,fallback){try{const v=localStorage.getItem(key);return v!==null?JSON.parse(v):fallback;}catch(e){return fallback;}}
+function storageSet(key,value){try{localStorage.setItem(key,JSON.stringify(value));}catch(e){}dbSet(key,value);}
 
-// Sync wrappers für sofortigen Zugriff beim Start (aus localStorage)
-function storageGet(key, fallback) {
-  try {
-    const v = localStorage.getItem(key);
-    if(v !== null) return JSON.parse(v);
-  } catch(e) {}
-  return fallback;
-}
-function storageSet(key, value) {
-  // Sync in localStorage
-  try { localStorage.setItem(key, JSON.stringify(value)); } catch(e) {}
-  // Async persistent in IndexedDB
-  dbSet(key, value);
-}
-
-let pickups     = storageGet('pickups', []);
-let settings    = storageGet('settings', {reminderDays:2,reminderTime:'08:00',notificationsEnabled:false});
-let hiddenTypes = storageGet('hiddenTypes', []);
-let tkKey       = storageGet('tkKey', '6a7afae6-ab0c-4c82-9317-c1dbeb735619') || '6a7afae6-ab0c-4c82-9317-c1dbeb735619';
-
-// Bei Start: aus IndexedDB laden (persistenter als localStorage auf iOS)
-async function loadFromDB() {
-  const [p, s, h, k] = await Promise.all([
-    dbGet('pickups', null),
-    dbGet('settings', null),
-    dbGet('hiddenTypes', null),
-    dbGet('tkKey', null),
-  ]);
-  let changed = false;
-  if(p !== null && JSON.stringify(p) !== JSON.stringify(pickups)) { pickups = p; changed = true; }
-  if(s !== null) settings = s;
-  if(h !== null) hiddenTypes = h;
-  if(k !== null && k !== '6a7afae6-ab0c-4c82-9317-c1dbeb735619') tkKey = k;
-  if(changed) { renderHome(); renderMuell(); }
-  // Sync localStorage from IndexedDB to keep both in sync
-  if(p !== null) try { localStorage.setItem('pickups', JSON.stringify(p)); } catch(e) {}
-}
-let activeFilter= 'alle';
+let pickups     = lsGet('pickups',[]);
+let settings    = lsGet('settings',{reminderDays:2,reminderTime:'08:00',notificationsEnabled:false});
+let hiddenTypes = lsGet('hiddenTypes',[]);
+let checkedIds  = lsGet('checkedIds',[]);
+let tkKey       = lsGet('tkKey','6a7afae6-ab0c-4c82-9317-c1dbeb735619') || '6a7afae6-ab0c-4c82-9317-c1dbeb735619';
 let activeFuel  = 'e5';
-let activeTab   = 'home';
-let isDark      = localStorage.getItem('theme') === 'dark';
+let activeFilter= 'alle';
+let isDark      = localStorage.getItem('theme')==='dark';
 let spritCache  = null;
 
-// ── Init ──
+// Init DOM
 document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
 document.getElementById('reminder-days').value = settings.reminderDays;
 document.getElementById('reminder-time').value = settings.reminderTime;
-if(tkKey) {
-  document.getElementById('tk-key-input').value = '••••••••••••••••';
-  document.getElementById('sprit-key-section').style.display = 'none';
-}
+if(tkKey){document.getElementById('tk-key-input').value='••••••••••';document.getElementById('sprit-key-section').style.display='none';}
+
 applyTheme();
 checkNotifStatus();
+checkOnboarding();
 renderHome();
 loadWeather();
 renderWSH();
-// IndexedDB laden (async, überschreibt falls aktueller)
+
+// Load from IndexedDB async (more persistent on iOS)
+async function loadFromDB(){
+  const [p,s,h,c] = await Promise.all([
+    dbGet('pickups',null),dbGet('settings',null),dbGet('hiddenTypes',null),dbGet('checkedIds',null)
+  ]);
+  let changed=false;
+  if(p!==null&&JSON.stringify(p)!==JSON.stringify(pickups)){pickups=p;changed=true;}
+  if(s!==null)settings=s;
+  if(h!==null)hiddenTypes=h;
+  if(c!==null)checkedIds=c;
+  if(changed){renderHome();renderMuell();checkOnboarding();}
+  if(p!==null)try{localStorage.setItem('pickups',JSON.stringify(p));}catch(e){}
+}
 loadFromDB();
 
 // ══════════════════════════════════════════
 // THEME
 // ══════════════════════════════════════════
-function applyTheme() {
-  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-  document.getElementById('theme-icon').className = isDark ? 'ti ti-moon' : 'ti ti-sun';
-  document.querySelector('meta[name="theme-color"]').content = isDark ? '#111110' : '#F7F6F2';
+function applyTheme(){
+  document.documentElement.setAttribute('data-theme',isDark?'dark':'light');
+  document.getElementById('theme-icon').className=isDark?'ti ti-moon':'ti ti-sun';
+  document.querySelector('meta[name="theme-color"]').content=isDark?'#111110':'#F7F6F2';
 }
-function toggleTheme() {
-  isDark = !isDark;
-  try{localStorage.setItem('theme', isDark ? 'dark' : 'light');}catch(e){}
-  applyTheme();
-}
+function toggleTheme(){isDark=!isDark;try{localStorage.setItem('theme',isDark?'dark':'light');}catch(e){}applyTheme();}
 
 // ══════════════════════════════════════════
 // NAVIGATION
 // ══════════════════════════════════════════
-const TAB_TITLES = { home:'Home', muell:'Müll', sprit:'Spritpreise', bus:'Bus & Bahn', mehr:'Mehr' };
-function switchTab(tab) {
-  if(tab === 'bus') { showToast('Bus & Bahn kommt bald'); return; }
-  activeTab = tab;
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.getElementById('view-' + tab).classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const ni = document.getElementById('nav-' + tab);
-  if(ni) ni.classList.add('active');
-  document.getElementById('header-title').textContent = TAB_TITLES[tab] || '';
-  if(tab === 'sprit' && tkKey) loadSprit();
-  if(tab === 'mehr') renderVisibilitySettings();
-  if(tab === 'home') renderHome();
-  if(tab === 'muell') renderMuell();
+const TAB_TITLES={home:'Home',muell:'Müll',sprit:'Spritpreise',bus:'Bus & Bahn',mehr:'Mehr'};
+function switchTab(tab){
+  if(tab==='bus'){showToast('Bus & Bahn kommt bald');return;}
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+tab).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const ni=document.getElementById('nav-'+tab);if(ni)ni.classList.add('active');
+  document.getElementById('header-title').textContent=TAB_TITLES[tab]||'';
+  if(tab==='sprit'&&tkKey)loadSprit();
+  if(tab==='mehr')renderVisibilitySettings();
+  if(tab==='home')renderHome();
+  if(tab==='muell')renderMuell();
 }
 
 // ══════════════════════════════════════════
 // HELPERS
 // ══════════════════════════════════════════
-function daysUntil(ds) {
-  const t=new Date(); t.setHours(0,0,0,0);
-  const d=new Date(ds+'T00:00:00'); d.setHours(0,0,0,0);
-  return Math.round((d-t)/86400000);
-}
-function fmtDate(ds) {
-  return new Date(ds+'T12:00:00').toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'});
-}
-function fmtDateShort(ds) {
-  return new Date(ds+'T12:00:00').toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'});
-}
-function getMonthKey(ds) {
-  return new Date(ds+'T12:00:00').toLocaleDateString('de-DE',{month:'long',year:'numeric'});
-}
-function typeIcon(type) {
-  const t = TYPES[type] || TYPES.restmuell;
-  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-  const bg = dark ? t.darkBg : t.bg;
-  return `<div class="type-icon" style="background:${bg};color:${t.color}"><i class="ti ${t.icon}"></i></div>`;
+function daysUntil(ds){const t=new Date();t.setHours(0,0,0,0);const d=new Date(ds+'T00:00:00');d.setHours(0,0,0,0);return Math.round((d-t)/86400000);}
+function fmtDate(ds){return new Date(ds+'T12:00:00').toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'});}
+function fmtDateShort(ds){return new Date(ds+'T12:00:00').toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'});}
+function getMonthKey(ds){return new Date(ds+'T12:00:00').toLocaleDateString('de-DE',{month:'long',year:'numeric'});}
+function save(){storageSet('pickups',pickups);storageSet('checkedIds',checkedIds);scheduleAllReminders();}
+
+// ══════════════════════════════════════════
+// ONBOARDING
+// ══════════════════════════════════════════
+function checkOnboarding(){
+  const banner=document.getElementById('onboarding-banner');
+  const hasFuture=pickups.some(p=>daysUntil(p.date)>=0);
+  banner.classList.toggle('hidden',hasFuture);
 }
 
 // ══════════════════════════════════════════
 // HOME
 // ══════════════════════════════════════════
-function renderHome() {
+function renderHome(){
   renderHomePickups();
-  if(tkKey) loadSpritPreview();
+  if(tkKey)loadSpritPreview();
   renderWSH();
+  checkOnboarding();
 }
 
-function renderHomePickups() {
-  const upcoming = pickups.filter(p => !hiddenTypes.includes(p.type) && daysUntil(p.date) >= 0);
-  const body = document.getElementById('home-muell-body');
-  const meta = document.getElementById('home-muell-meta');
-
-  if(!upcoming.length) {
-    meta.textContent = '';
-    body.innerHTML = `<div class="empty-state" style="padding:20px">
-      <i class="ti ti-calendar-off" style="font-size:24px;margin-bottom:6px;color:var(--text3)"></i>
-      <p style="font-size:13px">Keine Termine — jetzt laden</p>
-    </div>`;
-    return;
-  }
-
-  // Group upcoming by date, show next date
-  const byDate = {};
-  upcoming.forEach(p => { (byDate[p.date] = byDate[p.date]||[]).push(p); });
-  const dates = Object.keys(byDate).sort();
-  const nextDate = dates[0];
-  const days = daysUntil(nextDate);
-  meta.textContent = days === 0 ? 'Heute!' : days === 1 ? 'Morgen' : `in ${days} Tagen`;
-
-  // Show next date + one more if exists
-  const showDates = dates.slice(0, 2);
-  body.innerHTML = showDates.map(date => {
-    const d = daysUntil(date);
-    const items = byDate[date];
-    return items.map((p,i) => {
-      const t = TYPES[p.type] || TYPES.restmuell;
-      const dark = isDark;
-      const bg = dark ? t.darkBg : t.bg;
-      let badge = '';
-      if(i === 0) {
-        if(d === 0) badge = `<span class="badge badge-today">Heute</span>`;
-        else if(d === 1) badge = `<span class="badge badge-tom">Morgen</span>`;
-        else if(d <= 3) badge = `<span class="badge badge-soon">in ${d} d</span>`;
-      }
-      return `<div class="card-row" style="padding:12px 16px">
-        <div class="type-icon" style="background:${bg};color:${t.color}"><i class="ti ${t.icon}"></i></div>
-        <div class="type-info">
-          <div class="type-name">${t.label}</div>
-          <div class="type-sub">${fmtDateShort(date)} · ${t.kuerzel}</div>
-        </div>
-        ${badge}
-      </div>`;
+function renderHomePickups(){
+  const upcoming=pickups.filter(p=>!hiddenTypes.includes(p.type)&&daysUntil(p.date)>=0);
+  const body=document.getElementById('home-muell-body');
+  const meta=document.getElementById('home-muell-meta');
+  if(!upcoming.length){meta.textContent='';body.innerHTML='<div class="empty-state" style="padding:20px"><i class="ti ti-calendar-off" style="font-size:22px;margin-bottom:6px;color:var(--text3)"></i><p style="font-size:13px">Noch keine Termine geladen</p></div>';return;}
+  const byDate={};upcoming.forEach(p=>{(byDate[p.date]=byDate[p.date]||[]).push(p);});
+  const dates=Object.keys(byDate).sort();
+  const days=daysUntil(dates[0]);
+  meta.textContent=days===0?'Heute!':days===1?'Morgen':`in ${days} Tagen`;
+  body.innerHTML=dates.slice(0,2).map(date=>{
+    const d=daysUntil(date);
+    return byDate[date].map((p,i)=>{
+      const t=TYPES[p.type]||TYPES.restmuell;
+      const bg=isDark?t.darkBg:t.bg;
+      let badge='';
+      if(i===0){if(d===0)badge='<span class="badge badge-today">Heute</span>';else if(d===1)badge='<span class="badge badge-tom">Morgen</span>';else if(d<=3)badge=`<span class="badge badge-soon">in ${d} d</span>`;}
+      return `<div class="card-row"><div class="type-icon" style="background:${bg};color:${t.color}"><i class="ti ${t.icon}"></i></div><div class="type-info"><div class="type-name">${t.label}</div><div class="type-sub">${fmtDateShort(date)} · ${t.kuerzel}</div></div>${badge}</div>`;
     }).join('');
   }).join('');
 }
@@ -1143,171 +737,146 @@ function renderHomePickups() {
 // ══════════════════════════════════════════
 // WERTSTOFFHOF
 // ══════════════════════════════════════════
-function renderWSH() {
-  const now = new Date();
-  const dow = now.getDay(); // 0=So, 1=Mo...6=Sa
-  const h = now.getHours() + now.getMinutes()/60;
-  const month = now.getMonth() + 1;
-  const isSummer = month >= 3 && month <= 10;
-  const sched = isSummer ? WSH_SCHEDULE.sommer : WSH_SCHEDULE.winter;
-
-  const statusEl = document.getElementById('wsh-status');
-  const hoursEl = document.getElementById('wsh-hours');
-
-  if(dow === 0) { // Sonntag
-    statusEl.className = 'wsh-status-closed';
-    statusEl.textContent = 'Heute geschlossen';
-    hoursEl.textContent = 'Sonntags geschlossen';
-    return;
-  }
-  if(dow === 6) { // Samstag
-    const [open,close] = sched.sa.split('–').map(t => { const [hh,mm]=t.split(':'); return parseInt(hh)+parseInt(mm)/60; });
-    const isOpen = h >= open && h < close;
-    statusEl.className = isOpen ? 'wsh-status-open' : 'wsh-status-closed';
-    statusEl.textContent = isOpen ? `Geöffnet · bis ${sched.sa.split('–')[1]} Uhr` : `Heute geschlossen (Sa ${sched.sa})`;
-    hoursEl.textContent = 'Sa ' + sched.sa + ' Uhr';
-  } else { // Werktag
-    const [open,close] = sched.weekday.split('–').map(t => { const [hh,mm]=t.split(':'); return parseInt(hh)+parseInt(mm)/60; });
-    const isOpen = h >= open && h < close;
-    statusEl.className = isOpen ? 'wsh-status-open' : 'wsh-status-closed';
-    statusEl.textContent = isOpen ? `Geöffnet · bis ${sched.weekday.split('–')[1]} Uhr` : `Heute geschlossen`;
-    hoursEl.textContent = `Mo–Fr ${sched.weekday} Uhr`;
-  }
+function renderWSH(){
+  const now=new Date(),dow=now.getDay(),h=now.getHours()+now.getMinutes()/60;
+  const isSummer=(now.getMonth()+1)>=3&&(now.getMonth()+1)<=10;
+  const sched=isSummer?WSH_SOMMER:WSH_WINTER;
+  const statusEl=document.getElementById('wsh-status');
+  const hoursEl=document.getElementById('wsh-hours');
+  if(dow===0){statusEl.className='wsh-status-closed';statusEl.textContent='Heute geschlossen';hoursEl.textContent='Sonntags geschlossen';return;}
+  const timeStr=dow===6?sched.sa:sched.weekday;
+  const [open,close]=timeStr.split('–').map(t=>{const[hh,mm]=t.trim().split(':');return parseInt(hh)+parseInt(mm)/60;});
+  const isOpen=h>=open&&h<close;
+  statusEl.className=isOpen?'wsh-status-open':'wsh-status-closed';
+  statusEl.textContent=isOpen?`Geöffnet · bis ${timeStr.split('–')[1]} Uhr`:'Heute geschlossen';
+  hoursEl.textContent=dow===6?`Sa ${timeStr} Uhr`:`Mo–Fr ${sched.weekday} Uhr`;
 }
+
+function openWSHModal(){
+  // Highlight today's row
+  const now=new Date(),dow=now.getDay();
+  document.querySelectorAll('.wsh-detail-time').forEach(el=>el.classList.remove('today'));
+  if(dow>=1&&dow<=5){
+    document.querySelectorAll('.wsh-detail-time').forEach((el,i)=>{if(i===0||i===3)el.classList.add('today');});
+  }
+  if(dow===6){
+    document.querySelectorAll('.wsh-detail-time').forEach((el,i)=>{if(i===1||i===4)el.classList.add('today');});
+  }
+  document.getElementById('wsh-modal').classList.add('open');
+}
+function closeWSHModal(e){if(e.target===document.getElementById('wsh-modal'))document.getElementById('wsh-modal').classList.remove('open');}
 
 // ══════════════════════════════════════════
 // WETTER (Open-Meteo, kein Key)
 // ══════════════════════════════════════════
-async function loadWeather() {
-  try {
-    const url = 'https://api.open-meteo.com/v1/forecast?latitude=48.825&longitude=9.9589&current=temperature_2m,weathercode,windspeed_10m&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=Europe%2FBerlin&forecast_days=1';
-    const res = await fetch(url);
-    const data = await res.json();
-    const cur = data.current;
-    const day = data.daily;
-    const temp = Math.round(cur.temperature_2m);
-    const max  = Math.round(day.temperature_2m_max[0]);
-    const min  = Math.round(day.temperature_2m_min[0]);
-    const code = cur.weathercode;
-    const { desc, icon } = weatherCode(code);
-    document.getElementById('weather-temp').textContent  = temp + '°';
-    document.getElementById('weather-desc').textContent  = desc;
-    document.getElementById('weather-range').textContent = `↑${max}°  ↓${min}°`;
-    document.getElementById('weather-icon').className    = `ti ${icon}`;
-    const wind = Math.round(cur.windspeed_10m);
-    document.getElementById('weather-extras').innerHTML  =
-      `<div style="font-size:12px;color:var(--text3)"><i class="ti ti-wind" style="margin-right:3px"></i>${wind} km/h</div>`;
-  } catch(e) {
-    document.getElementById('weather-temp').textContent = '—';
-    document.getElementById('weather-desc').textContent = 'Nicht verfügbar';
-  }
+async function loadWeather(){
+  try{
+    const url='https://api.open-meteo.com/v1/forecast?latitude=48.825&longitude=9.9589&current=temperature_2m,weathercode,windspeed_10m&daily=temperature_2m_max,temperature_2m_min,weathercode,precipitation_sum&timezone=Europe%2FBerlin&forecast_days=4';
+    const res=await fetch(url);const data=await res.json();
+    const cur=data.current,day=data.daily;
+    const temp=Math.round(cur.temperature_2m);
+    const{desc,icon}=wCode(cur.weathercode);
+    document.getElementById('weather-temp').textContent=temp+'°';
+    document.getElementById('weather-desc').textContent=desc;
+    document.getElementById('weather-range').textContent=`↑${Math.round(day.temperature_2m_max[0])}°  ↓${Math.round(day.temperature_2m_min[0])}°`;
+    document.getElementById('weather-icon').className='ti '+icon;
+    const wind=Math.round(cur.windspeed_10m);
+    document.getElementById('weather-wind').innerHTML=`<div style="font-size:12px;color:var(--text3)"><i class="ti ti-wind" style="margin-right:3px"></i>${wind} km/h</div>`;
+    // 3-day forecast (days 1,2,3)
+    const days=['Morgen','Übermorgen',new Date(Date.now()+3*86400000).toLocaleDateString('de-DE',{weekday:'short'})];
+    document.getElementById('weather-forecast').innerHTML=days.map((label,i)=>{
+      const idx=i+1;
+      const{icon:ic}=wCode(day.weathercode[idx]);
+      return `<div class="weather-day"><div class="weather-day-label">${label}</div><div class="weather-day-icon"><i class="ti ${ic}" style="font-size:18px;color:var(--text2)"></i></div><div class="weather-day-temp">${Math.round(day.temperature_2m_max[idx])}° / ${Math.round(day.temperature_2m_min[idx])}°</div></div>`;
+    }).join('');
+  }catch(e){document.getElementById('weather-temp').textContent='—';document.getElementById('weather-desc').textContent='Nicht verfügbar';}
 }
-
-function weatherCode(code) {
-  if(code === 0) return {desc:'Sonnig',icon:'ti-sun'};
-  if(code <= 2)  return {desc:'Überwiegend klar',icon:'ti-cloud-sun'};
-  if(code <= 3)  return {desc:'Bewölkt',icon:'ti-cloud'};
-  if(code <= 48) return {desc:'Neblig',icon:'ti-mist'};
-  if(code <= 57) return {desc:'Nieselregen',icon:'ti-cloud-drizzle'};
-  if(code <= 67) return {desc:'Regen',icon:'ti-cloud-rain'};
-  if(code <= 77) return {desc:'Schnee',icon:'ti-snowflake'};
-  if(code <= 82) return {desc:'Regenschauer',icon:'ti-cloud-rain'};
-  if(code <= 86) return {desc:'Schneeschauer',icon:'ti-snowflake'};
-  return {desc:'Gewitter',icon:'ti-bolt'};
+function wCode(code){
+  if(code===0)return{desc:'Sonnig',icon:'ti-sun'};
+  if(code<=2)return{desc:'Überwiegend klar',icon:'ti-cloud-sun'};
+  if(code<=3)return{desc:'Bewölkt',icon:'ti-cloud'};
+  if(code<=48)return{desc:'Neblig',icon:'ti-mist'};
+  if(code<=57)return{desc:'Nieselregen',icon:'ti-cloud-drizzle'};
+  if(code<=67)return{desc:'Regen',icon:'ti-cloud-rain'};
+  if(code<=77)return{desc:'Schnee',icon:'ti-snowflake'};
+  if(code<=82)return{desc:'Regenschauer',icon:'ti-cloud-rain'};
+  return{desc:'Gewitter',icon:'ti-bolt'};
 }
 
 // ══════════════════════════════════════════
 // MÜLL
 // ══════════════════════════════════════════
-function addPickup() {
-  const type = document.getElementById('add-type').value;
-  const date = document.getElementById('add-date').value;
+function addPickup(){
+  const type=document.getElementById('add-type').value,date=document.getElementById('add-date').value;
   if(!date){showToast('Bitte ein Datum wählen');return;}
   pickups.push({id:Date.now(),type,date});
   pickups.sort((a,b)=>a.date.localeCompare(b.date));
-  save(); renderMuell(); renderHomePickups();
-  showToast('Termin hinzugefügt');
+  save();renderMuell();renderHomePickups();checkOnboarding();showToast('Termin hinzugefügt');
 }
-function deletePickup(id) {
-  pickups = pickups.filter(p=>p.id!==id);
-  save(); renderMuell(); renderHomePickups();
+function deletePickup(id){
+  pickups=pickups.filter(p=>p.id!==id);
+  checkedIds=checkedIds.filter(c=>c!==id);
+  save();renderMuell();renderHomePickups();checkOnboarding();
 }
-function save() {
-  storageSet('pickups', pickups);
-  scheduleAllReminders();
+function toggleCheck(id){
+  if(checkedIds.includes(id))checkedIds=checkedIds.filter(c=>c!==id);
+  else checkedIds.push(id);
+  storageSet('checkedIds',checkedIds);
+  renderMuell();
+  if(checkedIds.includes(id))showToast('Als rausgestellt markiert ✓');
 }
-function loadGOAData() {
-  const existing = new Set(pickups.map(p=>`${p.type}-${p.date}`));
-  const newOnes = GOA_TERMINE.filter(e=>!existing.has(`${e.type}-${e.date}`)).map((e,i)=>({...e,id:Date.now()+i}));
-  pickups = [...pickups,...newOnes].sort((a,b)=>a.date.localeCompare(b.date));
-  save(); renderMuell(); renderHomePickups();
-  showToast(`${newOnes.length} GOA-Termine geladen`);
-  switchTab('muell');
+function loadGOAData(){
+  const existing=new Set(pickups.map(p=>`${p.type}-${p.date}`));
+  const newOnes=GOA_TERMINE.filter(e=>!existing.has(`${e.type}-${e.date}`)).map((e,i)=>({...e,id:Date.now()+i}));
+  pickups=[...pickups,...newOnes].sort((a,b)=>a.date.localeCompare(b.date));
+  save();renderMuell();renderHomePickups();checkOnboarding();
+  showToast(`${newOnes.length} GOA-Termine geladen`);switchTab('muell');
 }
-function setFilter(f) { activeFilter=f; renderMuell(); }
+function setFilter(f){activeFilter=f;renderMuell();}
 
-function renderMuell() {
-  const visible  = pickups.filter(p=>!hiddenTypes.includes(p.type));
-  const filtered = activeFilter==='alle' ? visible : visible.filter(p=>p.type===activeFilter);
-  const upcoming = filtered.filter(p=>daysUntil(p.date)>=0);
-  const past     = filtered.filter(p=>daysUntil(p.date)<0);
+function renderMuell(){
+  const visible=pickups.filter(p=>!hiddenTypes.includes(p.type));
+  const filtered=activeFilter==='alle'?visible:visible.filter(p=>p.type===activeFilter);
+  const upcoming=filtered.filter(p=>daysUntil(p.date)>=0);
+  const past=filtered.filter(p=>daysUntil(p.date)<0);
 
-  // Filter chips
-  const types = [...new Set(pickups.map(p=>p.type))];
-  document.getElementById('filter-bar').innerHTML =
-    `<button class="chip ${activeFilter==='alle'?'active':''}" onclick="setFilter('alle')">Alle</button>` +
+  const types=[...new Set(pickups.map(p=>p.type))];
+  document.getElementById('filter-bar').innerHTML=
+    `<button class="chip ${activeFilter==='alle'?'active':''}" onclick="setFilter('alle')">Alle</button>`+
     types.map(t=>{const d=TYPES[t]||TYPES.restmuell;return`<button class="chip ${activeFilter===t?'active':''}" onclick="setFilter('${t}')">${d.kuerzel}</button>`;}).join('');
 
-  // Stats
-  const soon  = pickups.filter(p=>daysUntil(p.date)>=0&&daysUntil(p.date)<=7).length;
-  const total = pickups.filter(p=>daysUntil(p.date)>=0).length;
-  const done  = pickups.filter(p=>daysUntil(p.date)<0).length;
-  if(pickups.length) {
-    document.getElementById('muell-stats').innerHTML = `<div class="card" style="margin:0 16px 4px;border-radius:14px">
-      <div class="stats-row">
-        <div class="stat-box"><div class="stat-num">${soon}</div><div class="stat-lbl">Diese Woche</div></div>
-        <div class="stat-box"><div class="stat-num">${total}</div><div class="stat-lbl">Ausstehend</div></div>
-        <div class="stat-box"><div class="stat-num">${done}</div><div class="stat-lbl">Erledigt</div></div>
-      </div>
-    </div>`;
-  } else document.getElementById('muell-stats').innerHTML='';
+  const soon=pickups.filter(p=>daysUntil(p.date)>=0&&daysUntil(p.date)<=7).length;
+  const total=pickups.filter(p=>daysUntil(p.date)>=0).length;
+  const done=pickups.filter(p=>daysUntil(p.date)<0).length;
+  document.getElementById('muell-stats').innerHTML=pickups.length?`<div class="card" style="margin:0 16px 4px;border-radius:14px"><div class="stats-row"><div class="stat-box"><div class="stat-num">${soon}</div><div class="stat-lbl">Diese Woche</div></div><div class="stat-box"><div class="stat-num">${total}</div><div class="stat-lbl">Ausstehend</div></div><div class="stat-box"><div class="stat-num">${done}</div><div class="stat-lbl">Erledigt</div></div></div></div>`:'';
 
-  // Upcoming grouped by month
-  const upEl = document.getElementById('muell-upcoming');
-  if(!upcoming.length) {
-    upEl.innerHTML=`<div class="empty-state"><i class="ti ti-calendar-off"></i><p>Keine Termine.<br>Unter „Mehr" hinzufügen.</p></div>`;
-  } else {
-    const byMonth={};
-    upcoming.forEach(p=>{const m=getMonthKey(p.date);(byMonth[m]=byMonth[m]||[]).push(p);});
-    upEl.innerHTML = Object.entries(byMonth).map(([month,items])=>`
-      <div class="month-label">${month}</div>
-      <div class="card" style="margin:0 16px;border-radius:14px;overflow:hidden">
-        ${items.map(p=>renderPickupRow(p,false)).join('')}
-      </div>`).join('<div style="height:8px"></div>');
+  const upEl=document.getElementById('muell-upcoming');
+  if(!upcoming.length){upEl.innerHTML='<div class="empty-state"><i class="ti ti-calendar-off"></i><p>Keine Termine.<br>Unter „Mehr" hinzufügen.</p></div>';} 
+  else {
+    const byMonth={};upcoming.forEach(p=>{const m=getMonthKey(p.date);(byMonth[m]=byMonth[m]||[]).push(p);});
+    upEl.innerHTML=Object.entries(byMonth).map(([month,items])=>
+      `<div class="month-label">${month}</div><div class="card" style="margin:0 16px;border-radius:14px;overflow:hidden">${items.map(p=>renderPickupRow(p,false)).join('')}</div>`
+    ).join('<div style="height:8px"></div>');
   }
 
-  // Past
-  const pastLabel = document.getElementById('past-label');
-  const pastEl    = document.getElementById('muell-past');
-  if(past.length) {
+  const pastLabel=document.getElementById('past-label'),pastEl=document.getElementById('muell-past');
+  if(past.length){
     pastLabel.style.display='block';
-    pastEl.innerHTML = `<div class="card" style="margin:0 16px;border-radius:14px;overflow:hidden">
-      ${past.slice().reverse().slice(0,8).map(p=>renderPickupRow(p,true)).join('')}
-    </div>`;
-  } else { pastLabel.style.display='none'; pastEl.innerHTML=''; }
+    pastEl.innerHTML=`<div class="card" style="margin:0 16px;border-radius:14px;overflow:hidden">${past.slice().reverse().slice(0,8).map(p=>renderPickupRow(p,true)).join('')}</div>`;
+  } else {pastLabel.style.display='none';pastEl.innerHTML='';}
 }
 
-function renderPickupRow(p, isPast) {
-  const t = TYPES[p.type]||TYPES.restmuell;
-  const days = daysUntil(p.date);
-  const bg = isDark ? t.darkBg : t.bg;
-  let badge = '';
-  if(!isPast) {
-    if(days===0)      badge=`<span class="badge badge-today">Heute</span>`;
-    else if(days===1) badge=`<span class="badge badge-tom">Morgen</span>`;
-    else if(days<=3)  badge=`<span class="badge badge-soon">in ${days} d</span>`;
+function renderPickupRow(p,isPast){
+  const t=TYPES[p.type]||TYPES.restmuell,days=daysUntil(p.date);
+  const bg=isDark?t.darkBg:t.bg;
+  const isChecked=checkedIds.includes(p.id);
+  let badge='';
+  if(!isPast){
+    if(days===0)badge='<span class="badge badge-today">Heute</span>';
+    else if(days===1)badge='<span class="badge badge-tom">Morgen</span>';
+    else if(days<=3)badge=`<span class="badge badge-soon">in ${days} d</span>`;
   }
-  return `<div class="pickup-row ${isPast?'past':''}">
+  return `<div class="pickup-row ${isPast?'past':''} ${isChecked&&!isPast?'done':''}">
     <div class="pickup-accent" style="background:${t.color}"></div>
     <div class="type-icon" style="background:${bg};color:${t.color};margin-left:6px"><i class="ti ${t.icon}"></i></div>
     <div class="type-info">
@@ -1315,249 +884,185 @@ function renderPickupRow(p, isPast) {
       <div class="type-sub">${fmtDate(p.date)}</div>
     </div>
     ${badge}
-    <button class="pickup-delete" onclick="deletePickup(${p.id})" aria-label="Löschen"><i class="ti ti-x"></i></button>
+    ${!isPast?`<button class="check-btn ${isChecked?'checked':''}" onclick="toggleCheck(${p.id})" title="Rausgestellt markieren"><i class="ti ti-check"></i></button>`:''}
+    <button class="delete-btn" onclick="deletePickup(${p.id})" aria-label="Löschen"><i class="ti ti-x"></i></button>
   </div>`;
 }
 
 // ══════════════════════════════════════════
 // SPRIT
 // ══════════════════════════════════════════
-function saveTKKey() {
-  const k = document.getElementById('tk-key-input').value.trim();
+function saveTKKey(){
+  const k=document.getElementById('tk-key-input').value.trim();
   if(!k||k.includes('•')){showToast('Bitte echten Key eingeben');return;}
-  tkKey = k;
-  storageSet('tkKey', k); localStorage.setItem('tkKey', k);
-  document.getElementById('tk-key-input').value='••••••••••••••••';
+  tkKey=k;storageSet('tkKey',k);
+  document.getElementById('tk-key-input').value='••••••••••';
   document.getElementById('sprit-key-section').style.display='none';
-  showToast('Key gespeichert');
-  loadSprit();
+  showToast('Key gespeichert');loadSprit();
 }
-function setFuel(f) {
-  activeFuel = f;
+function setFuel(f){
+  activeFuel=f;
   ['e5','e10','diesel'].forEach(x=>document.getElementById('fchip-'+x).classList.toggle('active',x===f));
-  document.getElementById('home-sprit-fuel-label').textContent = f==='e5'?'Super E5':f==='e10'?'Super E10':'Diesel';
-  if(tkKey) { spritCache=null; loadSprit(); }
+  document.getElementById('home-sprit-label').textContent=f==='e5'?'Super E5':f==='e10'?'Super E10':'Diesel';
+  spritCache=null;if(tkKey)loadSprit();
 }
-
-async function loadSprit() {
-  const wrap = document.getElementById('sprit-list-wrap');
-  if(!tkKey) return;
-  if(spritCache && spritCache.fuel===activeFuel && Date.now()-spritCache.ts < 300000) {
-    renderSpritList(spritCache.data); return;
-  }
-  wrap.innerHTML=`<div style="text-align:center;padding:32px;color:var(--text3)"><i class="ti ti-loader" style="font-size:24px;margin-bottom:8px;display:block"></i>Lade Preise…</div>`;
-  try {
-    const url = `https://creativecommons.tankerkoenig.de/json/list.php?lat=48.825&lng=9.9589&rad=10&sort=price&type=${activeFuel}&apikey=${tkKey}`;
-    const res = await fetch(url);
-    const data = await res.json();
-    if(!data.ok) throw new Error(data.message||'API Fehler');
-    spritCache = {data:data.stations, fuel:activeFuel, ts:Date.now()};
-    renderSpritList(data.stations);
-    loadSpritPreview();
-  } catch(e) {
-    wrap.innerHTML=`<div style="margin:16px"><div style="padding:14px 16px;background:var(--c-red-bg);border-radius:12px;font-size:13px;color:var(--c-red)">Fehler: ${e.message}</div></div>`;
-  }
+async function loadSprit(){
+  const wrap=document.getElementById('sprit-list-wrap');
+  if(!tkKey)return;
+  if(spritCache&&spritCache.fuel===activeFuel&&Date.now()-spritCache.ts<300000){renderSpritList(spritCache.data);return;}
+  wrap.innerHTML='<div style="text-align:center;padding:32px;color:var(--text3)"><i class="ti ti-loader-2" style="font-size:22px;margin-bottom:8px;display:block"></i>Lade Preise…</div>';
+  try{
+    const res=await fetch(`https://creativecommons.tankerkoenig.de/json/list.php?lat=48.825&lng=9.9589&rad=10&sort=price&type=${activeFuel}&apikey=${tkKey}`);
+    const data=await res.json();
+    if(!data.ok)throw new Error(data.message||'API Fehler');
+    spritCache={data:data.stations,fuel:activeFuel,ts:Date.now()};
+    renderSpritList(data.stations);loadSpritPreview();
+  }catch(e){wrap.innerHTML=`<div style="margin:16px;padding:14px 16px;background:var(--red-bg);border-radius:12px;font-size:13px;color:var(--red)">${e.message}</div>`;}
 }
-
-async function loadSpritPreview() {
-  if(!tkKey) return;
-  try {
-    if(spritCache && spritCache.fuel===activeFuel) {
-      const top = (spritCache.data||[]).filter(s=>s[activeFuel]>0).slice(0,2);
-      renderSpritPreviewCards(top);
-      return;
-    }
-    const url = `https://creativecommons.tankerkoenig.de/json/list.php?lat=48.825&lng=9.9589&rad=10&sort=price&type=${activeFuel}&apikey=${tkKey}`;
-    const res = await fetch(url);
-    const data = await res.json();
-    if(!data.ok) return;
-    spritCache = {data:data.stations, fuel:activeFuel, ts:Date.now()};
+async function loadSpritPreview(){
+  if(!tkKey)return;
+  try{
+    if(spritCache&&spritCache.fuel===activeFuel){renderSpritPreviewCards(spritCache.data.filter(s=>s[activeFuel]>0).slice(0,2));return;}
+    const res=await fetch(`https://creativecommons.tankerkoenig.de/json/list.php?lat=48.825&lng=9.9589&rad=10&sort=price&type=${activeFuel}&apikey=${tkKey}`);
+    const data=await res.json();
+    if(!data.ok)return;
+    spritCache={data:data.stations,fuel:activeFuel,ts:Date.now()};
     renderSpritPreviewCards(data.stations.filter(s=>s[activeFuel]>0).slice(0,2));
-  } catch(e) {}
+  }catch(e){}
 }
-
-function renderSpritPreviewCards(stations) {
-  const body = document.getElementById('home-sprit-body');
-  if(!stations.length) { body.innerHTML=''; return; }
-  body.innerHTML = stations.map((s,i)=>{
-    const price = s[activeFuel];
-    const priceStr = price.toFixed(3);
-    const dist = s.dist < 1 ? Math.round(s.dist*1000)+'m' : s.dist.toFixed(1)+'km';
-    return `<div class="card-row" style="padding:12px 16px">
-      <div class="type-icon" style="background:var(--bg3);color:var(--text2)"><i class="ti ti-gas-station"></i></div>
-      <div class="type-info">
-        <div class="type-name">${s.brand||s.name} · ${dist}</div>
-        <div class="type-sub">${s.name}${!s.isOpen?' · geschlossen':''}</div>
-      </div>
-      <div style="text-align:right;flex-shrink:0">
-        <div style="font-size:18px;font-weight:600;color:${i===0?'var(--c-green)':'var(--text)'}">${priceStr.slice(0,-1)}<sup style="font-size:11px">${priceStr.slice(-1)}</sup></div>
-        <div style="font-size:10px;color:var(--text3)">${i===0?'günstigste':''}</div>
-      </div>
-    </div>`;
+function refreshSpritHome(){
+  const icon=document.getElementById('sprit-refresh-icon');
+  icon.style.transition='transform 0.6s';icon.style.transform='rotate(360deg)';
+  setTimeout(()=>{icon.style.transition='';icon.style.transform='';},600);
+  spritCache=null;loadSpritPreview();showToast('Spritpreise aktualisiert');
+}
+function renderSpritPreviewCards(stations){
+  const body=document.getElementById('home-sprit-body');
+  if(!stations.length){body.innerHTML='';return;}
+  body.innerHTML=stations.map((s,i)=>{
+    const price=s[activeFuel],priceStr=price.toFixed(3);
+    const dist=s.dist<1?Math.round(s.dist*1000)+'m':s.dist.toFixed(1)+'km';
+    return `<div class="card-row"><div class="type-icon" style="background:var(--bg3);color:var(--text2)"><i class="ti ti-gas-station"></i></div><div class="type-info"><div class="type-name">${s.brand||s.name} · ${dist}</div><div class="type-sub">${s.name}${!s.isOpen?' · geschlossen':''}</div></div><div style="text-align:right;flex-shrink:0"><div style="font-size:18px;font-weight:600;color:${i===0?'var(--green)':'var(--text)'}">${priceStr.slice(0,-1)}<sup style="font-size:11px">${priceStr.slice(-1)}</sup></div>${i===0?'<div style="font-size:10px;color:var(--text3)">günstigste</div>':''}</div></div>`;
   }).join('');
 }
-
-function renderSpritList(stations) {
-  const wrap = document.getElementById('sprit-list-wrap');
-  const valid = stations.filter(s=>s[activeFuel]>0);
-  if(!valid.length){wrap.innerHTML='<div style="padding:20px;text-align:center;color:var(--text3)">Keine Daten</div>';return;}
-  const now = new Date();
-  document.getElementById('sprit-updated').textContent = `Aktualisiert: ${now.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr · Quelle: Tankerkönig / MTS-K`;
-  wrap.innerHTML = `<div class="card" style="margin:0 16px;border-radius:14px;overflow:hidden">
-    ${valid.slice(0,8).map((s,i)=>{
-      const price = s[activeFuel];
-      const priceStr = price.toFixed(3);
-      const dist = s.dist<1 ? Math.round(s.dist*1000)+'m' : s.dist.toFixed(1)+'km';
-      const rankBg = i===0?'var(--c-amber-bg)':i===1?'var(--bg3)':i===2?'var(--bg3)':'var(--bg3)';
-      const rankColor = i===0?'var(--c-amber)':'var(--text3)';
-      return `<div class="pickup-row ${!s.isOpen?'past':''}">
-        <div class="rank-dot" style="background:${rankBg};color:${rankColor}">${i+1}</div>
-        <div class="type-info">
-          <div class="type-name">${s.brand||s.name}</div>
-          <div class="type-sub">${s.name} · ${dist}${!s.isOpen?' · geschlossen':''}</div>
-        </div>
-        <div style="text-align:right;flex-shrink:0">
-          <div class="sprit-price-big" style="color:${i===0?'var(--c-green)':'var(--text)'}">${priceStr.slice(0,-1)}<sup>${priceStr.slice(-1)}</sup></div>
-        </div>
-      </div>`;
-    }).join('')}
-  </div>`;
+function renderSpritList(stations){
+  const wrap=document.getElementById('sprit-list-wrap');
+  const valid=stations.filter(s=>s[activeFuel]>0);
+  if(!valid.length){wrap.innerHTML='<div style="padding:20px;text-align:center;color:var(--text3)">Keine Daten verfügbar</div>';return;}
+  document.getElementById('sprit-updated').textContent=`Aktualisiert: ${new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr · Tankerkönig / MTS-K`;
+  wrap.innerHTML=`<div class="card" style="margin:0 16px;border-radius:14px;overflow:hidden">${valid.slice(0,8).map((s,i)=>{
+    const price=s[activeFuel],priceStr=price.toFixed(3);
+    const dist=s.dist<1?Math.round(s.dist*1000)+'m':s.dist.toFixed(1)+'km';
+    const rankBg=i===0?'var(--amber-bg)':'var(--bg3)',rankC=i===0?'var(--amber)':'var(--text3)';
+    return `<div class="pickup-row ${!s.isOpen?'past':''}"><div class="rank-dot" style="background:${rankBg};color:${rankC}">${i+1}</div><div class="type-info"><div class="type-name">${s.brand||s.name}</div><div class="type-sub">${s.name} · ${dist}${!s.isOpen?' · geschlossen':''}</div></div><div style="text-align:right;flex-shrink:0"><div class="sprit-price-big" style="color:${i===0?'var(--green)':'var(--text)'}">${priceStr.slice(0,-1)}<sup style="font-size:11px">${priceStr.slice(-1)}</sup></div></div></div>`;
+  }).join('')}</div>`;
 }
 
 // ══════════════════════════════════════════
 // ICS IMPORT
 // ══════════════════════════════════════════
-document.getElementById('ics-file-input').addEventListener('change', e=>{
-  const f=e.target.files[0]; if(!f)return;
-  const r=new FileReader(); r.onload=ev=>parseICS(ev.target.result); r.readAsText(f);
+document.getElementById('ics-file-input').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=ev=>parseICS(ev.target.result);r.readAsText(f);
 });
-function parseICS(text) {
+function parseICS(text){
   const events=[];
   text.split('BEGIN:VEVENT').slice(1).forEach(block=>{
     const sm=block.match(/SUMMARY[^:]*:(.+)/),dm=block.match(/DTSTART[^:]*:(\d{8})/);
-    if(!sm||!dm) return;
-    const s=sm[1].trim().toLowerCase(), raw=dm[1];
+    if(!sm||!dm)return;
+    const s=sm[1].trim().toLowerCase(),raw=dm[1];
     const date=`${raw.slice(0,4)}-${raw.slice(4,6)}-${raw.slice(6,8)}`;
     let type='restmuell';
-    if(s.includes('bio')) type='bio';
-    else if(s.includes('blaue')||(s.includes('altpapier')&&!s.includes('verein'))) type='papier';
-    else if(s.includes('gelb')||s.includes('wertstoff')) type='gelb';
-    else if(s.includes('gartentonne')) type='gartentonne';
-    else if(s.includes('grün')||s.includes('gruen')) type='gruenabfuhr';
-    else if(s.includes('verein')||s.includes('avh')) type='altpapier_verein';
-    else if(s.includes('christbaum')) type='christbaum';
-    events.push({id:Date.now()+Math.floor(Math.random()*10000),type,date});
+    if(s.includes('bio'))type='bio';
+    else if(s.includes('blaue')||(s.includes('altpapier')&&!s.includes('verein')))type='papier';
+    else if(s.includes('gelb')||s.includes('wertstoff'))type='gelb';
+    else if(s.includes('gartentonne'))type='gartentonne';
+    else if(s.includes('grün')||s.includes('gruen'))type='gruenabfuhr';
+    else if(s.includes('verein')||s.includes('avh'))type='altpapier_verein';
+    else if(s.includes('christbaum'))type='christbaum';
+    events.push({id:Date.now()+Math.floor(Math.random()*100000),type,date});
   });
   if(!events.length){showToast('Keine Termine gefunden');return;}
   const existing=new Set(pickups.map(p=>`${p.type}-${p.date}`));
   const newOnes=events.filter(e=>!existing.has(`${e.type}-${e.date}`));
   pickups=[...pickups,...newOnes].sort((a,b)=>a.date.localeCompare(b.date));
-  save(); renderMuell(); renderHomePickups();
-  showToast(`${newOnes.length} Termine importiert`);
-  switchTab('muell');
+  save();renderMuell();renderHomePickups();checkOnboarding();
+  showToast(`${newOnes.length} Termine importiert`);switchTab('muell');
 }
 
 // ══════════════════════════════════════════
 // EINSTELLUNGEN
 // ══════════════════════════════════════════
-function saveSettings() {
-  settings.reminderDays = parseInt(document.getElementById('reminder-days').value);
-  settings.reminderTime = document.getElementById('reminder-time').value;
-  storageSet('settings', settings);
-  scheduleAllReminders();
+function saveSettings(){
+  settings.reminderDays=parseInt(document.getElementById('reminder-days').value);
+  settings.reminderTime=document.getElementById('reminder-time').value;
+  storageSet('settings',settings);scheduleAllReminders();
 }
-function renderVisibilitySettings() {
-  document.getElementById('visibility-settings').innerHTML = Object.entries(TYPES).map(([key,t])=>`
+function renderVisibilitySettings(){
+  document.getElementById('visibility-settings').innerHTML=Object.entries(TYPES).map(([key,t])=>`
     <div class="settings-row">
       <div class="settings-icon" style="background:${isDark?t.darkBg:t.bg};color:${t.color}"><i class="ti ${t.icon}"></i></div>
-      <div class="settings-info">
-        <div class="settings-title">${t.label}</div>
-        <div class="settings-desc">${t.kuerzel}</div>
-      </div>
+      <div class="settings-info"><div class="settings-title">${t.label}</div><div class="settings-desc">${t.kuerzel}</div></div>
       <label class="toggle"><input type="checkbox" ${!hiddenTypes.includes(key)?'checked':''} onchange="toggleType('${key}',this.checked)"><div class="toggle-track"></div></label>
     </div>`).join('');
 }
-function toggleType(key,visible) {
-  if(visible) hiddenTypes=hiddenTypes.filter(t=>t!==key);
-  else if(!hiddenTypes.includes(key)) hiddenTypes.push(key);
-  storageSet('hiddenTypes', hiddenTypes);
-  renderMuell(); renderHomePickups();
+function toggleType(key,visible){
+  if(visible)hiddenTypes=hiddenTypes.filter(t=>t!==key);
+  else if(!hiddenTypes.includes(key))hiddenTypes.push(key);
+  storageSet('hiddenTypes',hiddenTypes);renderMuell();renderHomePickups();
 }
-function clearAll(){if(!confirm('Wirklich alle Termine löschen?'))return;pickups=[];save();renderMuell();renderHomePickups();showToast('Alle Termine gelöscht');}
+function clearAll(){if(!confirm('Wirklich alle Termine löschen?'))return;pickups=[];checkedIds=[];save();renderMuell();renderHomePickups();checkOnboarding();showToast('Alle Termine gelöscht');}
 function showInstallHint(){const el=document.getElementById('install-hint');el.style.display=el.style.display==='block'?'none':'block';}
 
 // ══════════════════════════════════════════
 // NOTIFICATIONS
 // ══════════════════════════════════════════
-async function checkNotifStatus() {
-  const banner=document.getElementById('notif-banner');
-  const toggle=document.getElementById('toggle-notifs');
-  const status=document.getElementById('notif-status');
+async function checkNotifStatus(){
+  const banner=document.getElementById('notif-banner'),toggle=document.getElementById('toggle-notifs'),status=document.getElementById('notif-status');
   if(!('Notification' in window)){status.textContent='Nicht unterstützt';toggle.disabled=true;return;}
-  if(Notification.permission==='granted'){
-    banner.classList.add('hidden'); toggle.checked=settings.notificationsEnabled;
-    status.textContent=settings.notificationsEnabled?'Aktiv':'Deaktiviert';
-    if(settings.notificationsEnabled) scheduleAllReminders();
-  } else if(Notification.permission==='denied'){
-    status.textContent='Berechtigung verweigert'; toggle.disabled=true;
-  } else { banner.classList.remove('hidden'); toggle.checked=false; status.textContent='Berechtigung ausstehend'; }
+  if(Notification.permission==='granted'){banner.classList.add('hidden');toggle.checked=settings.notificationsEnabled;status.textContent=settings.notificationsEnabled?'Aktiv':'Deaktiviert';if(settings.notificationsEnabled)scheduleAllReminders();}
+  else if(Notification.permission==='denied'){status.textContent='Berechtigung verweigert';toggle.disabled=true;}
+  else{banner.classList.remove('hidden');toggle.checked=false;status.textContent='Berechtigung ausstehend';}
 }
-async function requestNotifications() {
+async function requestNotifications(){
   const perm=await Notification.requestPermission();
-  if(perm==='granted'){
-    settings.notificationsEnabled=true; storageSet('settings', settings);
-    document.getElementById('toggle-notifs').checked=true;
-    document.getElementById('notif-status').textContent='Aktiv';
-    document.getElementById('notif-banner').classList.add('hidden');
-    scheduleAllReminders(); showToast('Benachrichtigungen aktiv');
-  }
+  if(perm==='granted'){settings.notificationsEnabled=true;storageSet('settings',settings);document.getElementById('toggle-notifs').checked=true;document.getElementById('notif-status').textContent='Aktiv';document.getElementById('notif-banner').classList.add('hidden');scheduleAllReminders();showToast('Benachrichtigungen aktiv');}
 }
-function toggleNotifications(enabled) {
+function toggleNotifications(enabled){
   if(enabled&&Notification.permission!=='granted'){requestNotifications();return;}
-  settings.notificationsEnabled=enabled; storageSet('settings', settings);
+  settings.notificationsEnabled=enabled;storageSet('settings',settings);
   document.getElementById('notif-status').textContent=enabled?'Aktiv':'Deaktiviert';
-  if(enabled){scheduleAllReminders();showToast('Erinnerungen aktiviert');}
-  else{clearScheduled();showToast('Erinnerungen deaktiviert');}
+  if(enabled){scheduleAllReminders();showToast('Erinnerungen aktiviert');}else{clearScheduled();showToast('Erinnerungen deaktiviert');}
 }
 let scheduledTimers=[];
 function clearScheduled(){scheduledTimers.forEach(clearTimeout);scheduledTimers=[];}
 function scheduleAllReminders(){
-  clearScheduled();
-  if(!settings.notificationsEnabled||Notification.permission!=='granted') return;
-  const [h,m]=settings.reminderTime.split(':').map(Number), now=new Date();
+  clearScheduled();if(!settings.notificationsEnabled||Notification.permission!=='granted')return;
+  const[h,m]=settings.reminderTime.split(':').map(Number),now=new Date();
   pickups.forEach(p=>{
-    const pd=new Date(p.date+'T12:00:00');
-    const rd=new Date(pd); rd.setDate(rd.getDate()-settings.reminderDays); rd.setHours(h,m,0,0);
+    const pd=new Date(p.date+'T12:00:00'),rd=new Date(pd);
+    rd.setDate(rd.getDate()-settings.reminderDays);rd.setHours(h,m,0,0);
     const ms=rd-now;
     if(ms>0&&ms<7*24*60*60*1000){
-      const t=TYPES[p.type]||TYPES.restmuell;
-      const days=settings.reminderDays;
-      const timer=setTimeout(()=>{
+      const t=TYPES[p.type]||TYPES.restmuell,days=settings.reminderDays;
+      scheduledTimers.push(setTimeout(()=>{
         if(Notification.permission==='granted'&&settings.notificationsEnabled)
-          new Notification(`${t.label} – Tonne rausstellen`,{
-            body:`Abholung am ${fmtDate(p.date)}${days>0?' (in '+days+' Tag'+(days>1?'en':'')+')':' (heute)'}`,
-            icon:'icon-192.png', tag:`pickup-${p.id}`, requireInteraction:true
-          });
-      },ms);
-      scheduledTimers.push(timer);
+          new Notification(`${t.label} – Tonne rausstellen`,{body:`Abholung am ${fmtDate(p.date)}${days>0?' (in '+days+' Tag'+(days>1?'en':'')+')':' (heute)'}`,icon:'icon-192.png',tag:`pickup-${p.id}`,requireInteraction:true});
+      },ms));
     }
   });
 }
 function refreshReminders(){scheduleAllReminders();showToast('Erinnerungen aktualisiert');}
 function testNotification(){
   if(Notification.permission!=='granted'){showToast('Erst Benachrichtigungen aktivieren');return;}
-  new Notification('Hausmüll – Tonne rausstellen',{body:'Test-Erinnerung der Mögglingen App.',icon:'icon-192.png'});
-  showToast('Test gesendet');
+  new Notification('Hausmüll – Tonne rausstellen',{body:'Test-Erinnerung der Mögglingen App.',icon:'icon-192.png'});showToast('Test gesendet');
 }
 
 // ══════════════════════════════════════════
 // TOAST & SW
 // ══════════════════════════════════════════
-function showToast(msg){
-  const t=document.getElementById('toast'); t.textContent=msg;
-  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2600);
-}
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
 </html>
