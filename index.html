@@ -911,10 +911,27 @@ const WSH_SCHEDULE = {
   winter: { weekday:'07:30–17:00', sa:'08:00–13:00', so:null }
 };
 
-let pickups     = JSON.parse(localStorage.getItem('pickups') || '[]');
-let settings    = JSON.parse(localStorage.getItem('settings') || '{"reminderDays":2,"reminderTime":"08:00","notificationsEnabled":false}');
-let hiddenTypes = JSON.parse(localStorage.getItem('hiddenTypes') || '[]');
-let tkKey       = localStorage.getItem('tkKey') || '6a7afae6-ab0c-4c82-9317-c1dbeb735619';
+// ── Robuster Storage mit Fallback ──
+function storageGet(key, fallback) {
+  try {
+    const v = localStorage.getItem(key);
+    if(v === null) return fallback;
+    return JSON.parse(v);
+  } catch(e) {
+    try { return JSON.parse(sessionStorage.getItem(key)) || fallback; }
+    catch(e2) { return fallback; }
+  }
+}
+function storageSet(key, value) {
+  const s = JSON.stringify(value);
+  try { localStorage.setItem(key, s); } catch(e) {}
+  try { sessionStorage.setItem(key, s); } catch(e) {}
+}
+
+let pickups     = storageGet('pickups', []);
+let settings    = storageGet('settings', {reminderDays:2,reminderTime:'08:00',notificationsEnabled:false});
+let hiddenTypes = storageGet('hiddenTypes', []);
+let tkKey       = (function(){ try { return localStorage.getItem('tkKey') || '6a7afae6-ab0c-4c82-9317-c1dbeb735619'; } catch(e){ return '6a7afae6-ab0c-4c82-9317-c1dbeb735619'; }})();
 let activeFilter= 'alle';
 let activeFuel  = 'e5';
 let activeTab   = 'home';
@@ -929,6 +946,19 @@ if(tkKey) {
   document.getElementById('tk-key-input').value = '••••••••••••••••';
   document.getElementById('sprit-key-section').style.display = 'none';
 }
+// Verify storage is working
+(function(){
+  try {
+    localStorage.setItem('_test','1');
+    localStorage.removeItem('_test');
+  } catch(e) {
+    console.warn('localStorage nicht verfügbar, nutze sessionStorage');
+  }
+  // Re-read pickups to ensure fresh state
+  pickups = storageGet('pickups', []);
+  settings = storageGet('settings', {reminderDays:2,reminderTime:'08:00',notificationsEnabled:false});
+  hiddenTypes = storageGet('hiddenTypes', []);
+})();
 applyTheme();
 checkNotifStatus();
 renderHome();
@@ -945,7 +975,7 @@ function applyTheme() {
 }
 function toggleTheme() {
   isDark = !isDark;
-  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  try{localStorage.setItem('theme', isDark ? 'dark' : 'light');}catch(e){}
   applyTheme();
 }
 
@@ -1142,7 +1172,7 @@ function deletePickup(id) {
   save(); renderMuell(); renderHomePickups();
 }
 function save() {
-  localStorage.setItem('pickups',JSON.stringify(pickups));
+  storageSet('pickups', pickups);
   scheduleAllReminders();
 }
 function loadGOAData() {
@@ -1235,7 +1265,7 @@ function saveTKKey() {
   const k = document.getElementById('tk-key-input').value.trim();
   if(!k||k.includes('•')){showToast('Bitte echten Key eingeben');return;}
   tkKey = k;
-  localStorage.setItem('tkKey',k);
+  storageSet('tkKey', k); localStorage.setItem('tkKey', k);
   document.getElementById('tk-key-input').value='••••••••••••••••';
   document.getElementById('sprit-key-section').style.display='none';
   showToast('Key gespeichert');
@@ -1355,7 +1385,7 @@ function parseICS(text) {
     else if(s.includes('grün')||s.includes('gruen')) type='gruenabfuhr';
     else if(s.includes('verein')||s.includes('avh')) type='altpapier_verein';
     else if(s.includes('christbaum')) type='christbaum';
-    events.push({id:Date.now()+Math.random(),type,date});
+    events.push({id:Date.now()+Math.floor(Math.random()*10000),type,date});
   });
   if(!events.length){showToast('Keine Termine gefunden');return;}
   const existing=new Set(pickups.map(p=>`${p.type}-${p.date}`));
@@ -1372,7 +1402,7 @@ function parseICS(text) {
 function saveSettings() {
   settings.reminderDays = parseInt(document.getElementById('reminder-days').value);
   settings.reminderTime = document.getElementById('reminder-time').value;
-  localStorage.setItem('settings',JSON.stringify(settings));
+  storageSet('settings', settings);
   scheduleAllReminders();
 }
 function renderVisibilitySettings() {
@@ -1389,7 +1419,7 @@ function renderVisibilitySettings() {
 function toggleType(key,visible) {
   if(visible) hiddenTypes=hiddenTypes.filter(t=>t!==key);
   else if(!hiddenTypes.includes(key)) hiddenTypes.push(key);
-  localStorage.setItem('hiddenTypes',JSON.stringify(hiddenTypes));
+  storageSet('hiddenTypes', hiddenTypes);
   renderMuell(); renderHomePickups();
 }
 function clearAll(){if(!confirm('Wirklich alle Termine löschen?'))return;pickups=[];save();renderMuell();renderHomePickups();showToast('Alle Termine gelöscht');}
@@ -1414,7 +1444,7 @@ async function checkNotifStatus() {
 async function requestNotifications() {
   const perm=await Notification.requestPermission();
   if(perm==='granted'){
-    settings.notificationsEnabled=true; localStorage.setItem('settings',JSON.stringify(settings));
+    settings.notificationsEnabled=true; storageSet('settings', settings);
     document.getElementById('toggle-notifs').checked=true;
     document.getElementById('notif-status').textContent='Aktiv';
     document.getElementById('notif-banner').classList.add('hidden');
@@ -1423,7 +1453,7 @@ async function requestNotifications() {
 }
 function toggleNotifications(enabled) {
   if(enabled&&Notification.permission!=='granted'){requestNotifications();return;}
-  settings.notificationsEnabled=enabled; localStorage.setItem('settings',JSON.stringify(settings));
+  settings.notificationsEnabled=enabled; storageSet('settings', settings);
   document.getElementById('notif-status').textContent=enabled?'Aktiv':'Deaktiviert';
   if(enabled){scheduleAllReminders();showToast('Erinnerungen aktiviert');}
   else{clearScheduled();showToast('Erinnerungen deaktiviert');}
