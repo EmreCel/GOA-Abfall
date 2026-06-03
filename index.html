@@ -1028,6 +1028,7 @@ function renderSpritList(stations){
 // BUS & BAHN
 // ══════════════════════════════════════════
 const WORKER_URL = 'https://moegglingen-bus.emre18celik.workers.dev';
+const APP_TOKEN = 'bbd81de641e4e4ff223d5ccfc13c6c71fe35b44ada53d42b';
 const BUS_STATIONS = [
   { key:'bahnhof',       name:'Mögglingen Bahnhof',           type:'train' },
   { key:'bahnhof_bus',   name:'Bahnhof (Bussteig)',            type:'bus'   },
@@ -1184,7 +1185,7 @@ async function loadDepartures(){
 
     const ctrl = new AbortController();
     const tid  = setTimeout(()=>ctrl.abort(), 10000);
-    const res  = await fetch(fetchUrl, {signal:ctrl.signal});
+    const res  = await fetch(fetchUrl, {signal:ctrl.signal, headers:{'X-App-Token':APP_TOKEN}});
     clearTimeout(tid);
     if(!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
