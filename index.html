@@ -722,14 +722,25 @@ function checkOnboarding(){
 // WEATHER + SUNRISE/SUNSET
 // ══════════════════════════════════════════
 async function loadWeather(){
+  const wrap = document.getElementById('weather-hero-wrap');
+  if(!wrap) return;
   try{
     const url='https://api.open-meteo.com/v1/forecast?latitude=48.825&longitude=9.9589&current=temperature_2m,weathercode,windspeed_10m&daily=temperature_2m_max,temperature_2m_min,weathercode,precipitation_sum,sunrise,sunset&timezone=Europe%2FBerlin&forecast_days=7';
-    const res=await fetch(url);const data=await res.json();
+    const ctrl = new AbortController();
+    const tid = setTimeout(()=>ctrl.abort(), 8000);
+    const res = await fetch(url, {signal: ctrl.signal});
+    clearTimeout(tid);
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if(!data.current) throw new Error('Keine Wetterdaten');
     weatherData=data;
     renderWeatherHero(data);
     renderWeekRow(data);
   }catch(e){
-    document.getElementById('weather-hero-wrap').innerHTML=`<div style="margin:14px 16px;padding:16px;background:var(--bg2);border-radius:16px;border:1px solid var(--border);font-size:13px;color:var(--text3);text-align:center">Wetter nicht verfügbar</div>`;
+    wrap.innerHTML=`<div style="margin:14px 16px;padding:16px;background:var(--bg2);border-radius:16px;border:1px solid var(--border);cursor:pointer" onclick="loadWeather()">
+      <div style="font-size:13px;color:var(--text3);text-align:center;margin-bottom:6px">Wetter nicht verfügbar · Antippen zum Laden</div>
+      <div style="font-size:11px;color:var(--text3);text-align:center;opacity:0.6">${e.message}</div>
+    </div>`;
   }
 }
 
@@ -861,7 +872,7 @@ function closeWSHModal(e){if(e.target===document.getElementById('wsh-modal'))doc
 // ══════════════════════════════════════════
 function renderHome(){
   renderHomePickups();
-  if(tkKey){ spritCache=null; loadSpritPreview(); }
+  if(tkKey) loadSpritPreview();
   renderWSH();
   checkOnboarding();
 }
@@ -1008,19 +1019,37 @@ async function loadSprit(){
   if(spritCache&&spritCache.fuel===activeFuel&&Date.now()-spritCache.ts<300000){renderSpritList(spritCache.data);return;}
   wrap.innerHTML='<div style="text-align:center;padding:32px;color:var(--text3)"><i class="ti ti-loader-2" style="font-size:22px;margin-bottom:8px;display:block"></i>Lade Preise…</div>';
   try{
-    const res=await fetch(`https://creativecommons.tankerkoenig.de/json/list.php?lat=48.825&lng=9.9589&rad=10&sort=price&type=${activeFuel}&apikey=${tkKey}`);
+    const ctrl2=new AbortController();
+    const tid2=setTimeout(()=>ctrl2.abort(),10000);
+    const res=await fetch(`https://creativecommons.tankerkoenig.de/json/list.php?lat=48.825&lng=9.9589&rad=10&sort=price&type=${activeFuel}&apikey=${tkKey}`,{signal:ctrl2.signal});
+    clearTimeout(tid2);
     const data=await res.json();
     if(!data.ok)throw new Error(data.message||'API Fehler');
     spritCache={data:data.stations,fuel:activeFuel,ts:Date.now()};
     renderSpritList(data.stations);loadSpritPreview();
-  }catch(e){wrap.innerHTML=`<div style="margin:16px;padding:14px 16px;background:rgba(154,58,58,0.1);border-radius:12px;font-size:13px;color:#9A3A3A">${e.message}</div>`;}
+  }catch(e){
+    wrap.innerHTML=`<div style="margin:16px">
+      <div style="padding:14px 16px;background:rgba(154,58,58,0.08);border-radius:12px;font-size:13px;color:#9A3A3A;margin-bottom:8px">
+        <i class="ti ti-alert-circle" style="margin-right:6px"></i>${e.message}
+      </div>
+      <div style="font-size:11px;color:var(--text3);padding:0 2px;margin-bottom:8px">
+        Key: ${tkKey ? tkKey.slice(0,8)+'...' : 'nicht gesetzt'} · Koordinaten: 48.825, 9.9589
+      </div>
+      <button class="btn-secondary" onclick="spritCache=null;loadSprit()"><i class="ti ti-refresh"></i>Nochmal versuchen</button>
+    </div>`;
+  }
 }
 
 async function loadSpritPreview(){
   if(!tkKey)return;
   try{
-    if(spritCache&&spritCache.fuel===activeFuel){renderSpritPreviewCards(spritCache.data.filter(s=>s[activeFuel]>0).slice(0,2));return;}
-    const res=await fetch(`https://creativecommons.tankerkoenig.de/json/list.php?lat=48.825&lng=9.9589&rad=10&sort=price&type=${activeFuel}&apikey=${tkKey}`);
+    if(spritCache&&spritCache.fuel===activeFuel&&Date.now()-spritCache.ts<300000){
+      renderSpritPreviewCards(spritCache.data.filter(s=>s[activeFuel]>0).slice(0,2));return;
+    }
+    const ctrl2=new AbortController();
+    const tid2=setTimeout(()=>ctrl2.abort(),10000);
+    const res=await fetch(`https://creativecommons.tankerkoenig.de/json/list.php?lat=48.825&lng=9.9589&rad=10&sort=price&type=${activeFuel}&apikey=${tkKey}`,{signal:ctrl2.signal});
+    clearTimeout(tid2);
     const data=await res.json();if(!data.ok)return;
     spritCache={data:data.stations,fuel:activeFuel,ts:Date.now()};
     renderSpritPreviewCards(data.stations.filter(s=>s[activeFuel]>0).slice(0,2));
