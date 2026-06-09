@@ -139,7 +139,7 @@ a{color:inherit;text-decoration:none}
 .card-label{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:0.07em;text-transform:uppercase}
 .card-meta{font-size:12px;color:var(--text3)}
 
-/* ── MÜLL ROWS (neue Kombi-Variante) ── */
+/* ── MÜLL ROWS ── */
 .muell-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border)}
 .muell-row:last-child{border-bottom:none}
 .muell-row.done{opacity:0.35}
@@ -375,14 +375,6 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:8px}
       <i class="ti ti-refresh" id="sprit-tab-refresh-icon"></i>
     </button>
   </div>
-  <div class="form-section" id="sprit-key-section" style="margin-top:4px">
-    <h3>Tankerkönig API-Key</h3>
-    <div class="key-row">
-      <input type="password" id="tk-key-input" placeholder="API-Key eingeben…">
-      <button class="btn-sm-green" onclick="saveTKKey()">Speichern</button>
-    </div>
-    <p style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.5">Kostenlos auf <a href="https://creativecommons.tankerkoenig.de" style="color:#3A7A55">creativecommons.tankerkoenig.de</a></p>
-  </div>
   <div id="sprit-list-wrap"></div>
   <div id="sprit-updated" style="font-size:11px;color:var(--text3);text-align:center;padding:8px 16px 0"></div>
 </div>
@@ -406,7 +398,7 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:8px}
     </div>
   </div>
 
-  <!-- Mode tabs: Abfahrten / Verbindung -->
+  <!-- Mode tabs -->
   <div style="display:flex;gap:0;margin:12px 16px 0;background:var(--bg3);border-radius:12px;padding:3px">
     <button id="bus-mode-dep" onclick="setBusMode('dep')" style="flex:1;padding:7px;border-radius:9px;font-size:13px;font-weight:500;font-family:inherit;background:var(--bg2);color:var(--text);border:none;cursor:pointer;transition:all 0.2s">Abfahrten</button>
     <button id="bus-mode-con" onclick="setBusMode('con')" style="flex:1;padding:7px;border-radius:9px;font-size:13px;font-weight:500;font-family:inherit;background:transparent;color:var(--text3);border:none;cursor:pointer;transition:all 0.2s">Verbindung</button>
@@ -448,26 +440,21 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:8px}
   <!-- ── VERBINDUNG ── -->
   <div id="bus-con-panel" style="display:none;padding:12px 16px 0">
     <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
-      <!-- Von -->
       <div style="position:relative">
         <i class="ti ti-map-pin" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--text3)"></i>
-        <input type="text" id="con-from" placeholder="Von (z.B. Mögglingen Bahnhof)"
-          value="Mögglingen Bahnhof"
+        <input type="text" id="con-from" placeholder="Von (z.B. Mögglingen Bahnhof)" value="Mögglingen Bahnhof"
           style="width:100%;padding:10px 12px 10px 36px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;color:var(--text);font-size:14px;font-family:inherit;outline:none;-webkit-appearance:none">
       </div>
-      <!-- Swap -->
       <div style="display:flex;align-items:center;gap:8px">
         <div style="flex:1;height:1px;background:var(--border)"></div>
         <button onclick="swapConStops()" style="width:30px;height:30px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--text2)" title="Tauschen"><i class="ti ti-arrows-up-down"></i></button>
         <div style="flex:1;height:1px;background:var(--border)"></div>
       </div>
-      <!-- Nach -->
       <div style="position:relative">
         <i class="ti ti-flag" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--text3)"></i>
         <input type="text" id="con-to" placeholder="Nach (z.B. Aalen ZOB)"
           style="width:100%;padding:10px 12px 10px 36px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;color:var(--text);font-size:14px;font-family:inherit;outline:none;-webkit-appearance:none">
       </div>
-      <!-- Datum/Zeit -->
       <div style="display:flex;gap:8px">
         <input type="date" id="con-date" style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;color:var(--text);padding:8px 12px;font-size:13px;font-family:inherit;outline:none;-webkit-appearance:none">
         <input type="time" id="con-time" style="width:90px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;color:var(--text);padding:8px 10px;font-size:13px;font-family:inherit;outline:none;-webkit-appearance:none">
@@ -478,7 +465,6 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:8px}
     </div>
     <div id="con-container"></div>
   </div>
-
 </div>
 
 <!-- ═══ MEHR ═══ -->
@@ -584,8 +570,8 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:8px}
     <div class="modal-title">Wertstoffhof Ellert</div>
     <div class="modal-sub"><i class="ti ti-map-pin" style="font-size:13px;margin-right:4px"></i>An der B29, Ausfahrt Mögglingen-Ost</div>
     <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px">Sommer (15. März – 31. Oktober)</div>
-    <div class="wsh-detail-row"><span style="font-size:13px;font-weight:500" id="wsh-mo-fr-s-label">Mo – Fr</span><span style="font-size:13px;color:var(--text2)">07:30 – 18:00 Uhr</span></div>
-    <div class="wsh-detail-row"><span style="font-size:13px;font-weight:500" id="wsh-sa-s-label">Samstag</span><span style="font-size:13px;color:var(--text2)">08:00 – 13:00 Uhr</span></div>
+    <div class="wsh-detail-row"><span style="font-size:13px;font-weight:500">Mo – Fr</span><span style="font-size:13px;color:var(--text2)">07:30 – 18:00 Uhr</span></div>
+    <div class="wsh-detail-row"><span style="font-size:13px;font-weight:500">Samstag</span><span style="font-size:13px;color:var(--text2)">08:00 – 13:00 Uhr</span></div>
     <div class="wsh-detail-row"><span style="font-size:13px;font-weight:500">Sonntag</span><span style="font-size:13px;color:#9A3A3A">Geschlossen</span></div>
     <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin:14px 0 10px">Winter (1. Nov – 14. März)</div>
     <div class="wsh-detail-row"><span style="font-size:13px;font-weight:500">Mo – Fr</span><span style="font-size:13px;color:var(--text2)">07:30 – 17:00 Uhr</span></div>
@@ -604,14 +590,14 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:8px}
 // TYPES
 // ══════════════════════════════════════════
 const TYPES = {
-  restmuell:       {label:'Hausmüll',          kuerzel:'HM',  icon:'ti-circle-dashed',          color:'#6B6860', bg:'#EEEAE4', darkBg:'#2A2824'},
-  bio:             {label:'Bioabfälle',         kuerzel:'Bio', icon:'ti-plant',            color:'#3A7A55', bg:'#E0F0E8', darkBg:'#142A1E'},
-  papier:          {label:'Blaue Tonne',        kuerzel:'BT',  icon:'ti-book',       color:'#2A5A8A', bg:'#DDE8F4', darkBg:'#12243A'},
-  gelb:            {label:'Gelber Sack',        kuerzel:'GS',  icon:'ti-arrows-exchange',         color:'#B08830', bg:'#F4EDD8', darkBg:'#2A2010'},
-  gartentonne:     {label:'Gartentonne',        kuerzel:'GT',  icon:'ti-seeding',         color:'#3A6A28', bg:'#E0ECD8', darkBg:'#122010'},
-  gruenabfuhr:     {label:'Grünabfuhr',         kuerzel:'GA',  icon:'ti-tree',           color:'#1E5A20', bg:'#DCF0DC', darkBg:'#0A200A'},
-  altpapier_verein:{label:'AV Holsammlung',     kuerzel:'AVH', icon:'ti-packages',             color:'#6A4A9A', bg:'#EAE4F4', darkBg:'#221830'},
-  christbaum:      {label:'Christbaumsammlung', kuerzel:'CS',  icon:'ti-trees',  color:'#8A2A2A', bg:'#F4E0E0', darkBg:'#2A0E0E'}
+  restmuell:       {label:'Hausmüll',          kuerzel:'HM',  icon:'ti-circle-dashed', color:'#6B6860', bg:'#EEEAE4', darkBg:'#2A2824'},
+  bio:             {label:'Bioabfälle',         kuerzel:'Bio', icon:'ti-plant',         color:'#3A7A55', bg:'#E0F0E8', darkBg:'#142A1E'},
+  papier:          {label:'Blaue Tonne',        kuerzel:'BT',  icon:'ti-book',          color:'#2A5A8A', bg:'#DDE8F4', darkBg:'#12243A'},
+  gelb:            {label:'Gelber Sack',        kuerzel:'GS',  icon:'ti-arrows-exchange',color:'#B08830', bg:'#F4EDD8', darkBg:'#2A2010'},
+  gartentonne:     {label:'Gartentonne',        kuerzel:'GT',  icon:'ti-seeding',       color:'#3A6A28', bg:'#E0ECD8', darkBg:'#122010'},
+  gruenabfuhr:     {label:'Grünabfuhr',         kuerzel:'GA',  icon:'ti-tree',          color:'#1E5A20', bg:'#DCF0DC', darkBg:'#0A200A'},
+  altpapier_verein:{label:'AV Holsammlung',     kuerzel:'AVH', icon:'ti-packages',      color:'#6A4A9A', bg:'#EAE4F4', darkBg:'#221830'},
+  christbaum:      {label:'Christbaumsammlung', kuerzel:'CS',  icon:'ti-trees',         color:'#8A2A2A', bg:'#F4E0E0', darkBg:'#2A0E0E'}
 };
 
 const GOA_TERMINE = [{"type":"bio","date":"2026-03-07"},{"type":"bio","date":"2026-03-20"},{"type":"papier","date":"2026-03-20"},{"type":"gelb","date":"2026-03-20"},{"type":"gartentonne","date":"2026-03-20"},{"type":"gartentonne","date":"2026-04-04"},{"type":"bio","date":"2026-04-07"},{"type":"restmuell","date":"2026-04-14"},{"type":"gartentonne","date":"2026-04-17"},{"type":"bio","date":"2026-04-20"},{"type":"papier","date":"2026-04-23"},{"type":"gelb","date":"2026-04-23"},{"type":"restmuell","date":"2026-04-28"},{"type":"gartentonne","date":"2026-05-02"},{"type":"bio","date":"2026-05-04"},{"type":"gruenabfuhr","date":"2026-05-04"},{"type":"bio","date":"2026-05-11"},{"type":"restmuell","date":"2026-05-12"},{"type":"gartentonne","date":"2026-05-16"},{"type":"bio","date":"2026-05-18"},{"type":"papier","date":"2026-05-21"},{"type":"gelb","date":"2026-05-21"},{"type":"bio","date":"2026-05-26"},{"type":"restmuell","date":"2026-05-27"},{"type":"gartentonne","date":"2026-05-30"},{"type":"bio","date":"2026-06-01"},{"type":"bio","date":"2026-06-08"},{"type":"restmuell","date":"2026-06-09"},{"type":"gartentonne","date":"2026-06-12"},{"type":"altpapier_verein","date":"2026-06-13"},{"type":"bio","date":"2026-06-15"},{"type":"papier","date":"2026-06-16"},{"type":"papier","date":"2026-06-18"},{"type":"gelb","date":"2026-06-18"},{"type":"bio","date":"2026-06-22"},{"type":"restmuell","date":"2026-06-23"},{"type":"gartentonne","date":"2026-06-26"},{"type":"bio","date":"2026-06-29"},{"type":"bio","date":"2026-07-06"},{"type":"restmuell","date":"2026-07-07"},{"type":"gartentonne","date":"2026-07-10"},{"type":"bio","date":"2026-07-13"},{"type":"papier","date":"2026-07-16"},{"type":"gelb","date":"2026-07-16"},{"type":"bio","date":"2026-07-20"},{"type":"restmuell","date":"2026-07-21"},{"type":"gartentonne","date":"2026-07-24"},{"type":"bio","date":"2026-07-27"},{"type":"bio","date":"2026-08-03"},{"type":"restmuell","date":"2026-08-04"},{"type":"gartentonne","date":"2026-08-07"},{"type":"bio","date":"2026-08-10"},{"type":"papier","date":"2026-08-13"},{"type":"gelb","date":"2026-08-13"},{"type":"bio","date":"2026-08-17"},{"type":"restmuell","date":"2026-08-18"},{"type":"gartentonne","date":"2026-08-21"},{"type":"bio","date":"2026-08-24"},{"type":"bio","date":"2026-08-31"},{"type":"restmuell","date":"2026-09-01"},{"type":"gartentonne","date":"2026-09-04"},{"type":"altpapier_verein","date":"2026-09-05"},{"type":"bio","date":"2026-09-07"},{"type":"papier","date":"2026-09-10"},{"type":"gelb","date":"2026-09-10"},{"type":"bio","date":"2026-09-14"},{"type":"restmuell","date":"2026-09-15"},{"type":"gartentonne","date":"2026-09-18"},{"type":"bio","date":"2026-09-21"},{"type":"bio","date":"2026-09-28"},{"type":"restmuell","date":"2026-09-29"},{"type":"gartentonne","date":"2026-10-02"},{"type":"bio","date":"2026-10-05"},{"type":"papier","date":"2026-10-08"},{"type":"gelb","date":"2026-10-08"},{"type":"bio","date":"2026-10-12"},{"type":"restmuell","date":"2026-10-13"},{"type":"gartentonne","date":"2026-10-16"},{"type":"bio","date":"2026-10-19"},{"type":"bio","date":"2026-10-26"},{"type":"restmuell","date":"2026-10-27"},{"type":"gartentonne","date":"2026-10-30"},{"type":"bio","date":"2026-11-02"},{"type":"papier","date":"2026-11-05"},{"type":"gelb","date":"2026-11-05"},{"type":"bio","date":"2026-11-09"},{"type":"restmuell","date":"2026-11-10"},{"type":"gartentonne","date":"2026-11-13"},{"type":"bio","date":"2026-11-16"},{"type":"gruenabfuhr","date":"2026-11-20"},{"type":"bio","date":"2026-11-23"},{"type":"restmuell","date":"2026-11-24"},{"type":"gartentonne","date":"2026-11-27"},{"type":"bio","date":"2026-11-30"},{"type":"bio","date":"2026-12-02"},{"type":"papier","date":"2026-12-03"},{"type":"gelb","date":"2026-12-03"},{"type":"restmuell","date":"2026-12-08"},{"type":"gartentonne","date":"2026-12-11"},{"type":"bio","date":"2026-12-14"},{"type":"bio","date":"2026-12-21"},{"type":"restmuell","date":"2026-12-22"},{"type":"bio","date":"2026-12-29"},{"type":"papier","date":"2027-01-02"},{"type":"gelb","date":"2027-01-02"},{"type":"bio","date":"2027-01-05"},{"type":"restmuell","date":"2027-01-07"},{"type":"christbaum","date":"2027-01-11"},{"type":"bio","date":"2027-01-12"},{"type":"bio","date":"2027-01-18"},{"type":"restmuell","date":"2027-01-19"},{"type":"bio","date":"2027-01-25"},{"type":"papier","date":"2027-01-28"},{"type":"gelb","date":"2027-01-28"},{"type":"bio","date":"2027-02-01"},{"type":"restmuell","date":"2027-02-02"},{"type":"bio","date":"2027-02-08"},{"type":"bio","date":"2027-02-15"},{"type":"restmuell","date":"2027-02-16"},{"type":"bio","date":"2027-02-22"},{"type":"papier","date":"2027-02-25"},{"type":"gelb","date":"2027-02-25"},{"type":"bio","date":"2027-03-01"},{"type":"restmuell","date":"2027-03-02"},{"type":"altpapier_verein","date":"2027-03-06"},{"type":"bio","date":"2027-03-08"},{"type":"bio","date":"2027-03-15"},{"type":"restmuell","date":"2027-03-16"},{"type":"bio","date":"2027-03-22"},{"type":"papier","date":"2027-03-25"},{"type":"gelb","date":"2027-03-25"},{"type":"bio","date":"2027-03-30"},{"type":"restmuell","date":"2027-03-31"}];
@@ -632,7 +618,6 @@ let pickups     = lsGet('pickups',[]);
 let settings    = lsGet('settings',{reminderDays:2,reminderTime:'08:00',notificationsEnabled:false});
 let hiddenTypes = lsGet('hiddenTypes',[]);
 let checkedIds  = lsGet('checkedIds',[]);
-let tkKey       = lsGet('tkKey','6a7afae6-ab0c-4c82-9317-c1dbeb735619')||'6a7afae6-ab0c-4c82-9317-c1dbeb735619';
 let activeFuel  = 'e5';
 let activeFilter= 'alle';
 let activeTab   = 'home';
@@ -640,10 +625,11 @@ let isDark      = localStorage.getItem('theme')==='dark';
 let spritCache  = null;
 let weatherData = null;
 
+const WORKER_URL = 'https://moegglingen-bus.emre18celik.workers.dev';
+
 document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
 document.getElementById('reminder-days').value = settings.reminderDays;
 document.getElementById('reminder-time').value = settings.reminderTime;
-if(tkKey){document.getElementById('tk-key-input').value='••••••••••';document.getElementById('sprit-key-section').style.display='none';}
 
 applyTheme();
 checkNotifStatus();
@@ -676,7 +662,7 @@ function applyTheme(){
 function toggleTheme(){isDark=!isDark;try{localStorage.setItem('theme',isDark?'dark':'light');}catch(e){}applyTheme();renderHome();renderMuell();}
 
 // ══════════════════════════════════════════
-// NAVIGATION — with fade animation
+// NAVIGATION
 // ══════════════════════════════════════════
 const TAB_TITLES={home:'Home',muell:'Müll',sprit:'Spritpreise',bus:'Bus & Bahn',mehr:'Mehr'};
 function switchTab(tab){
@@ -691,7 +677,7 @@ function switchTab(tab){
   document.getElementById('header-title').innerHTML=tab==='home'?`<span id="greeting-text" class="greeting-text">${GREETINGS[greetIdx]}</span>`:TAB_TITLES[tab]||'';
   if(tab==='home'){renderHome();stopAutoRefresh();}
   if(tab==='muell'){renderMuell();}
-  if(tab==='sprit'&&tkKey){loadSprit();}
+  if(tab==='sprit'){loadSprit();}
   if(tab==='bus'){loadFavoriteOnOpen();renderStationTabs();loadDepartures(true);startAutoRefresh();}
   if(tab==='mehr'){renderVisibilitySettings();}
   checkOnboarding();
@@ -719,20 +705,20 @@ function checkOnboarding(){
 }
 
 // ══════════════════════════════════════════
-// WEATHER + SUNRISE/SUNSET
+// WEATHER
 // ══════════════════════════════════════════
 async function loadWeather(){
-  const wrap = document.getElementById('weather-hero-wrap');
-  if(!wrap) return;
+  const wrap=document.getElementById('weather-hero-wrap');
+  if(!wrap)return;
   try{
     const url='https://api.open-meteo.com/v1/forecast?latitude=48.825&longitude=9.9589&current=temperature_2m,weathercode,windspeed_10m&daily=temperature_2m_max,temperature_2m_min,weathercode,precipitation_sum,sunrise,sunset&timezone=Europe%2FBerlin&forecast_days=7';
-    const ctrl = new AbortController();
-    const tid = setTimeout(()=>ctrl.abort(), 8000);
-    const res = await fetch(url, {signal: ctrl.signal});
+    const ctrl=new AbortController();
+    const tid=setTimeout(()=>ctrl.abort(),8000);
+    const res=await fetch(url,{signal:ctrl.signal});
     clearTimeout(tid);
-    if(!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    if(!data.current) throw new Error('Keine Wetterdaten');
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    const data=await res.json();
+    if(!data.current)throw new Error('Keine Wetterdaten');
     weatherData=data;
     renderWeatherHero(data);
     renderWeekRow(data);
@@ -752,9 +738,7 @@ function renderWeatherHero(data){
   const code=cur.weathercode;
   const {desc,icon,animClass}=wCode(code);
   const wind=Math.round(cur.windspeed_10m);
-
-  // Sunrise / sunset
-  const sunriseStr=day.sunrise[0]; // "2026-06-03T05:18"
+  const sunriseStr=day.sunrise[0];
   const sunsetStr=day.sunset[0];
   const sunrise=new Date(sunriseStr);
   const sunset=new Date(sunsetStr);
@@ -765,13 +749,10 @@ function renderWeatherHero(data){
   const srTime=sunrise.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
   const ssTime=sunset.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
   const dayHours=Math.round(totalDayMs/3600000);
-
   document.getElementById('weather-hero-wrap').innerHTML=`
   <div class="weather-hero anim-card" style="animation-delay:0.05s">
     <div class="wh-top">
-      <div>
-        <div class="wh-temp" id="anim-temp">—<sup>°</sup></div>
-      </div>
+      <div><div class="wh-temp" id="anim-temp">—<sup>°</sup></div></div>
       <div class="wh-right">
         <span class="wh-icon ${animClass}"><i class="ti ${icon}" style="font-size:34px;color:var(--hero-muted)"></i></span>
         <div class="wh-desc">${desc}</div>
@@ -788,11 +769,7 @@ function renderWeatherHero(data){
     </div>
     <div style="font-size:10px;color:var(--hero-dim);margin-top:6px;text-align:center">${dayHours}h Tageslicht heute</div>
   </div>`;
-
-  // Animate temperature counting up
   animateTemp(temp);
-
-  // Animate sun dot after short delay
   setTimeout(()=>{
     const fill=document.getElementById('sun-fill');
     const dot=document.getElementById('sun-dot');
@@ -816,14 +793,12 @@ function animateTemp(target){
 function renderWeekRow(data){
   const day=data.daily;
   const dayNames=['So','Mo','Di','Mi','Do','Fr','Sa'];
-  const today=new Date().getDay();
   const wrap=document.getElementById('week-row-home');
   if(!wrap)return;
   wrap.innerHTML=day.time.slice(0,7).map((dateStr,i)=>{
     const d=new Date(dateStr+'T12:00:00');
     const name=i===0?'Heute':dayNames[d.getDay()];
     const max=Math.round(day.temperature_2m_max[i]);
-    const min=Math.round(day.temperature_2m_min[i]);
     const {icon}=wCode(day.weathercode[i]);
     const isToday=i===0;
     return `<div class="wday ${isToday?'today':''}" style="animation:cardIn 0.4s ease ${0.1+i*0.05}s both">
@@ -868,11 +843,11 @@ function openWSHModal(){document.getElementById('wsh-modal').classList.add('open
 function closeWSHModal(e){if(e.target===document.getElementById('wsh-modal'))document.getElementById('wsh-modal').classList.remove('open');}
 
 // ══════════════════════════════════════════
-// HOME MÜLL WIDGET (Variante 1+2 Kombi)
+// HOME
 // ══════════════════════════════════════════
 function renderHome(){
   renderHomePickups();
-  if(tkKey) loadSpritPreview();
+  loadSpritPreview();
   renderWSH();
   checkOnboarding();
 }
@@ -885,11 +860,9 @@ function renderHomePickups(){
   if(!labelEl)return;
   if(!upcoming.length){labelEl.style.display='none';cardEl.style.display='none';return;}
   labelEl.style.display='block';cardEl.style.display='block';
-
   const byDate={};
   upcoming.forEach(p=>{(byDate[p.date]=byDate[p.date]||[]).push(p);});
   const nextDates=Object.keys(byDate).sort().slice(0,2);
-
   bodyEl.innerHTML=nextDates.map(date=>{
     return byDate[date].map(p=>{
       const t=TYPES[p.type]||TYPES.restmuell;
@@ -950,18 +923,15 @@ function renderMuell(){
   const filtered=activeFilter==='alle'?visible:visible.filter(p=>p.type===activeFilter);
   const upcoming=filtered.filter(p=>daysUntil(p.date)>=0);
   const past=filtered.filter(p=>daysUntil(p.date)<0);
-
   const types=[...new Set(pickups.map(p=>p.type))];
   document.getElementById('filter-bar').innerHTML=
     `<button class="chip ${activeFilter==='alle'?'active':''}" onclick="setFilter('alle')">Alle</button>`+
     types.map(t=>{const d=TYPES[t]||TYPES.restmuell;return`<button class="chip ${activeFilter===t?'active':''}" onclick="setFilter('${t}')">${d.kuerzel}</button>`;}).join('');
-
   const soon=pickups.filter(p=>daysUntil(p.date)>=0&&daysUntil(p.date)<=7).length;
   const total=pickups.filter(p=>daysUntil(p.date)>=0).length;
   const done=pickups.filter(p=>daysUntil(p.date)<0).length;
   document.getElementById('muell-stats').innerHTML=pickups.length?
     `<div class="card" style="margin:0 16px 4px;border-radius:14px"><div class="stats-row"><div class="stat-box"><div class="stat-num">${soon}</div><div class="stat-lbl">Diese Woche</div></div><div class="stat-box"><div class="stat-num">${total}</div><div class="stat-lbl">Ausstehend</div></div><div class="stat-box"><div class="stat-num">${done}</div><div class="stat-lbl">Erledigt</div></div></div></div>`:'';
-
   const upEl=document.getElementById('muell-upcoming');
   if(!upcoming.length){
     upEl.innerHTML='<div class="empty-state"><i class="ti ti-calendar-off"></i><p>Keine Termine.<br>Unter „Mehr" hinzufügen.</p></div>';
@@ -974,7 +944,6 @@ function renderMuell(){
        </div>`
     ).join('<div style="height:8px"></div>');
   }
-
   const pastLabel=document.getElementById('past-label'),pastEl=document.getElementById('muell-past');
   if(past.length){
     pastLabel.style.display='block';
@@ -1002,54 +971,41 @@ function renderPickupRow(p,isPast,idx){
       <div class="pickup-date">${fmtDate(p.date)}</div>
     </div>
     ${badge}
-    ${!isPast?`<button class="check-btn ${isChecked?'checked':''}" onclick="toggleCheck(${p.id})" aria-label="Abhaken" style="${isChecked?'animation:checkBounce 0.3s ease':''}" ><i class="ti ti-check"></i></button>`:''}
+    ${!isPast?`<button class="check-btn ${isChecked?'checked':''}" onclick="toggleCheck(${p.id})" aria-label="Abhaken"><i class="ti ti-check"></i></button>`:''}
     <button class="delete-btn" onclick="deletePickup(${p.id})" aria-label="Löschen"><i class="ti ti-x"></i></button>
   </div>`;
 }
 
 // ══════════════════════════════════════════
-// SPRIT
+// SPRIT — via Cloudflare Worker (kein Key im Frontend)
 // ══════════════════════════════════════════
-function saveTKKey(){const k=document.getElementById('tk-key-input').value.trim();if(!k||k.includes('•')){showToast('Bitte echten Key eingeben');return;}tkKey=k;storageSet('tkKey',k);document.getElementById('tk-key-input').value='••••••••••';document.getElementById('sprit-key-section').style.display='none';showToast('Key gespeichert');loadSprit();}
-function setFuel(f){activeFuel=f;['e5','e10','diesel'].forEach(x=>document.getElementById('fchip-'+x).classList.toggle('active',x===f));spritCache=null;if(tkKey)loadSprit();}
+function setFuel(f){
+  activeFuel=f;
+  ['e5','e10','diesel'].forEach(x=>document.getElementById('fchip-'+x).classList.toggle('active',x===f));
+  spritCache=null;
+  loadSprit();
+}
 
 async function loadSprit(){
   const wrap=document.getElementById('sprit-list-wrap');
-  if(!tkKey)return;
+  if(!wrap)return;
   if(spritCache&&spritCache.fuel===activeFuel&&Date.now()-spritCache.ts<300000){renderSpritList(spritCache.data);return;}
   wrap.innerHTML='<div style="text-align:center;padding:32px;color:var(--text3)"><i class="ti ti-loader-2" style="font-size:22px;margin-bottom:8px;display:block"></i>Lade Preise…</div>';
   try{
-    const ctrl2=new AbortController();
-    const tid2=setTimeout(()=>ctrl2.abort(),10000);
-    const res=await fetch(`https://creativecommons.tankerkoenig.de/json/list.php?lat=48.825&lng=9.9589&rad=10&sort=price&type=${activeFuel}&apikey=${tkKey}`,{signal:ctrl2.signal});
-    clearTimeout(tid2);
+    const ctrl=new AbortController();
+    const tid=setTimeout(()=>ctrl.abort(),10000);
+    const res=await fetch(`${WORKER_URL}/prices?type=${activeFuel}`,{signal:ctrl.signal});
+    clearTimeout(tid);
+    if(!res.ok)throw new Error('HTTP '+res.status);
     const data=await res.json();
-    if(!data.ok)throw new Error(data.message||'API Fehler: ok=false');
+    if(!data.ok)throw new Error(data.error||'API Fehler');
     const stations=data.stations||[];
-    // Debug: show raw count and first station
-    const wrap2=document.getElementById('sprit-list-wrap');
-    if(!stations.length){
-      wrap2.innerHTML=`<div style="margin:16px;padding:14px;background:var(--bg2);border-radius:12px;font-size:12px;color:var(--text2)">
-        API antwortet OK aber 0 Stationen gefunden.<br>
-        Key aktiv: ${data.ok} · Typ: ${activeFuel} · Radius: 10km<br>
-        Wahrscheinlich noch nicht freigeschaltet.
-      </div>`;
-      return;
-    }
-    // Only cache if we got real price data
-    const withPrices = stations.filter(s => s[activeFuel] > 0);
-    if(withPrices.length) {
-      spritCache={data:stations,fuel:activeFuel,ts:Date.now()};
-    }
+    spritCache={data:stations,fuel:activeFuel,ts:Date.now()};
     renderSpritList(stations);
-    if(withPrices.length) loadSpritPreview();
   }catch(e){
     wrap.innerHTML=`<div style="margin:16px">
       <div style="padding:14px 16px;background:rgba(154,58,58,0.08);border-radius:12px;font-size:13px;color:#9A3A3A;margin-bottom:8px">
         <i class="ti ti-alert-circle" style="margin-right:6px"></i>${e.message}
-      </div>
-      <div style="font-size:11px;color:var(--text3);padding:0 2px;margin-bottom:8px">
-        Key: ${tkKey ? tkKey.slice(0,8)+'...' : 'nicht gesetzt'} · Koordinaten: 48.825, 9.9589
       </div>
       <button class="btn-secondary" onclick="spritCache=null;loadSprit()"><i class="ti ti-refresh"></i>Nochmal versuchen</button>
     </div>`;
@@ -1057,23 +1013,51 @@ async function loadSprit(){
 }
 
 async function loadSpritPreview(){
-  if(!tkKey)return;
   try{
     if(spritCache&&spritCache.fuel===activeFuel&&Date.now()-spritCache.ts<300000){
-      renderSpritPreviewCards(spritCache.data.filter(s=>s[activeFuel]>0).slice(0,2));return;
+      renderSpritPreviewHome(spritCache.data.filter(s=>s[activeFuel]>0).slice(0,3));
+      return;
     }
-    const ctrl2=new AbortController();
-    const tid2=setTimeout(()=>ctrl2.abort(),10000);
-    const res=await fetch(`https://creativecommons.tankerkoenig.de/json/list.php?lat=48.825&lng=9.9589&rad=10&sort=price&type=${activeFuel}&apikey=${tkKey}`,{signal:ctrl2.signal});
-    clearTimeout(tid2);
-    const data=await res.json();if(!data.ok)return;
+    const ctrl=new AbortController();
+    const tid=setTimeout(()=>ctrl.abort(),10000);
+    const res=await fetch(`${WORKER_URL}/prices?type=${activeFuel}`,{signal:ctrl.signal});
+    clearTimeout(tid);
+    const data=await res.json();
+    if(!data.ok)return;
     spritCache={data:data.stations,fuel:activeFuel,ts:Date.now()};
-    renderSpritPreviewCards(data.stations.filter(s=>s[activeFuel]>0).slice(0,2));
+    renderSpritPreviewHome(data.stations.filter(s=>s[activeFuel]>0).slice(0,3));
   }catch(e){}
 }
 
-function renderSpritPreviewCards(stations){
-  // Not shown on new home anymore — sprit is full tab only
+function renderSpritPreviewHome(stations){
+  const body=document.getElementById('home-sprit-body');
+  const label=document.getElementById('home-sprit-fuel-label');
+  const meta=document.getElementById('home-sprit-meta');
+  if(!body)return;
+  if(label)label.textContent=activeFuel==='e5'?'Super E5':activeFuel==='e10'?'Super E10':'Diesel';
+  if(meta)meta.textContent=new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})+' Uhr';
+  if(!stations.length){
+    body.innerHTML='<div style="padding:14px 16px;font-size:13px;color:var(--text3)">Keine Preise verfügbar</div>';
+    return;
+  }
+  body.innerHTML=stations.map((s,i)=>{
+    const price=s[activeFuel];
+    if(!price)return'';
+    const priceStr=price.toFixed(3);
+    const dist=s.dist<1?Math.round(s.dist*1000)+'m':s.dist.toFixed(1)+'km';
+    const rankBg=i===0?'rgba(176,136,48,0.15)':'var(--bg3)';
+    const rankC=i===0?'#B08830':'var(--text3)';
+    return `<div class="pickup-row ${!s.isOpen?'past':''}">
+      <div class="rank-dot" style="background:${rankBg};color:${rankC}">${i+1}</div>
+      <div class="pickup-info">
+        <div class="pickup-type">${s.brand||s.name}</div>
+        <div class="pickup-date">${dist}${!s.isOpen?' · geschlossen':''}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div class="sprit-price-big" style="color:${i===0?'#3A7A55':'var(--text)'}">${priceStr.slice(0,-1)}<sup style="font-size:11px">${priceStr.slice(-1)}</sup></div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function refreshSpritHome(){
@@ -1094,8 +1078,8 @@ function renderSpritList(stations){
     wrap.innerHTML=`<div style="padding:20px 16px">
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;text-align:center">
         <i class="ti ti-gas-station" style="font-size:28px;color:var(--text3);display:block;margin-bottom:10px"></i>
-        <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px">Tankerkönig Key noch nicht aktiv</div>
-        <div style="font-size:13px;color:var(--text3);line-height:1.6">API antwortet, aber liefert noch keine Preise.<br>Bitte morgen erneut versuchen.</div>
+        <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px">Keine Preise verfügbar</div>
+        <div style="font-size:13px;color:var(--text3);line-height:1.6">Tankerkönig liefert aktuell keine Daten.</div>
         <button class="btn-secondary" onclick="spritCache=null;loadSprit()" style="margin-top:12px;width:auto;padding:8px 16px">
           <i class="ti ti-refresh"></i> Nochmal versuchen
         </button>
@@ -1174,7 +1158,6 @@ function showInstallHint(){const el=document.getElementById('install-hint');el.s
 // ══════════════════════════════════════════
 // BUS & BAHN
 // ══════════════════════════════════════════
-const WORKER_URL='https://moegglingen-bus.emre18celik.workers.dev';
 const BUS_STATIONS=[
   {key:'bahnhof',       name:'Mögglingen Bahnhof',     type:'train'},
   {key:'bahnhof_bus',   name:'Bahnhof (Bussteig)',      type:'bus'},
@@ -1189,12 +1172,11 @@ const BUS_STATIONS=[
 ];
 let activeBusStation=0, allDepartures=[], activeDirection='all';
 let favStation=lsGet('favBusStation',0);
-let busMode='dep'; // 'dep' or 'con'
+let busMode='dep';
 let autoRefreshTimer=null;
 let lastRefreshTime=null;
 const DIRECTIONS={aalen:['aalen'],schorndorf:['schorndorf','waiblingen'],stuttgart:['stuttgart','waiblingen','schorndorf'],gmuend:['gmünd','gmuend','schwäbisch']};
 
-// ── Mode toggle ──
 function setBusMode(mode){
   busMode=mode;
   const depBtn=document.getElementById('bus-mode-dep');
@@ -1209,26 +1191,24 @@ function setBusMode(mode){
     conBtn.style.background='var(--bg2)';conBtn.style.color='var(--text)';
     depBtn.style.background='transparent';depBtn.style.color='var(--text3)';
     depPanel.style.display='none';conPanel.style.display='block';
-    // Init connection date/time
     const n=new Date();
     const dateEl=document.getElementById('con-date');
     const timeEl=document.getElementById('con-time');
-    if(dateEl&&!dateEl.value) dateEl.value=n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');
-    if(timeEl&&!timeEl.value) timeEl.value=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+    if(dateEl&&!dateEl.value)dateEl.value=n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');
+    if(timeEl&&!timeEl.value)timeEl.value=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
   }
 }
 
-// ── Station tabs ──
 function renderStationTabs(){
   const sel=document.getElementById('bus-station-select');
-  if(sel) sel.innerHTML=BUS_STATIONS.map((s,i)=>`<option value="${i}" ${i===activeBusStation?'selected':''}>${s.type==='train'?'🚆':'🚌'} ${s.name}${i===favStation?' ★':''}</option>`).join('');
+  if(sel)sel.innerHTML=BUS_STATIONS.map((s,i)=>`<option value="${i}" ${i===activeBusStation?'selected':''}>${s.type==='train'?'🚆':'🚌'} ${s.name}${i===favStation?' ★':''}</option>`).join('');
   const nameEl=document.getElementById('bus-station-name');
-  if(nameEl) nameEl.textContent=BUS_STATIONS[activeBusStation].name;
+  if(nameEl)nameEl.textContent=BUS_STATIONS[activeBusStation].name;
   updateFavBtn();
   const n=new Date();
   const dateEl=document.getElementById('bus-date'),timeEl=document.getElementById('bus-time');
-  if(dateEl&&!dateEl.value) dateEl.value=n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');
-  if(timeEl&&!timeEl.value) timeEl.value=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+  if(dateEl&&!dateEl.value)dateEl.value=n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');
+  if(timeEl&&!timeEl.value)timeEl.value=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
 }
 
 function selectStation(i){activeBusStation=parseInt(i);renderStationTabs();loadDepartures(true);}
@@ -1275,18 +1255,14 @@ function applyDirectionFilter(){
   renderDepartureList(filtered,new Date());
 }
 
-// ── Auto-refresh ──
 function startAutoRefresh(){
   stopAutoRefresh();
   autoRefreshTimer=setInterval(()=>{
     if(activeTab!=='bus'||busMode!=='dep'){stopAutoRefresh();return;}
-    // Only auto-refresh if viewing current time (not a future time)
     const dateEl=document.getElementById('bus-date');
     const today=new Date(),todayStr=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
-    if(dateEl&&dateEl.value===todayStr){
-      loadDepartures(false); // silent refresh
-    }
-  }, 60000);
+    if(dateEl&&dateEl.value===todayStr){loadDepartures(false);}
+  },60000);
 }
 function stopAutoRefresh(){if(autoRefreshTimer){clearInterval(autoRefreshTimer);autoRefreshTimer=null;}}
 
@@ -1297,7 +1273,6 @@ function updateRefreshLabel(){
   lbl.textContent=sec<10?'gerade aktualisiert':sec<60?`vor ${sec}s aktuell`:'';
 }
 
-// ── Load departures ──
 async function loadDepartures(showLoader=true){
   const container=document.getElementById('bus-container');
   if(!container)return;
@@ -1306,8 +1281,7 @@ async function loadDepartures(showLoader=true){
     icon.style.transition='transform 0.6s';icon.style.transform='rotate(360deg)';
     setTimeout(()=>{icon.style.transition='';icon.style.transform='';},600);
   }
-  if(showLoader) container.innerHTML='<div class="empty-state"><i class="ti ti-loader-2" style="font-size:28px"></i><p style="font-size:13px">Lade Abfahrten…</p></div>';
-
+  if(showLoader)container.innerHTML='<div class="empty-state"><i class="ti ti-loader-2" style="font-size:28px"></i><p style="font-size:13px">Lade Abfahrten…</p></div>';
   const stop=BUS_STATIONS[activeBusStation];
   try{
     const dateEl=document.getElementById('bus-date'),timeEl=document.getElementById('bus-time');
@@ -1316,24 +1290,21 @@ async function loadDepartures(showLoader=true){
     const nowTime=String(today.getHours()).padStart(2,'0')+':'+String(today.getMinutes()).padStart(2,'0');
     const isNow=(!dateVal||dateVal===todayStr)&&(!timeVal||timeVal===nowTime);
     let fetchUrl=`${WORKER_URL}/departures?stop=${stop.key}&limit=25`;
-    if(dateVal&&dateVal!==todayStr) fetchUrl+=`&date=${dateVal}`;
-    if(timeVal&&!isNow) fetchUrl+=`&time=${timeVal}`;
-
+    if(dateVal&&dateVal!==todayStr)fetchUrl+=`&date=${dateVal}`;
+    if(timeVal&&!isNow)fetchUrl+=`&time=${timeVal}`;
     const ctrl=new AbortController(),tid=setTimeout(()=>ctrl.abort(),10000);
     const res=await fetch(fetchUrl,{signal:ctrl.signal});clearTimeout(tid);
     if(!res.ok)throw new Error('HTTP '+res.status);
     const data=await res.json();
     if(data.error)throw new Error(data.error);
-
     allDepartures=data.departures||[];
     lastRefreshTime=Date.now();
     updateRefreshLabel();
     updateNextBanner();
     applyDirectionFilter();
-
   }catch(e){
     allDepartures=[];
-    if(showLoader) container.innerHTML=`<div style="margin:16px">
+    if(showLoader)container.innerHTML=`<div style="margin:16px">
       <div style="padding:14px 16px;background:rgba(154,58,58,0.1);border-radius:12px;font-size:13px;color:#9A3A3A;margin-bottom:12px">
         <i class="ti ti-alert-circle" style="margin-right:6px"></i>${e.message}
       </div>
@@ -1342,12 +1313,10 @@ async function loadDepartures(showLoader=true){
   }
 }
 
-// ── Next departure banner ──
 function updateNextBanner(){
   const banner=document.getElementById('bus-next-banner');
   if(!banner||!allDepartures.length){if(banner)banner.style.display='none';return;}
   const now=new Date();
-  // Find soonest departure
   const upcoming=allDepartures.filter(d=>d.diffMin>=-1).slice(0,1);
   if(!upcoming.length){banner.style.display='none';return;}
   const d=upcoming[0];
@@ -1366,7 +1335,6 @@ function updateNextBanner(){
   document.getElementById('bus-next-in').textContent=inText;
 }
 
-// ── Render departures ──
 function renderDepartureList(deps,now){
   const container=document.getElementById('bus-container');
   const lines=deps.map(d=>{
@@ -1375,9 +1343,7 @@ function renderDepartureList(deps,now){
     const hhmm=planned.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
     return{...d,diffMin,hhmm};
   }).filter(d=>d.diffMin>-5).slice(0,15);
-
   if(!lines.length){container.innerHTML='<div class="empty-state"><i class="ti ti-bus-off"></i><p>Keine Abfahrten gefunden</p></div>';return;}
-
   const ts=new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
   container.innerHTML=`
     <div style="font-size:11px;color:var(--text3);padding:0 20px 8px">Stand: ${ts} Uhr · EFA-BW · Auto-Refresh alle 60s</div>
@@ -1414,7 +1380,6 @@ function getBusLineColor(name){
   return{bg:'rgba(107,104,96,0.12)',text:'#6B6860'};
 }
 
-// ── Connection search ──
 function swapConStops(){
   const from=document.getElementById('con-from');
   const to=document.getElementById('con-to');
@@ -1427,15 +1392,12 @@ async function searchConnection(){
   const dateVal=document.getElementById('con-date').value;
   const timeVal=document.getElementById('con-time').value;
   if(!from||!to){showToast('Bitte Start und Ziel eingeben');return;}
-
   const container=document.getElementById('con-container');
   container.innerHTML='<div class="empty-state"><i class="ti ti-loader-2" style="font-size:28px"></i><p style="font-size:13px">Suche Verbindungen…</p></div>';
-
   try{
     let fetchUrl=`${WORKER_URL}/trip?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
-    if(dateVal) fetchUrl+=`&date=${dateVal}`;
-    if(timeVal) fetchUrl+=`&time=${timeVal}`;
-
+    if(dateVal)fetchUrl+=`&date=${dateVal}`;
+    if(timeVal)fetchUrl+=`&time=${timeVal}`;
     const ctrl=new AbortController(),tid=setTimeout(()=>ctrl.abort(),15000);
     const res=await fetch(fetchUrl,{signal:ctrl.signal});clearTimeout(tid);
     if(!res.ok)throw new Error('HTTP '+res.status);
@@ -1451,10 +1413,7 @@ async function searchConnection(){
 
 function renderConnections(trips,from,to){
   const container=document.getElementById('con-container');
-  if(!trips.length){
-    container.innerHTML='<div class="empty-state"><i class="ti ti-route-off"></i><p>Keine Verbindungen gefunden</p></div>';
-    return;
-  }
+  if(!trips.length){container.innerHTML='<div class="empty-state"><i class="ti ti-route-off"></i><p>Keine Verbindungen gefunden</p></div>';return;}
   container.innerHTML=`<div class="card" style="margin-top:12px;border-radius:14px;overflow:hidden">
     ${trips.slice(0,5).map((trip,i)=>{
       const dep=new Date(trip.departure);
@@ -1509,7 +1468,6 @@ function toggleTripDetail(i){
   if(ch)ch.style.transform=open?'':'rotate(180deg)';
 }
 
-
 // ══════════════════════════════════════════
 // NOTIFICATIONS
 // ══════════════════════════════════════════
@@ -1544,7 +1502,7 @@ function refreshReminders(){scheduleAllReminders();showToast('Erinnerungen aktua
 function testNotification(){if(Notification.permission!=='granted'){showToast('Erst Benachrichtigungen aktivieren');return;}new Notification('Hausmüll – Tonne rausstellen',{body:'Test-Erinnerung der Mögglingen App.',icon:'icon-192.png'});showToast('Test gesendet');}
 
 // ══════════════════════════════════════════
-// GREETING ROTATION
+// GREETING
 // ══════════════════════════════════════════
 const GREETINGS=['Hallo','Merhaba','Servus','Grüß Gott','Guten Tag','Hey','Willkommen','Salut'];
 let greetIdx=0;
