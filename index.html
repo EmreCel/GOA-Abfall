@@ -681,6 +681,11 @@ let activeTab   = 'home';
 let isDark      = localStorage.getItem('theme')==='dark';
 let spritCache  = null;
 let weatherData = null;
+let activeEventFilter = 'alle';
+
+const GREETINGS=['Hallo','Merhaba','Servus','Grüß Gott','Guten Tag','Hey','Willkommen','Salut'];
+let greetIdx=0;
+let scheduledTimers=[];
 
 const WORKER_URL = 'https://moegglingen-bus.emre18celik.workers.dev';
 
@@ -1561,8 +1566,6 @@ const EVENTS = [
   }
 ];
 
-let activeEventFilter = 'alle';
-
 function setEventFilter(f) {
   activeEventFilter = f;
   document.querySelectorAll('[id^="efchip-"]').forEach(el => el.classList.remove('active'));
@@ -1678,7 +1681,6 @@ async function checkNotifStatus(){
 }
 async function requestNotifications(){const perm=await Notification.requestPermission();if(perm==='granted'){settings.notificationsEnabled=true;storageSet('settings',settings);document.getElementById('toggle-notifs').checked=true;document.getElementById('notif-status').textContent='Aktiv';document.getElementById('notif-banner').classList.add('hidden');scheduleAllReminders();showToast('Benachrichtigungen aktiv');}}
 function toggleNotifications(enabled){if(enabled&&Notification.permission!=='granted'){requestNotifications();return;}settings.notificationsEnabled=enabled;storageSet('settings',settings);document.getElementById('notif-status').textContent=enabled?'Aktiv':'Deaktiviert';if(enabled){scheduleAllReminders();showToast('Erinnerungen aktiviert');}else{clearScheduled();showToast('Erinnerungen deaktiviert');}}
-let scheduledTimers=[];
 function clearScheduled(){scheduledTimers.forEach(clearTimeout);scheduledTimers=[];}
 function scheduleAllReminders(){
   clearScheduled();if(!settings.notificationsEnabled||Notification.permission!=='granted')return;
@@ -1702,8 +1704,6 @@ function testNotification(){if(Notification.permission!=='granted'){showToast('E
 // ══════════════════════════════════════════
 // GREETING
 // ══════════════════════════════════════════
-const GREETINGS=['Hallo','Merhaba','Servus','Grüß Gott','Guten Tag','Hey','Willkommen','Salut'];
-let greetIdx=0;
 function startGreeting(){
   setInterval(()=>{
     if(activeTab!=='home')return;
