@@ -415,7 +415,7 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:8px}
 <div id="view-bus" class="view">
 
   <!-- Next departure banner -->
-  <div id="bus-next-banner" style="display:none;margin:12px 16px 0;padding:12px 16px;background:var(--hero);border-radius:14px;display:none">
+  <div id="bus-next-banner" style="display:none;margin:12px 16px 0;padding:12px 16px;background:var(--hero);border-radius:14px">
     <div style="font-size:10px;font-weight:600;color:var(--hero-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Nächste Abfahrt</div>
     <div id="bus-next-content" style="display:flex;align-items:center;gap:10px">
       <div id="bus-next-line" style="min-width:44px;height:26px;border-radius:6px;background:rgba(255,255,255,0.1);color:var(--hero-text);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">—</div>
@@ -644,6 +644,15 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:8px}
 
 <script>
 // ══════════════════════════════════════════
+// WICHTIG: In dieser Datei stehen ALLE Deklarationen
+// (const/let/function) zuerst. Der Init-Block steht
+// als init() GANZ AM ENDE des Scripts. Niemals
+// Render-/Init-Aufrufe mitten ins Script setzen —
+// das führt zu ReferenceErrors (Temporal Dead Zone)
+// und killt die komplette App.
+// ══════════════════════════════════════════
+
+// ══════════════════════════════════════════
 // TYPES
 // ══════════════════════════════════════════
 const TYPES = {
@@ -671,6 +680,9 @@ async function dbGet(key,fallback){try{const db=await openDB();return new Promis
 function lsGet(key,fallback){try{const v=localStorage.getItem(key);return v!==null?JSON.parse(v):fallback;}catch(e){return fallback;}}
 function storageSet(key,value){try{localStorage.setItem(key,JSON.stringify(value));}catch(e){}dbSet(key,value);}
 
+// ══════════════════════════════════════════
+// STATE (alle Variablen ZENTRAL hier)
+// ══════════════════════════════════════════
 let pickups     = lsGet('pickups',[]);
 let settings    = lsGet('settings',{reminderDays:2,reminderTime:'08:00',notificationsEnabled:false});
 let hiddenTypes = lsGet('hiddenTypes',[]);
@@ -689,18 +701,63 @@ let scheduledTimers=[];
 
 const WORKER_URL = 'https://moegglingen-bus.emre18celik.workers.dev';
 
-document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
-document.getElementById('reminder-days').value = settings.reminderDays;
-document.getElementById('reminder-time').value = settings.reminderTime;
+const TAB_TITLES={home:'Home',muell:'Müll',sprit:'Spritpreise',bus:'Bus & Bahn',events:'Events',mehr:'Mehr'};
 
-applyTheme();
-checkNotifStatus();
-renderHome();
-loadWeather();
-renderWSH();
-startGreeting();
-checkOnboarding();
+// Bus-State
+const BUS_STATIONS=[
+  {key:'bahnhof',       name:'Mögglingen Bahnhof',     type:'train'},
+  {key:'bahnhof_bus',   name:'Bahnhof (Bussteig)',      type:'bus'},
+  {key:'mitte',         name:'Mitte',                   type:'bus'},
+  {key:'raiba',         name:'Raiffeisenbank',          type:'bus'},
+  {key:'schule',        name:'Schule',                  type:'bus'},
+  {key:'rosenstrasse',  name:'Rosenstraße',             type:'bus'},
+  {key:'nelkenstrasse', name:'Nelkenstraße',            type:'bus'},
+  {key:'lauterstrasse', name:'Lauterstraße Süd',        type:'bus'},
+  {key:'bruhlfeld',     name:'Im Brühlfeld',            type:'bus'},
+  {key:'gollenhof',     name:'Gollenhof',               type:'bus'},
+];
+let activeBusStation=0, allDepartures=[], activeDirection='all';
+let favStation=lsGet('favBusStation',0);
+let busMode='dep';
+let autoRefreshTimer=null;
+let lastRefreshTime=null;
+const DIRECTIONS={aalen:['aalen'],schorndorf:['schorndorf','waiblingen'],stuttgart:['stuttgart','waiblingen','schorndorf'],gmuend:['gmünd','gmuend','schwäbisch']};
 
+// Events-Daten
+const EVENTS = [
+  {
+    id: 1,
+    title: '[DEMO] Sommerfest Mögglingen 2026',
+    desc: 'Das jährliche Sommerfest auf dem Rathausplatz mit Live-Musik, Essen & Trinken und einem bunten Rahmenprogramm für die ganze Familie.',
+    date: '2026-07-19',
+    timeStart: '14:00',
+    timeEnd: '23:00',
+    location: 'Rathausplatz Mögglingen',
+    category: 'kultur',
+    isFree: true,
+    price: null,
+    website: 'https://www.moegglingen.de',
+    image: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=80',
+  },
+  {
+    id: 2,
+    title: '[DEMO] Flohmarkt Ostalbkreis',
+    desc: 'Großer Flohmarkt mit über 200 Ständen. Stöbern, handeln und entdecken — von Vintage-Möbeln bis Elektrokleinkram ist alles dabei.',
+    date: '2026-08-02',
+    timeStart: '08:00',
+    timeEnd: '16:00',
+    location: 'Messeplatz Schwäbisch Gmünd',
+    category: 'markt',
+    isFree: false,
+    price: '2,00 €',
+    website: null,
+    image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=80',
+  }
+];
+
+// ══════════════════════════════════════════
+// DB-SYNC
+// ══════════════════════════════════════════
 async function loadFromDB(){
   const [p,s,h,c]=await Promise.all([dbGet('pickups',null),dbGet('settings',null),dbGet('hiddenTypes',null),dbGet('checkedIds',null)]);
   let changed=false;
@@ -711,7 +768,6 @@ async function loadFromDB(){
   if(changed){renderHome();renderMuell();checkOnboarding();}
   if(p!==null)try{localStorage.setItem('pickups',JSON.stringify(p));}catch(e){}
 }
-loadFromDB();
 
 // ══════════════════════════════════════════
 // THEME
@@ -726,7 +782,6 @@ function toggleTheme(){isDark=!isDark;try{localStorage.setItem('theme',isDark?'d
 // ══════════════════════════════════════════
 // NAVIGATION
 // ══════════════════════════════════════════
-const TAB_TITLES={home:'Home',muell:'Müll',sprit:'Spritpreise',bus:'Bus & Bahn',events:'Events',mehr:'Mehr'};
 function switchTab(tab){
   activeTab=tab;
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -845,7 +900,7 @@ function animateTemp(target){
   const el=document.getElementById('anim-temp');
   if(!el)return;
   let current=0;
-  const step=Math.ceil(target/20);
+  const step=Math.ceil(target/20)||1;
   const interval=setInterval(()=>{
     current=Math.min(current+step,target);
     el.innerHTML=current+'<sup>°</sup>';
@@ -1174,10 +1229,6 @@ function renderSpritList(stations){
 // ══════════════════════════════════════════
 // ICS
 // ══════════════════════════════════════════
-document.getElementById('ics-file-input').addEventListener('change',e=>{
-  const f=e.target.files[0];if(!f)return;
-  const r=new FileReader();r.onload=ev=>parseICS(ev.target.result);r.readAsText(f);
-});
 function parseICS(text){
   const events=[];
   text.split('BEGIN:VEVENT').slice(1).forEach(block=>{
@@ -1222,25 +1273,6 @@ function showInstallHint(){const el=document.getElementById('install-hint');el.s
 // ══════════════════════════════════════════
 // BUS & BAHN
 // ══════════════════════════════════════════
-const BUS_STATIONS=[
-  {key:'bahnhof',       name:'Mögglingen Bahnhof',     type:'train'},
-  {key:'bahnhof_bus',   name:'Bahnhof (Bussteig)',      type:'bus'},
-  {key:'mitte',         name:'Mitte',                   type:'bus'},
-  {key:'raiba',         name:'Raiffeisenbank',          type:'bus'},
-  {key:'schule',        name:'Schule',                  type:'bus'},
-  {key:'rosenstrasse',  name:'Rosenstraße',             type:'bus'},
-  {key:'nelkenstrasse', name:'Nelkenstraße',            type:'bus'},
-  {key:'lauterstrasse', name:'Lauterstraße Süd',        type:'bus'},
-  {key:'bruhlfeld',     name:'Im Brühlfeld',            type:'bus'},
-  {key:'gollenhof',     name:'Gollenhof',               type:'bus'},
-];
-let activeBusStation=0, allDepartures=[], activeDirection='all';
-let favStation=lsGet('favBusStation',0);
-let busMode='dep';
-let autoRefreshTimer=null;
-let lastRefreshTime=null;
-const DIRECTIONS={aalen:['aalen'],schorndorf:['schorndorf','waiblingen'],stuttgart:['stuttgart','waiblingen','schorndorf'],gmuend:['gmünd','gmuend','schwäbisch']};
-
 function setBusMode(mode){
   busMode=mode;
   const depBtn=document.getElementById('bus-mode-dep');
@@ -1535,37 +1567,6 @@ function toggleTripDetail(i){
 // ══════════════════════════════════════════
 // EVENTS
 // ══════════════════════════════════════════
-const EVENTS = [
-  {
-    id: 1,
-    title: '[DEMO] Sommerfest Mögglingen 2026',
-    desc: 'Das jährliche Sommerfest auf dem Rathausplatz mit Live-Musik, Essen & Trinken und einem bunten Rahmenprogramm für die ganze Familie.',
-    date: '2026-07-19',
-    timeStart: '14:00',
-    timeEnd: '23:00',
-    location: 'Rathausplatz Mögglingen',
-    category: 'kultur',
-    isFree: true,
-    price: null,
-    website: 'https://www.moegglingen.de',
-    image: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=80',
-  },
-  {
-    id: 2,
-    title: '[DEMO] Flohmarkt Ostalbkreis',
-    desc: 'Großer Flohmarkt mit über 200 Ständen. Stöbern, handeln und entdecken — von Vintage-Möbeln bis Elektrokleinkram ist alles dabei.',
-    date: '2026-08-02',
-    timeStart: '08:00',
-    timeEnd: '16:00',
-    location: 'Messeplatz Schwäbisch Gmünd',
-    category: 'markt',
-    isFree: false,
-    price: '2,00 €',
-    website: null,
-    image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=80',
-  }
-];
-
 function setEventFilter(f) {
   activeEventFilter = f;
   document.querySelectorAll('[id^="efchip-"]').forEach(el => el.classList.remove('active'));
@@ -1716,10 +1717,36 @@ function startGreeting(){
 }
 
 // ══════════════════════════════════════════
-// TOAST & SW
+// TOAST
 // ══════════════════════════════════════════
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
-if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+
+// ══════════════════════════════════════════
+// INIT — bleibt IMMER ganz am Ende des Scripts.
+// Erst hier sind alle const/let initialisiert.
+// ══════════════════════════════════════════
+function init(){
+  document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('reminder-days').value = settings.reminderDays;
+  document.getElementById('reminder-time').value = settings.reminderTime;
+
+  document.getElementById('ics-file-input').addEventListener('change',e=>{
+    const f=e.target.files[0];if(!f)return;
+    const r=new FileReader();r.onload=ev=>parseICS(ev.target.result);r.readAsText(f);
+  });
+
+  applyTheme();
+  checkNotifStatus();
+  renderHome();
+  loadWeather();
+  renderWSH();
+  startGreeting();
+  checkOnboarding();
+  loadFromDB();
+
+  if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+init();
 </script>
 </body>
 </html>
