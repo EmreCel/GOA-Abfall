@@ -6,58 +6,88 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Mögglingen">
-<meta name="theme-color" id="theme-meta" content="#F7F4EF">
+<meta name="theme-color" id="theme-meta" content="#F6F4EE">
 <title>Mögglingen App</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,200;9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..600&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* ── THEME ── */
+/* ════════════════════════════════════════════
+   DESIGN SYSTEM — "Süddeutsch Editorial"
+   Papier · Tinte · Tannengrün
+   Regeln: kein #000/#FFF, keine Gradients auf
+   Flächen, keine farbigen Badge-Hintergründe,
+   Hairlines statt Schatten (Schatten NUR für
+   Schwebendes: Tab-Insel, Modals).
+   ════════════════════════════════════════════ */
 :root {
-  --bg:       #F7F4EF;
-  --bg2:      #FFFFFF;
-  --bg3:      #EEEAE4;
-  --bg4:      #E4E0D8;
-  --text:     #1C1A16;
-  --text2:    #7A7268;
-  --text3:    #B0A898;
-  --border:   rgba(0,0,0,0.07);
-  --border2:  rgba(0,0,0,0.11);
-  --hero:     #1C2B3A;
-  --hero2:    #243344;
-  --hero-text:#F0EDE8;
-  --hero-muted:#8A9AAA;
-  --hero-dim: #5A6A7A;
-  --nav-h:    68px;
+  --bg:        #F6F4EE;   /* warmes Papier */
+  --bg2:       #FDFCF9;   /* Karten */
+  --bg3:       #EDEAE2;
+  --bg4:       #E2DED4;
+  --text:      #1E1C17;   /* warme Tinte */
+  --text2:     #5C584E;
+  --text3:     #8B867A;
+  --border:    rgba(30,28,23,0.10);
+  --border2:   rgba(30,28,23,0.16);
+
+  /* Identitätsfarbe: Tannengrün */
+  --hero:      #2E4639;
+  --hero2:     #3A5547;
+  --hero-deep: #22362C;
+  --hero-text: #F2F0E9;
+  --hero-muted:#A8BCAB;
+  --hero-dim:  #6F8475;
+  --accent:      var(--hero);
+  --accent-tint: #E8EDE7;
+
+  /* Funktional, gedeckt */
+  --ok:   #4A6B4F;
+  --warn: #9A6B2F;
+  --bad:  #8C3B2E;
+
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-ui:      'Instrument Sans', system-ui, sans-serif;
+
+  --shadow-float: 0 8px 24px rgba(30,28,23,0.12), 0 2px 6px rgba(30,28,23,0.06);
+
+  --nav-h:    78px;
   --safe-b:   env(safe-area-inset-bottom,0px);
 }
 [data-theme="dark"] {
-  --bg:       #141210;
-  --bg2:      #1E1C18;
-  --bg3:      #282420;
-  --bg4:      #322E28;
-  --text:     #F0EDE8;
-  --text2:    #9A9288;
-  --text3:    #604840;
-  --border:   rgba(255,255,255,0.08);
-  --border2:  rgba(255,255,255,0.13);
-  --hero:     #1C2B3A;
-  --hero2:    #243344;
-  --hero-text:#F0EDE8;
-  --hero-muted:#8A9AAA;
-  --hero-dim: #5A6A7A;
-  --wsh-open: #6EE7B7;
-  --wsh-closed: #FCA5A5;
+  --bg:        #15130F;
+  --bg2:       #1E1B16;
+  --bg3:       #28241D;
+  --bg4:       #322D24;
+  --text:      #EFEDE6;
+  --text2:     #9A948A;
+  --text3:     #6E675B;
+  --border:    rgba(255,255,255,0.08);
+  --border2:   rgba(255,255,255,0.14);
+  --hero:      #2E4639;
+  --hero2:     #3A5547;
+  --hero-deep: #22362C;
+  --hero-text: #F2F0E9;
+  --hero-muted:#A8BCAB;
+  --hero-dim:  #6F8475;
+  --accent-tint: #232B25;
+  --ok:   #9CC5A4;
+  --warn: #C9A05C;
+  --bad:  #D9A399;
+  --shadow-float: 0 8px 24px rgba(0,0,0,0.45), 0 2px 6px rgba(0,0,0,0.3);
 }
 
 /* ── RESET ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{height:100%}
-body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.5;min-height:100%;max-width:430px;margin:0 auto;overflow-x:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--font-ui);font-size:15px;line-height:1.5;min-height:100%;max-width:430px;margin:0 auto;overflow-x:hidden}
 button{font-family:inherit;cursor:pointer;border:none;background:none}
 input,select{font-family:inherit}
 a{color:inherit;text-decoration:none}
+.num{font-variant-numeric:tabular-nums}
 
 /* ── ANIMATIONS ── */
 @keyframes fadeSlideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
@@ -84,31 +114,33 @@ a{color:inherit;text-decoration:none}
 /* ── HEADER ── */
 .app-header{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--border);padding:52px 20px 14px}
 .header-inner{display:flex;align-items:flex-end;justify-content:space-between}
-.header-sub{font-size:11px;font-weight:500;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:3px}
-.header-title{font-size:24px;font-weight:300;letter-spacing:-0.3px;line-height:1.1}
-.header-title strong{font-weight:600}
+.header-sub{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:4px}
+.header-title{font-family:var(--font-display);font-size:27px;font-weight:480;letter-spacing:-0.02em;line-height:1.1}
+.header-title strong{font-weight:560}
 .header-actions{display:flex;gap:8px}
-.icon-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);display:flex;align-items:center;justify-content:center;font-size:17px;transition:background 0.15s}
-.icon-btn:active{background:var(--bg4)}
+.icon-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--border2);background:transparent;color:var(--text2);display:flex;align-items:center;justify-content:center;font-size:17px;transition:background 0.15s}
+.icon-btn:active{background:var(--bg3)}
 
-/* ── BOTTOM NAV ── */
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;height:calc(var(--nav-h) + var(--safe-b));background:var(--bg2);border-top:1px solid var(--border);display:flex;align-items:flex-start;padding-top:8px;z-index:100}
-.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:0 4px;position:relative}
-.nav-icon-wrap{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--text3);transition:all 0.2s}
-.nav-item.active .nav-icon-wrap{background:var(--hero);color:#fff}
-.nav-label{font-size:10px;font-weight:500;color:var(--text3);letter-spacing:0.02em;transition:color 0.2s}
-.nav-item.active .nav-label{color:var(--text)}
+/* ── TAB ISLAND ── */
+.tab-island{position:fixed;bottom:calc(14px + var(--safe-b));left:50%;transform:translateX(-50%);width:calc(100% - 28px);max-width:402px;display:flex;align-items:center;justify-content:space-between;gap:2px;padding:6px;border-radius:28px;background:rgba(253,252,249,0.82);-webkit-backdrop-filter:blur(20px) saturate(1.4);backdrop-filter:blur(20px) saturate(1.4);border:1px solid var(--border);box-shadow:var(--shadow-float);z-index:100}
+[data-theme="dark"] .tab-island{background:rgba(30,27,22,0.85)}
+.nav-item{display:flex;align-items:center;justify-content:center;gap:6px;height:44px;min-width:42px;padding:0 8px;border-radius:999px;background:transparent;color:var(--text3);font-size:12.5px;font-weight:600;letter-spacing:0.01em;cursor:pointer;transition:background .35s cubic-bezier(.3,1.4,.4,1),color .25s ease,padding .35s cubic-bezier(.3,1.4,.4,1)}
+.nav-item i{font-size:20px}
+.nav-label{max-width:0;opacity:0;overflow:hidden;white-space:nowrap;transition:max-width .35s cubic-bezier(.3,1.4,.4,1),opacity .25s ease .08s}
+.nav-item.active{background:var(--accent);color:var(--hero-text);padding:0 14px}
+.nav-item.active .nav-label{max-width:80px;opacity:1}
+.nav-item:active{transform:scale(0.94)}
 
 /* ── VIEWS ── */
-.view{display:none;padding:0 0 calc(var(--nav-h) + var(--safe-b) + 8px)}
+.view{display:none;padding:0 0 calc(var(--nav-h) + var(--safe-b) + 16px)}
 .view.active{display:block}
 
 /* ── HERO WEATHER CARD ── */
 .weather-hero{background:var(--hero);border-radius:24px;padding:20px;margin:14px 16px 10px;position:relative;overflow:hidden}
 .weather-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,0.03)}
 .wh-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
-.wh-temp{font-size:56px;font-weight:200;color:var(--hero-text);line-height:1;letter-spacing:-3px}
-.wh-temp sup{font-size:24px;font-weight:200;color:var(--hero-muted);vertical-align:super}
+.wh-temp{font-family:var(--font-display);font-size:58px;font-weight:420;color:var(--hero-text);line-height:1;letter-spacing:-0.03em;font-variant-numeric:tabular-nums}
+.wh-temp sup{font-size:26px;font-weight:400;color:var(--hero-muted);vertical-align:super}
 .wh-right{text-align:right}
 .wh-icon{font-size:34px;color:var(--hero-muted);margin-bottom:6px;display:block}
 .wh-desc{font-size:13px;color:var(--hero-muted);margin-bottom:3px}
@@ -116,28 +148,28 @@ a{color:inherit;text-decoration:none}
 .sun-bar{display:flex;align-items:center;gap:8px;margin-bottom:0}
 .sun-time{font-size:10px;color:var(--hero-muted);font-variant-numeric:tabular-nums;white-space:nowrap}
 .sun-track{flex:1;height:4px;background:var(--hero2);border-radius:2px;position:relative;overflow:visible}
-.sun-track-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#C8A050,#8AB0D8);transition:width 1s ease}
-.sun-dot{width:8px;height:8px;background:#E8D870;border-radius:50%;position:absolute;top:-2px;transform:translateX(-50%);transition:left 1.2s ease;box-shadow:0 0 6px rgba(232,216,112,0.6)}
+.sun-track-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#C9A85C,#9BB39B);transition:width 1s ease}
+.sun-dot{width:8px;height:8px;background:#D9C268;border-radius:50%;position:absolute;top:-2px;transform:translateX(-50%);transition:left 1.2s ease}
 
 /* ── WEEK ROW ── */
 .week-row{display:flex;gap:5px;padding:0 16px;margin-bottom:12px}
-.wday{flex:1;border-radius:12px;padding:8px 3px;text-align:center;background:var(--bg3);border:0.5px solid var(--border);cursor:pointer;transition:all 0.2s}
+.wday{flex:1;border-radius:14px;padding:8px 3px;text-align:center;background:transparent;border:1px solid var(--border);cursor:pointer;transition:all 0.2s}
 .wday.today{background:var(--hero);border-color:var(--hero)}
-.wday-name{font-size:9px;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;color:var(--text3);font-weight:500}
+.wday-name{font-size:9px;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;color:var(--text3);font-weight:600}
 .wday-icon{font-size:14px;margin-bottom:3px;color:var(--text3)}
-.wday-temp{font-size:10px;font-weight:500;color:var(--text2)}
-.wday.today .wday-name{color:rgba(160,180,200,0.8)}
-.wday.today .wday-icon{color:#C0D8F0}
-.wday.today .wday-temp{color:#F0EDE8}
+.wday-temp{font-size:10px;font-weight:500;color:var(--text2);font-variant-numeric:tabular-nums}
+.wday.today .wday-name{color:rgba(232,240,233,0.65)}
+.wday.today .wday-icon{color:#DCE8DD}
+.wday.today .wday-temp{color:var(--hero-text)}
 
 /* ── SECTION LABEL ── */
-.section-label{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:0.07em;text-transform:uppercase;padding:14px 20px 8px}
+.section-label{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:0.09em;text-transform:uppercase;padding:16px 20px 8px}
 
-/* ── CARDS ── */
-.card{background:var(--bg2);border-radius:16px;border:1px solid var(--border);overflow:hidden}
+/* ── CARDS: Hairline statt Schatten ── */
+.card{background:var(--bg2);border-radius:20px;border:1px solid var(--border);overflow:hidden}
 .card-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border)}
-.card-label{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:0.07em;text-transform:uppercase}
-.card-meta{font-size:12px;color:var(--text3)}
+.card-label{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase}
+.card-meta{font-size:12px;color:var(--text3);font-variant-numeric:tabular-nums}
 
 /* ── MÜLL ROWS ── */
 .muell-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border)}
@@ -150,67 +182,67 @@ a{color:inherit;text-decoration:none}
 .muell-countdown{font-size:12px;color:var(--text2);flex-shrink:0;font-variant-numeric:tabular-nums}
 .muell-countdown.urgent{color:var(--text);font-weight:600}
 .check-btn{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border2);background:transparent;color:var(--text3);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;transition:all 0.2s}
-.check-btn.checked{background:#3A7A55;border-color:#3A7A55;color:#fff;animation:checkBounce 0.3s ease}[data-theme='dark'] .check-btn.checked{background:#2D5A3F;border-color:#3A7A55}
+.check-btn.checked{background:var(--accent);border-color:var(--accent);color:var(--hero-text);animation:checkBounce 0.3s ease}
 .delete-btn{width:26px;height:26px;border-radius:50%;background:transparent;color:var(--text3);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;opacity:0.4;transition:opacity 0.15s}
-.delete-btn:active{opacity:1;color:#c44}
+.delete-btn:active{opacity:1;color:var(--bad)}
 
 /* ── PICKUP FULL LIST ── */
 .pickup-accent{position:absolute;left:0;top:0;bottom:0;width:3px}
-.pickup-row{display:flex;align-items:center;gap:12px;padding:11px 16px;background:var(--bg2);border-bottom:1px solid var(--border);position:relative;overflow:hidden;transition:opacity 0.2s}
+.pickup-row{display:flex;align-items:center;gap:12px;padding:12px 16px 12px 18px;background:var(--bg2);border-bottom:1px solid var(--border);position:relative;overflow:hidden;transition:opacity 0.2s}
 .pickup-row:last-child{border-bottom:none}
 .pickup-row.past{opacity:0.28}
 .pickup-row.done-row{opacity:0.45}
-.pickup-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
 .pickup-info{flex:1;min-width:0}
 .pickup-type{font-size:14px;font-weight:500}
 .pickup-date{font-size:12px;color:var(--text3);margin-top:1px}
-.badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;flex-shrink:0}[data-theme='dark'] .badge{opacity:0.9}
+.badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;border:1px solid var(--border2);background:transparent;color:var(--text2);flex-shrink:0}
 
 /* ── STATS ── */
-.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:14px 16px;border-bottom:1px solid var(--border)}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:14px 16px}
 .stat-box{text-align:center}
-.stat-num{font-size:22px;font-weight:600}
-.stat-lbl{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-top:1px}
+.stat-num{font-family:var(--font-display);font-size:24px;font-weight:500;font-variant-numeric:tabular-nums}
+.stat-lbl{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-top:1px}
 
 /* ── FILTER CHIPS ── */
 .chip-bar{display:flex;gap:6px;padding:12px 16px;overflow-x:auto;scrollbar-width:none}
 .chip-bar::-webkit-scrollbar{display:none}
-.chip{flex-shrink:0;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid var(--border2);background:var(--bg2);color:var(--text2);cursor:pointer;transition:all 0.15s}
-.chip.active{background:var(--text);color:var(--bg);border-color:var(--text)}
-.month-label{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:0.07em;text-transform:uppercase;padding:14px 20px 6px}
+.chip{flex-shrink:0;padding:6px 14px;border-radius:999px;font-size:12px;font-weight:500;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;transition:all 0.15s}
+.chip.active{background:var(--accent);color:var(--hero-text);border-color:var(--accent)}
+.month-label{font-family:var(--font-display);font-size:15px;font-weight:500;color:var(--text2);letter-spacing:-0.01em;padding:16px 20px 6px}
 
 /* ── SPRIT ── */
 .fuel-bar{display:flex;gap:6px;padding:12px 16px}
-.fuel-chip{flex:1;text-align:center;padding:8px 4px;border-radius:10px;font-size:12px;font-weight:600;border:1px solid var(--border2);background:var(--bg2);color:var(--text2);cursor:pointer;transition:all 0.15s}
-.fuel-chip.active{background:var(--hero);color:var(--hero-text);border-color:var(--hero)}
-.sprit-price-big{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+.fuel-chip{flex:1;text-align:center;padding:8px 4px;border-radius:999px;font-size:12px;font-weight:600;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;transition:all 0.15s}
+.fuel-chip.active{background:var(--accent);color:var(--hero-text);border-color:var(--accent)}
+.sprit-price-big{font-family:var(--font-display);font-size:21px;font-weight:500;font-variant-numeric:tabular-nums}
 .rank-dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
 
 /* ── WSH ── */
-.wsh-status-open{font-size:12px;font-weight:500;color:#3A7A55}[data-theme='dark'] .wsh-status-open{color:#6EE7B7}
-.wsh-status-closed{font-size:12px;font-weight:500;color:#9A3A3A}[data-theme='dark'] .wsh-status-closed{color:#FCA5A5}
+.wsh-status-open{font-size:12px;font-weight:500;color:var(--ok)}
+.wsh-status-closed{font-size:12px;font-weight:500;color:var(--bad)}
 .wsh-hours{font-size:11px;color:var(--text3);margin-top:1px}
 .wsh-detail-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
 .wsh-detail-row:last-child{border-bottom:none}
+.status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:1px}
 
 /* ── QUICK LINKS ── */
 .quicklinks{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 16px}
-.ql-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:background 0.15s}
+.ql-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:background 0.15s}
 .ql-card:active{background:var(--bg3)}
-.ql-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
-.ql-label{font-size:13px;font-weight:500;color:var(--text)}
+.ql-icon{font-size:19px;color:var(--text3);line-height:1}
+.ql-label{font-size:13px;font-weight:600;color:var(--text)}
 .ql-sub{font-size:11px;color:var(--text3);margin-top:1px}
 
 /* ── ONBOARDING ── */
-.onboarding-banner{margin:14px 16px;padding:14px 16px;background:var(--hero);border-radius:14px;display:flex;gap:12px;align-items:flex-start}
+.onboarding-banner{margin:14px 16px;padding:14px 16px;background:var(--hero);border-radius:18px;display:flex;gap:12px;align-items:flex-start}
 .onboarding-banner.hidden{display:none}
-.onboarding-title{font-size:14px;font-weight:600;color:var(--hero-text);margin-bottom:3px}
+.onboarding-title{font-family:var(--font-display);font-size:15px;font-weight:520;color:var(--hero-text);margin-bottom:3px}
 .onboarding-sub{font-size:12px;color:var(--hero-muted);line-height:1.5}
-.onboarding-btn{margin-top:10px;background:rgba(255,255,255,0.15);color:var(--hero-text);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:background 0.15s}
-.onboarding-btn:active{background:rgba(255,255,255,0.25)}
+.onboarding-btn{margin-top:10px;background:rgba(255,255,255,0.12);color:var(--hero-text);border:1px solid rgba(255,255,255,0.18);border-radius:999px;padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:background 0.15s}
+.onboarding-btn:active{background:rgba(255,255,255,0.22)}
 
 /* ── NOTIF ── */
-.notif-banner{margin:12px 16px;padding:12px 16px;background:var(--hero);border-radius:12px;font-size:13px;color:var(--hero-text);cursor:pointer;display:flex;align-items:center;gap:10px;font-weight:500}
+.notif-banner{margin:12px 16px;padding:12px 16px;background:var(--hero);border-radius:16px;font-size:13px;color:var(--hero-text);cursor:pointer;display:flex;align-items:center;gap:10px;font-weight:500}
 .notif-banner.hidden{display:none}
 
 /* ── BUS ── */
@@ -218,80 +250,82 @@ a{color:inherit;text-decoration:none}
 .coming-soon-icon{width:56px;height:56px;border-radius:16px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 16px;color:var(--text3)}
 
 /* ── FORMS ── */
-.form-section{margin:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:18px}
-.form-section h3{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:14px}
+.form-section{margin:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:18px}
+.form-section h3{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:14px}
 .form-row{margin-bottom:10px}
 .form-label{font-size:12px;font-weight:500;color:var(--text2);margin-bottom:5px;display:block}
-select,input[type=date],input[type=text],input[type=password],input[type=time]{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;color:var(--text);padding:10px 14px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;-webkit-appearance:none;appearance:none}
-select:focus,input:focus{border-color:var(--text2)}
+select,input[type=date],input[type=text],input[type=password],input[type=time]{width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:12px;color:var(--text);padding:10px 14px;font-size:14px;font-family:var(--font-ui);outline:none;-webkit-appearance:none;appearance:none}
+select:focus,input:focus{border-color:var(--accent)}
 select option{background:var(--bg2)}
-.btn-primary{width:100%;background:var(--text);color:var(--bg);border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:opacity 0.15s}
-.btn-primary:active{opacity:0.8}
-.btn-secondary{width:100%;background:var(--bg3);color:var(--text);border:1px solid var(--border2);border-radius:12px;padding:11px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px}
-.btn-sm{background:var(--bg3);color:var(--text);border:1px solid var(--border2);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer}
-.btn-sm-green{background:rgba(58,122,85,0.15);color:#3A7A55;border:none;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;white-space:nowrap}
+.btn-primary{width:100%;background:var(--accent);color:var(--hero-text);border:none;border-radius:14px;padding:13px;font-size:14px;font-weight:600;font-family:var(--font-ui);cursor:pointer;transition:background 0.15s}
+.btn-primary:active{background:var(--hero-deep)}
+.btn-secondary{width:100%;background:transparent;color:var(--text);border:1px solid var(--border2);border-radius:14px;padding:11px;font-size:13px;font-weight:500;font-family:var(--font-ui);cursor:pointer;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-sm{background:transparent;color:var(--text);border:1px solid var(--border2);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:500;font-family:var(--font-ui);cursor:pointer}
+.btn-sm-green{background:var(--accent-tint);color:var(--accent);border:none;border-radius:999px;padding:9px 14px;font-size:13px;font-weight:600;font-family:var(--font-ui);cursor:pointer;white-space:nowrap}
+[data-theme="dark"] .btn-sm-green{color:var(--ok)}
 .key-row{display:flex;gap:8px}.key-row input{flex:1}
-.ics-drop{border:1.5px dashed var(--border2);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:all 0.15s;margin-top:8px}
-.ics-drop:hover{border-color:#3A7A55;background:rgba(58,122,85,0.04)}
+.ics-drop{border:1.5px dashed var(--border2);border-radius:14px;padding:20px;text-align:center;cursor:pointer;transition:all 0.15s;margin-top:8px}
+.ics-drop:hover{border-color:var(--accent);background:var(--accent-tint)}
 #ics-file-input{display:none}
 
 /* ── SETTINGS ── */
-.settings-section{margin:0 16px 4px;background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.settings-section{margin:0 16px 4px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;overflow:hidden}
 .settings-row{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border);gap:12px}
 .settings-row:last-child{border-bottom:none}
-.settings-icon{width:32px;height:32px;border-radius:8px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--text2);flex-shrink:0}
+.settings-icon{width:32px;height:32px;border-radius:10px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--text2);flex-shrink:0}
 .settings-info{flex:1}
 .settings-title{font-size:14px;font-weight:500}
 .settings-desc{font-size:12px;color:var(--text3);margin-top:1px}
 .toggle{position:relative;width:44px;height:26px;flex-shrink:0}
 .toggle input{opacity:0;width:0;height:0}
 .toggle-track{position:absolute;inset:0;background:var(--bg4);border-radius:13px;cursor:pointer;border:1px solid var(--border2);transition:all 0.2s}
-.toggle input:checked+.toggle-track{background:#3A7A55;border-color:#3A7A55}
+.toggle input:checked+.toggle-track{background:var(--accent);border-color:var(--accent)}
 .toggle-track::after{content:'';position:absolute;left:3px;top:50%;transform:translateY(-50%);width:18px;height:18px;border-radius:50%;background:var(--bg2);box-shadow:0 1px 3px rgba(0,0,0,0.15);transition:all 0.2s}
-.toggle input:checked+.toggle-track::after{left:calc(100% - 21px)}
-select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:8px}
+.toggle input:checked+.toggle-track::after{left:calc(100% - 21px);background:#FDFCF9}
+select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
 
 /* ── MODAL ── */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:300;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s}
+.modal-overlay{position:fixed;inset:0;background:rgba(20,18,14,0.45);z-index:300;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s}
 .modal-overlay.open{opacity:1;pointer-events:all}
-.modal-sheet{background:var(--bg2);border-radius:24px 24px 0 0;padding:20px 20px 32px;width:100%;max-width:430px;max-height:80vh;overflow-y:auto;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1)}
+.modal-sheet{background:var(--bg2);border-radius:26px 26px 0 0;padding:20px 20px 32px;width:100%;max-width:430px;max-height:80vh;overflow-y:auto;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1);box-shadow:var(--shadow-float)}
 .modal-overlay.open .modal-sheet{transform:translateY(0)}
 .modal-handle{width:36px;height:4px;background:var(--bg4);border-radius:2px;margin:0 auto 16px}
-.modal-title{font-size:17px;font-weight:600;margin-bottom:4px}
+.modal-title{font-family:var(--font-display);font-size:19px;font-weight:520;letter-spacing:-0.01em;margin-bottom:4px}
 .modal-sub{font-size:13px;color:var(--text3);margin-bottom:16px}
 
 /* ── TOAST ── */
-.toast{position:fixed;bottom:calc(var(--nav-h) + var(--safe-b) + 12px);left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 20px;border-radius:20px;font-size:13px;font-weight:500;z-index:200;opacity:0;transition:opacity 0.2s;white-space:nowrap;pointer-events:none}
+.toast{position:fixed;bottom:calc(var(--nav-h) + var(--safe-b) + 16px);left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 20px;border-radius:999px;font-size:13px;font-weight:500;z-index:200;opacity:0;transition:opacity 0.2s;white-space:nowrap;pointer-events:none;box-shadow:var(--shadow-float)}
 .toast.show{opacity:1}
 .empty-state{text-align:center;padding:40px 24px;color:var(--text3)}
 .empty-state i{font-size:32px;margin-bottom:10px;display:block}
 .empty-state p{font-size:14px;line-height:1.6}
-.install-hint{margin:0 16px 14px;padding:14px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;font-size:13px;color:var(--text2);line-height:1.6;display:none}
+.install-hint{margin:0 16px 14px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;font-size:13px;color:var(--text2);line-height:1.6;display:none}
 .install-hint strong{color:var(--text);font-weight:600}
 
 /* ── EVENTS ── */
-.event-card{background:var(--bg2);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin:0 16px 12px;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s}
+.event-card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;overflow:hidden;margin:0 16px 12px;cursor:pointer;transition:transform 0.15s}
 .event-card:active{transform:scale(0.985)}
 .event-img{width:100%;height:160px;object-fit:cover;display:block;background:var(--bg3)}
-.event-img-placeholder{width:100%;height:160px;background:linear-gradient(135deg,var(--hero) 0%,var(--hero2) 100%);display:flex;align-items:center;justify-content:center;font-size:40px}
+.event-img-placeholder{width:100%;height:160px;background:var(--accent-tint);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:52px;font-weight:480;color:var(--accent)}
+[data-theme="dark"] .event-img-placeholder{color:var(--hero-muted)}
 .event-body{padding:14px 16px}
 .event-badges{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
-.event-badge{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;letter-spacing:0.04em;text-transform:uppercase}
-.event-badge-free{background:rgba(58,122,85,0.12);color:#3A7A55}
-.event-badge-paid{background:rgba(176,136,48,0.12);color:#B08830}
-.event-badge-demo{background:rgba(154,58,58,0.1);color:#9A3A3A}
-.event-badge-cat{background:var(--bg3);color:var(--text2)}
-.event-title{font-size:16px;font-weight:600;color:var(--text);margin-bottom:5px;line-height:1.3}
+.event-badge{font-size:10px;font-weight:600;padding:3px 9px;border-radius:999px;letter-spacing:0.04em;text-transform:uppercase;border:1px solid var(--border2);background:transparent;color:var(--text2)}
+.event-badge-free{color:var(--ok);border-color:currentColor}
+.event-badge-paid{color:var(--warn);border-color:currentColor}
+.event-badge-demo{color:var(--bad);border-color:currentColor}
+.event-badge-cat{color:var(--text3)}
+.event-title{font-family:var(--font-display);font-size:18px;font-weight:520;letter-spacing:-0.01em;color:var(--text);margin-bottom:5px;line-height:1.25}
 .event-desc{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:10px}
 .event-meta-row{display:flex;flex-direction:column;gap:4px}
 .event-meta-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text3)}
 .event-meta-item i{font-size:13px;flex-shrink:0}
 
 /* Event Home Widget */
-.event-home-card{background:var(--hero);border-radius:16px;margin:0 16px 12px;overflow:hidden;cursor:pointer;transition:opacity 0.15s}
+.event-home-card{background:var(--hero);border-radius:20px;margin:0 16px 12px;overflow:hidden;cursor:pointer;transition:opacity 0.15s}
 .event-home-card:active{opacity:0.85}
 .event-home-img{width:100%;height:100px;object-fit:cover;display:block}
-.event-home-img-placeholder{width:100%;height:100px;display:flex;align-items:center;justify-content:center;font-size:28px;background:var(--hero2)}
+.event-home-img-placeholder{width:100%;height:100px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:34px;color:rgba(255,255,255,0.45);background:var(--hero2)}
 .event-home-body{padding:12px 14px}
 
 /* Event filter bar */
@@ -343,7 +377,7 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:8px}
       <span class="card-label" id="home-sprit-fuel-label">Super E5</span>
       <div style="display:flex;align-items:center;gap:8px">
         <span class="card-meta" id="home-sprit-meta"></span>
-        <button onclick="refreshSpritHome()" style="width:26px;height:26px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--text2)" aria-label="Aktualisieren">
+        <button onclick="refreshSpritHome()" style="width:26px;height:26px;border-radius:50%;background:transparent;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--text2)" aria-label="Aktualisieren">
           <i class="ti ti-refresh" id="sprit-home-refresh-icon"></i>
         </button>
       </div>
@@ -356,29 +390,28 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:8px}
   <div class="section-label">Schnellzugriff</div>
   <div class="quicklinks" style="margin-bottom:16px">
     <a href="https://www.goa-online.de/leistungen/abfuhrkalender/abfuhrkalender-fuer-privathaushalte/" target="_blank" class="ql-card">
-      <div class="ql-icon" style="background:rgba(58,122,85,0.12);color:#3A7A55"><i class="ti ti-calendar-down"></i></div>
+      <div class="ql-icon"><i class="ti ti-calendar-down"></i></div>
       <div><div class="ql-label">GOA Kalender</div><div class="ql-sub">ICS herunterladen</div></div>
     </a>
     <a href="https://www.moegglingen.de" target="_blank" class="ql-card">
-      <div class="ql-icon" style="background:rgba(28,43,58,0.1);color:var(--hero)"><i class="ti ti-building"></i></div>
+      <div class="ql-icon"><i class="ti ti-building"></i></div>
       <div><div class="ql-label">Gemeinde</div><div class="ql-sub">moegglingen.de</div></div>
     </a>
     <a href="tel:+4971742711555" class="ql-card">
-      <div class="ql-icon" style="background:rgba(176,136,48,0.12);color:#B08830"><i class="ti ti-phone"></i></div>
+      <div class="ql-icon"><i class="ti ti-phone"></i></div>
       <div><div class="ql-label">GOA Bürgertel.</div><div class="ql-sub">07174 / 2711-555</div></div>
     </a>
     <a href="https://maps.google.com/?q=Wertstoffhof+Ellert+Mögglingen" target="_blank" class="ql-card">
-      <div class="ql-icon" style="background:rgba(90,90,90,0.08);color:var(--text2)"><i class="ti ti-recycle"></i></div>
+      <div class="ql-icon"><i class="ti ti-recycle"></i></div>
       <div><div class="ql-label">Wertstoffhof</div><div class="ql-sub">In Maps öffnen</div></div>
     </a>
   </div>
   <!-- Wertstoffhof -->
   <div class="card" style="margin:0 16px 16px;cursor:pointer" onclick="openWSHModal()">
     <div style="display:flex;align-items:center;gap:12px;padding:14px 16px">
-      <div style="width:36px;height:36px;border-radius:9px;background:rgba(58,122,85,0.1);color:#3A7A55;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0"><i class="ti ti-recycle"></i></div>
       <div style="flex:1">
         <div style="font-size:14px;font-weight:500">Wertstoffhof Ellert</div>
-        <div id="wsh-status" class="wsh-status-open" style="font-size:12px;font-weight:500;margin-top:1px">Wird geprüft…</div>
+        <div id="wsh-status" class="wsh-status-open" style="margin-top:2px">Wird geprüft…</div>
         <div id="wsh-hours" class="wsh-hours"></div>
       </div>
       <i class="ti ti-chevron-right" style="color:var(--text3);font-size:16px"></i>
@@ -415,31 +448,31 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:8px}
 <div id="view-bus" class="view">
 
   <!-- Next departure banner -->
-  <div id="bus-next-banner" style="display:none;margin:12px 16px 0;padding:12px 16px;background:var(--hero);border-radius:14px">
+  <div id="bus-next-banner" style="display:none;margin:12px 16px 0;padding:12px 16px;background:var(--hero);border-radius:18px">
     <div style="font-size:10px;font-weight:600;color:var(--hero-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Nächste Abfahrt</div>
     <div id="bus-next-content" style="display:flex;align-items:center;gap:10px">
-      <div id="bus-next-line" style="min-width:44px;height:26px;border-radius:6px;background:rgba(255,255,255,0.1);color:var(--hero-text);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">—</div>
+      <div id="bus-next-line" style="min-width:44px;height:26px;border-radius:7px;background:rgba(255,255,255,0.12);color:var(--hero-text);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">—</div>
       <div style="flex:1">
         <div id="bus-next-dest" style="font-size:14px;font-weight:500;color:var(--hero-text)">—</div>
         <div id="bus-next-sub" style="font-size:11px;color:var(--hero-muted);margin-top:1px">—</div>
       </div>
       <div style="text-align:right;flex-shrink:0">
-        <div id="bus-next-time" style="font-size:20px;font-weight:600;color:var(--hero-text);font-variant-numeric:tabular-nums">—</div>
+        <div id="bus-next-time" style="font-family:var(--font-display);font-size:21px;font-weight:500;color:var(--hero-text);font-variant-numeric:tabular-nums">—</div>
         <div id="bus-next-in" style="font-size:11px;font-weight:600;color:var(--hero-muted)"></div>
       </div>
     </div>
   </div>
 
   <!-- Mode tabs -->
-  <div style="display:flex;gap:0;margin:12px 16px 0;background:var(--bg3);border-radius:12px;padding:3px">
-    <button id="bus-mode-dep" onclick="setBusMode('dep')" style="flex:1;padding:7px;border-radius:9px;font-size:13px;font-weight:500;font-family:inherit;background:var(--bg2);color:var(--text);border:none;cursor:pointer;transition:all 0.2s">Abfahrten</button>
-    <button id="bus-mode-con" onclick="setBusMode('con')" style="flex:1;padding:7px;border-radius:9px;font-size:13px;font-weight:500;font-family:inherit;background:transparent;color:var(--text3);border:none;cursor:pointer;transition:all 0.2s">Verbindung</button>
+  <div style="display:flex;gap:0;margin:12px 16px 0;background:var(--bg3);border-radius:999px;padding:3px">
+    <button id="bus-mode-dep" onclick="setBusMode('dep')" style="flex:1;padding:7px;border-radius:999px;font-size:13px;font-weight:500;font-family:inherit;background:var(--bg2);color:var(--text);border:none;cursor:pointer;transition:all 0.2s">Abfahrten</button>
+    <button id="bus-mode-con" onclick="setBusMode('con')" style="flex:1;padding:7px;border-radius:999px;font-size:13px;font-weight:500;font-family:inherit;background:transparent;color:var(--text3);border:none;cursor:pointer;transition:all 0.2s">Verbindung</button>
   </div>
 
   <!-- ── ABFAHRTEN ── -->
   <div id="bus-dep-panel">
     <div style="padding:10px 16px 6px;display:flex;align-items:center;justify-content:space-between">
-      <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em" id="bus-station-name">Mögglingen Bahnhof</div>
+      <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em" id="bus-station-name">Mögglingen Bahnhof</div>
       <div style="display:flex;align-items:center;gap:6px">
         <span id="bus-autoupdate-lbl" style="font-size:10px;color:var(--text3)"></span>
         <button class="icon-btn" onclick="toggleFavorite()" id="fav-btn" aria-label="Favorit" style="width:30px;height:30px;font-size:15px"><i class="ti ti-star" id="fav-icon"></i></button>
@@ -448,14 +481,14 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:8px}
     </div>
     <div style="padding:0 16px 8px">
       <div style="position:relative">
-        <select id="bus-station-select" onchange="selectStation(this.value)" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;color:var(--text);padding:8px 36px 8px 12px;font-size:14px;font-family:inherit;outline:none;-webkit-appearance:none;appearance:none"></select>
+        <select id="bus-station-select" onchange="selectStation(this.value)" style="width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:12px;color:var(--text);padding:8px 36px 8px 12px;font-size:14px;font-family:inherit;outline:none;-webkit-appearance:none;appearance:none"></select>
         <i class="ti ti-chevron-down" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--text3);pointer-events:none"></i>
       </div>
     </div>
     <div style="padding:0 16px 8px;display:flex;gap:8px;align-items:center">
-      <input type="date" id="bus-date" onchange="updateBusTime()" style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;color:var(--text);padding:8px 12px;font-size:13px;font-family:inherit;outline:none;-webkit-appearance:none">
-      <input type="time" id="bus-time" onchange="updateBusTime()" style="width:90px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;color:var(--text);padding:8px 10px;font-size:13px;font-family:inherit;outline:none;-webkit-appearance:none">
-      <button onclick="resetToNow()" style="width:34px;height:34px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:14px;flex-shrink:0" title="Jetzt"><i class="ti ti-clock-hour-3"></i></button>
+      <input type="date" id="bus-date" onchange="updateBusTime()" style="flex:1;background:var(--bg);border:1px solid var(--border2);border-radius:12px;color:var(--text);padding:8px 12px;font-size:13px;font-family:inherit;outline:none;-webkit-appearance:none">
+      <input type="time" id="bus-time" onchange="updateBusTime()" style="width:90px;background:var(--bg);border:1px solid var(--border2);border-radius:12px;color:var(--text);padding:8px 10px;font-size:13px;font-family:inherit;outline:none;-webkit-appearance:none">
+      <button onclick="resetToNow()" style="width:34px;height:34px;border-radius:50%;background:transparent;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:14px;flex-shrink:0" title="Jetzt"><i class="ti ti-clock-hour-3"></i></button>
     </div>
     <div style="display:flex;gap:6px;padding:0 16px 10px;overflow-x:auto;scrollbar-width:none">
       <button class="chip active" id="dir-all" onclick="setDirection('all')">Alle</button>
@@ -475,21 +508,21 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:8px}
       <div style="position:relative">
         <i class="ti ti-map-pin" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--text3)"></i>
         <input type="text" id="con-from" placeholder="Von (z.B. Mögglingen Bahnhof)" value="Mögglingen Bahnhof"
-          style="width:100%;padding:10px 12px 10px 36px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;color:var(--text);font-size:14px;font-family:inherit;outline:none;-webkit-appearance:none">
+          style="width:100%;padding:10px 12px 10px 36px;background:var(--bg);border:1px solid var(--border2);border-radius:12px;color:var(--text);font-size:14px;font-family:inherit;outline:none;-webkit-appearance:none">
       </div>
       <div style="display:flex;align-items:center;gap:8px">
         <div style="flex:1;height:1px;background:var(--border)"></div>
-        <button onclick="swapConStops()" style="width:30px;height:30px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--text2)" title="Tauschen"><i class="ti ti-arrows-up-down"></i></button>
+        <button onclick="swapConStops()" style="width:30px;height:30px;border-radius:50%;background:transparent;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--text2)" title="Tauschen"><i class="ti ti-arrows-up-down"></i></button>
         <div style="flex:1;height:1px;background:var(--border)"></div>
       </div>
       <div style="position:relative">
         <i class="ti ti-flag" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--text3)"></i>
         <input type="text" id="con-to" placeholder="Nach (z.B. Aalen ZOB)"
-          style="width:100%;padding:10px 12px 10px 36px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;color:var(--text);font-size:14px;font-family:inherit;outline:none;-webkit-appearance:none">
+          style="width:100%;padding:10px 12px 10px 36px;background:var(--bg);border:1px solid var(--border2);border-radius:12px;color:var(--text);font-size:14px;font-family:inherit;outline:none;-webkit-appearance:none">
       </div>
       <div style="display:flex;gap:8px">
-        <input type="date" id="con-date" style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;color:var(--text);padding:8px 12px;font-size:13px;font-family:inherit;outline:none;-webkit-appearance:none">
-        <input type="time" id="con-time" style="width:90px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;color:var(--text);padding:8px 10px;font-size:13px;font-family:inherit;outline:none;-webkit-appearance:none">
+        <input type="date" id="con-date" style="flex:1;background:var(--bg);border:1px solid var(--border2);border-radius:12px;color:var(--text);padding:8px 12px;font-size:13px;font-family:inherit;outline:none;-webkit-appearance:none">
+        <input type="time" id="con-time" style="width:90px;background:var(--bg);border:1px solid var(--border2);border-radius:12px;color:var(--text);padding:8px 10px;font-size:13px;font-family:inherit;outline:none;-webkit-appearance:none">
       </div>
       <button onclick="searchConnection()" class="btn-primary" style="margin-top:2px">
         <i class="ti ti-search" style="margin-right:6px;vertical-align:-1px"></i>Verbindung suchen
@@ -511,12 +544,12 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:8px}
     <button class="chip" id="efchip-musik" onclick="setEventFilter('musik')">Musik</button>
   </div>
   <div id="events-list"></div>
-  <div style="margin:16px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;display:flex;align-items:flex-start;gap:12px">
+  <div style="margin:16px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:18px;display:flex;align-items:flex-start;gap:12px">
     <i class="ti ti-calendar-plus" style="font-size:20px;color:var(--text3);flex-shrink:0;margin-top:2px"></i>
     <div>
-      <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px">Event einreichen</div>
+      <div style="font-family:var(--font-display);font-size:15px;font-weight:520;color:var(--text);margin-bottom:3px">Event einreichen</div>
       <div style="font-size:12px;color:var(--text3);line-height:1.5">Du möchtest ein Event in der App sehen? Schreib uns eine kurze Nachricht.</div>
-      <a href="mailto:info@ec-syncora.de?subject=Event einreichen&body=Eventname:%0ADatum:%0AOrt:%0ABeschreibung:%0AKostenlos/Eintritt:%0AWebsite:" style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;background:var(--hero);color:var(--hero-text);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600">
+      <a href="mailto:info@ec-syncora.de?subject=Event einreichen&body=Eventname:%0ADatum:%0AOrt:%0ABeschreibung:%0AKostenlos/Eintritt:%0AWebsite:" style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;background:var(--accent);color:var(--hero-text);border-radius:999px;padding:8px 16px;font-size:12px;font-weight:600">
         <i class="ti ti-send" style="font-size:13px"></i>Event vorschlagen
       </a>
     </div>
@@ -595,7 +628,7 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:8px}
     <div class="settings-row">
       <div class="settings-icon"><i class="ti ti-trash"></i></div>
       <div class="settings-info"><div class="settings-title">Alle Termine löschen</div></div>
-      <button class="btn-sm" style="color:#9A3A3A;border-color:rgba(154,58,58,0.2)" onclick="clearAll()">Löschen</button>
+      <button class="btn-sm" style="color:var(--bad);border-color:rgba(140,59,46,0.25)" onclick="clearAll()">Löschen</button>
     </div>
   </div>
   <div class="install-hint" id="install-hint">
@@ -610,14 +643,14 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:8px}
   </div>
 </div>
 
-<!-- BOTTOM NAV -->
-<nav class="bottom-nav">
-  <div class="nav-item active" id="nav-home" onclick="switchTab('home')"><div class="nav-icon-wrap"><i class="ti ti-home-2"></i></div><span class="nav-label">Home</span></div>
-  <div class="nav-item" id="nav-muell" onclick="switchTab('muell')"><div class="nav-icon-wrap"><i class="ti ti-trash"></i></div><span class="nav-label">Müll</span></div>
-  <div class="nav-item" id="nav-sprit" onclick="switchTab('sprit')"><div class="nav-icon-wrap"><i class="ti ti-gas-station"></i></div><span class="nav-label">Sprit</span></div>
-  <div class="nav-item" id="nav-bus" onclick="switchTab('bus')"><div class="nav-icon-wrap"><i class="ti ti-bus"></i></div><span class="nav-label">Bus</span></div>
-  <div class="nav-item" id="nav-events" onclick="switchTab('events')"><div class="nav-icon-wrap"><i class="ti ti-calendar-event"></i></div><span class="nav-label">Events</span></div>
-  <div class="nav-item" id="nav-mehr" onclick="switchTab('mehr')"><div class="nav-icon-wrap"><i class="ti ti-dots"></i></div><span class="nav-label">Mehr</span></div>
+<!-- TAB ISLAND -->
+<nav class="tab-island">
+  <button class="nav-item active" id="nav-home" onclick="switchTab('home')"><i class="ti ti-home-2"></i><span class="nav-label">Start</span></button>
+  <button class="nav-item" id="nav-muell" onclick="switchTab('muell')"><i class="ti ti-trash"></i><span class="nav-label">Abfall</span></button>
+  <button class="nav-item" id="nav-sprit" onclick="switchTab('sprit')"><i class="ti ti-gas-station"></i><span class="nav-label">Tanken</span></button>
+  <button class="nav-item" id="nav-bus" onclick="switchTab('bus')"><i class="ti ti-bus"></i><span class="nav-label">Bus</span></button>
+  <button class="nav-item" id="nav-events" onclick="switchTab('events')"><i class="ti ti-calendar-event"></i><span class="nav-label">Events</span></button>
+  <button class="nav-item" id="nav-mehr" onclick="switchTab('mehr')"><i class="ti ti-dots"></i><span class="nav-label">Mehr</span></button>
 </nav>
 
 <!-- WSH MODAL -->
@@ -626,15 +659,15 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:8px}
     <div class="modal-handle"></div>
     <div class="modal-title">Wertstoffhof Ellert</div>
     <div class="modal-sub"><i class="ti ti-map-pin" style="font-size:13px;margin-right:4px"></i>An der B29, Ausfahrt Mögglingen-Ost</div>
-    <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px">Sommer (15. März – 31. Oktober)</div>
+    <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px">Sommer (15. März – 31. Oktober)</div>
     <div class="wsh-detail-row"><span style="font-size:13px;font-weight:500">Mo – Fr</span><span style="font-size:13px;color:var(--text2)">07:30 – 18:00 Uhr</span></div>
     <div class="wsh-detail-row"><span style="font-size:13px;font-weight:500">Samstag</span><span style="font-size:13px;color:var(--text2)">08:00 – 13:00 Uhr</span></div>
-    <div class="wsh-detail-row"><span style="font-size:13px;font-weight:500">Sonntag</span><span style="font-size:13px;color:#9A3A3A">Geschlossen</span></div>
-    <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin:14px 0 10px">Winter (1. Nov – 14. März)</div>
+    <div class="wsh-detail-row"><span style="font-size:13px;font-weight:500">Sonntag</span><span style="font-size:13px;color:var(--bad)">Geschlossen</span></div>
+    <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin:14px 0 10px">Winter (1. Nov – 14. März)</div>
     <div class="wsh-detail-row"><span style="font-size:13px;font-weight:500">Mo – Fr</span><span style="font-size:13px;color:var(--text2)">07:30 – 17:00 Uhr</span></div>
     <div class="wsh-detail-row"><span style="font-size:13px;font-weight:500">Samstag</span><span style="font-size:13px;color:var(--text2)">08:00 – 13:00 Uhr</span></div>
-    <div class="wsh-detail-row"><span style="font-size:13px;font-weight:500">Sonntag</span><span style="font-size:13px;color:#9A3A3A">Geschlossen</span></div>
-    <a href="https://maps.google.com/?q=Wertstoffhof+Ellert+Mögglingen" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--bg3);border:1px solid var(--border2);border-radius:12px;padding:12px;font-size:14px;font-weight:500;color:var(--text);margin-top:16px">
+    <div class="wsh-detail-row"><span style="font-size:13px;font-weight:500">Sonntag</span><span style="font-size:13px;color:var(--bad)">Geschlossen</span></div>
+    <a href="https://maps.google.com/?q=Wertstoffhof+Ellert+Mögglingen" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:transparent;border:1px solid var(--border2);border-radius:14px;padding:12px;font-size:14px;font-weight:500;color:var(--text);margin-top:16px">
       <i class="ti ti-map-2"></i>In Google Maps öffnen
     </a>
   </div>
@@ -653,17 +686,19 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:8px}
 // ══════════════════════════════════════════
 
 // ══════════════════════════════════════════
-// TYPES
+// TYPES — Farben sind FUNKTIONALE Tonnen-Codes,
+// bewusst gedeckt. Nur als 3px-Streifen + Icon-
+// Farbe verwenden, NIE als Flächen-Hintergrund.
 // ══════════════════════════════════════════
 const TYPES = {
-  restmuell:       {label:'Hausmüll',          kuerzel:'HM',  icon:'ti-circle-dashed', color:'#6B6860', bg:'#EEEAE4', darkBg:'#2A2824'},
-  bio:             {label:'Bioabfälle',         kuerzel:'Bio', icon:'ti-plant',         color:'#3A7A55', bg:'#E0F0E8', darkBg:'#142A1E'},
-  papier:          {label:'Blaue Tonne',        kuerzel:'BT',  icon:'ti-book',          color:'#2A5A8A', bg:'#DDE8F4', darkBg:'#12243A'},
-  gelb:            {label:'Gelber Sack',        kuerzel:'GS',  icon:'ti-arrows-exchange',color:'#B08830', bg:'#F4EDD8', darkBg:'#2A2010'},
-  gartentonne:     {label:'Gartentonne',        kuerzel:'GT',  icon:'ti-seeding',       color:'#3A6A28', bg:'#E0ECD8', darkBg:'#122010'},
-  gruenabfuhr:     {label:'Grünabfuhr',         kuerzel:'GA',  icon:'ti-tree',          color:'#1E5A20', bg:'#DCF0DC', darkBg:'#0A200A'},
-  altpapier_verein:{label:'AV Holsammlung',     kuerzel:'AVH', icon:'ti-packages',      color:'#6A4A9A', bg:'#EAE4F4', darkBg:'#221830'},
-  christbaum:      {label:'Christbaumsammlung', kuerzel:'CS',  icon:'ti-trees',         color:'#8A2A2A', bg:'#F4E0E0', darkBg:'#2A0E0E'}
+  restmuell:       {label:'Hausmüll',          kuerzel:'HM',  icon:'ti-circle-dashed',  color:'#6B675E'},
+  bio:             {label:'Bioabfälle',         kuerzel:'Bio', icon:'ti-plant',          color:'#4A6B4F'},
+  papier:          {label:'Blaue Tonne',        kuerzel:'BT',  icon:'ti-book',           color:'#3E5A77'},
+  gelb:            {label:'Gelber Sack',        kuerzel:'GS',  icon:'ti-arrows-exchange',color:'#9A7B2F'},
+  gartentonne:     {label:'Gartentonne',        kuerzel:'GT',  icon:'ti-seeding',        color:'#5C7349'},
+  gruenabfuhr:     {label:'Grünabfuhr',         kuerzel:'GA',  icon:'ti-tree',           color:'#3E5A40'},
+  altpapier_verein:{label:'AV Holsammlung',     kuerzel:'AVH', icon:'ti-packages',       color:'#7A6A55'},
+  christbaum:      {label:'Christbaumsammlung', kuerzel:'CS',  icon:'ti-trees',          color:'#7A4038'}
 };
 
 const GOA_TERMINE = [{"type":"bio","date":"2026-03-07"},{"type":"bio","date":"2026-03-20"},{"type":"papier","date":"2026-03-20"},{"type":"gelb","date":"2026-03-20"},{"type":"gartentonne","date":"2026-03-20"},{"type":"gartentonne","date":"2026-04-04"},{"type":"bio","date":"2026-04-07"},{"type":"restmuell","date":"2026-04-14"},{"type":"gartentonne","date":"2026-04-17"},{"type":"bio","date":"2026-04-20"},{"type":"papier","date":"2026-04-23"},{"type":"gelb","date":"2026-04-23"},{"type":"restmuell","date":"2026-04-28"},{"type":"gartentonne","date":"2026-05-02"},{"type":"bio","date":"2026-05-04"},{"type":"gruenabfuhr","date":"2026-05-04"},{"type":"bio","date":"2026-05-11"},{"type":"restmuell","date":"2026-05-12"},{"type":"gartentonne","date":"2026-05-16"},{"type":"bio","date":"2026-05-18"},{"type":"papier","date":"2026-05-21"},{"type":"gelb","date":"2026-05-21"},{"type":"bio","date":"2026-05-26"},{"type":"restmuell","date":"2026-05-27"},{"type":"gartentonne","date":"2026-05-30"},{"type":"bio","date":"2026-06-01"},{"type":"bio","date":"2026-06-08"},{"type":"restmuell","date":"2026-06-09"},{"type":"gartentonne","date":"2026-06-12"},{"type":"altpapier_verein","date":"2026-06-13"},{"type":"bio","date":"2026-06-15"},{"type":"papier","date":"2026-06-16"},{"type":"papier","date":"2026-06-18"},{"type":"gelb","date":"2026-06-18"},{"type":"bio","date":"2026-06-22"},{"type":"restmuell","date":"2026-06-23"},{"type":"gartentonne","date":"2026-06-26"},{"type":"bio","date":"2026-06-29"},{"type":"bio","date":"2026-07-06"},{"type":"restmuell","date":"2026-07-07"},{"type":"gartentonne","date":"2026-07-10"},{"type":"bio","date":"2026-07-13"},{"type":"papier","date":"2026-07-16"},{"type":"gelb","date":"2026-07-16"},{"type":"bio","date":"2026-07-20"},{"type":"restmuell","date":"2026-07-21"},{"type":"gartentonne","date":"2026-07-24"},{"type":"bio","date":"2026-07-27"},{"type":"bio","date":"2026-08-03"},{"type":"restmuell","date":"2026-08-04"},{"type":"gartentonne","date":"2026-08-07"},{"type":"bio","date":"2026-08-10"},{"type":"papier","date":"2026-08-13"},{"type":"gelb","date":"2026-08-13"},{"type":"bio","date":"2026-08-17"},{"type":"restmuell","date":"2026-08-18"},{"type":"gartentonne","date":"2026-08-21"},{"type":"bio","date":"2026-08-24"},{"type":"bio","date":"2026-08-31"},{"type":"restmuell","date":"2026-09-01"},{"type":"gartentonne","date":"2026-09-04"},{"type":"altpapier_verein","date":"2026-09-05"},{"type":"bio","date":"2026-09-07"},{"type":"papier","date":"2026-09-10"},{"type":"gelb","date":"2026-09-10"},{"type":"bio","date":"2026-09-14"},{"type":"restmuell","date":"2026-09-15"},{"type":"gartentonne","date":"2026-09-18"},{"type":"bio","date":"2026-09-21"},{"type":"bio","date":"2026-09-28"},{"type":"restmuell","date":"2026-09-29"},{"type":"gartentonne","date":"2026-10-02"},{"type":"bio","date":"2026-10-05"},{"type":"papier","date":"2026-10-08"},{"type":"gelb","date":"2026-10-08"},{"type":"bio","date":"2026-10-12"},{"type":"restmuell","date":"2026-10-13"},{"type":"gartentonne","date":"2026-10-16"},{"type":"bio","date":"2026-10-19"},{"type":"bio","date":"2026-10-26"},{"type":"restmuell","date":"2026-10-27"},{"type":"gartentonne","date":"2026-10-30"},{"type":"bio","date":"2026-11-02"},{"type":"papier","date":"2026-11-05"},{"type":"gelb","date":"2026-11-05"},{"type":"bio","date":"2026-11-09"},{"type":"restmuell","date":"2026-11-10"},{"type":"gartentonne","date":"2026-11-13"},{"type":"bio","date":"2026-11-16"},{"type":"gruenabfuhr","date":"2026-11-20"},{"type":"bio","date":"2026-11-23"},{"type":"restmuell","date":"2026-11-24"},{"type":"gartentonne","date":"2026-11-27"},{"type":"bio","date":"2026-11-30"},{"type":"bio","date":"2026-12-02"},{"type":"papier","date":"2026-12-03"},{"type":"gelb","date":"2026-12-03"},{"type":"restmuell","date":"2026-12-08"},{"type":"gartentonne","date":"2026-12-11"},{"type":"bio","date":"2026-12-14"},{"type":"bio","date":"2026-12-21"},{"type":"restmuell","date":"2026-12-22"},{"type":"bio","date":"2026-12-29"},{"type":"papier","date":"2027-01-02"},{"type":"gelb","date":"2027-01-02"},{"type":"bio","date":"2027-01-05"},{"type":"restmuell","date":"2027-01-07"},{"type":"christbaum","date":"2027-01-11"},{"type":"bio","date":"2027-01-12"},{"type":"bio","date":"2027-01-18"},{"type":"restmuell","date":"2027-01-19"},{"type":"bio","date":"2027-01-25"},{"type":"papier","date":"2027-01-28"},{"type":"gelb","date":"2027-01-28"},{"type":"bio","date":"2027-02-01"},{"type":"restmuell","date":"2027-02-02"},{"type":"bio","date":"2027-02-08"},{"type":"bio","date":"2027-02-15"},{"type":"restmuell","date":"2027-02-16"},{"type":"bio","date":"2027-02-22"},{"type":"papier","date":"2027-02-25"},{"type":"gelb","date":"2027-02-25"},{"type":"bio","date":"2027-03-01"},{"type":"restmuell","date":"2027-03-02"},{"type":"altpapier_verein","date":"2027-03-06"},{"type":"bio","date":"2027-03-08"},{"type":"bio","date":"2027-03-15"},{"type":"restmuell","date":"2027-03-16"},{"type":"bio","date":"2027-03-22"},{"type":"papier","date":"2027-03-25"},{"type":"gelb","date":"2027-03-25"},{"type":"bio","date":"2027-03-30"},{"type":"restmuell","date":"2027-03-31"}];
@@ -701,7 +736,7 @@ let scheduledTimers=[];
 
 const WORKER_URL = 'https://moegglingen-bus.emre18celik.workers.dev';
 
-const TAB_TITLES={home:'Home',muell:'Müll',sprit:'Spritpreise',bus:'Bus & Bahn',events:'Events',mehr:'Mehr'};
+const TAB_TITLES={home:'Start',muell:'Abfall',sprit:'Spritpreise',bus:'Bus & Bahn',events:'Events',mehr:'Mehr'};
 
 // Bus-State
 const BUS_STATIONS=[
@@ -775,7 +810,7 @@ async function loadFromDB(){
 function applyTheme(){
   document.documentElement.setAttribute('data-theme',isDark?'dark':'light');
   document.getElementById('theme-icon').className=isDark?'ti ti-moon':'ti ti-sun';
-  document.querySelector('meta[name="theme-color"]').content=isDark?'#141210':'#F7F4EF';
+  document.querySelector('meta[name="theme-color"]').content=isDark?'#15130F':'#F6F4EE';
 }
 function toggleTheme(){isDark=!isDark;try{localStorage.setItem('theme',isDark?'dark':'light');}catch(e){}applyTheme();renderHome();renderMuell();}
 
@@ -792,6 +827,7 @@ function switchTab(tab){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   const ni=document.getElementById('nav-'+tab);if(ni)ni.classList.add('active');
   document.getElementById('header-title').innerHTML=tab==='home'?`<span id="greeting-text" class="greeting-text">${GREETINGS[greetIdx]}</span>`:TAB_TITLES[tab]||'';
+  if(navigator.vibrate)navigator.vibrate(8);
   if(tab==='home'){renderHome();stopAutoRefresh();}
   if(tab==='muell'){renderMuell();}
   if(tab==='sprit'){loadSprit();}
@@ -841,7 +877,7 @@ async function loadWeather(){
     renderWeatherHero(data);
     renderWeekRow(data);
   }catch(e){
-    wrap.innerHTML=`<div style="margin:14px 16px;padding:16px;background:var(--bg2);border-radius:16px;border:1px solid var(--border);cursor:pointer" onclick="loadWeather()">
+    wrap.innerHTML=`<div style="margin:14px 16px;padding:16px;background:var(--bg2);border-radius:20px;border:1px solid var(--border);cursor:pointer" onclick="loadWeather()">
       <div style="font-size:13px;color:var(--text3);text-align:center;margin-bottom:6px">Wetter nicht verfügbar · Antippen zum Laden</div>
       <div style="font-size:11px;color:var(--text3);text-align:center;opacity:0.6">${e.message}</div>
     </div>`;
@@ -948,13 +984,13 @@ function renderWSH(){
   const sched=isSummer?WSH_SOMMER:WSH_WINTER;
   const statusEl=document.getElementById('wsh-status'),hoursEl=document.getElementById('wsh-hours');
   if(!statusEl)return;
-  if(dow===0){statusEl.className='wsh-status-closed';statusEl.textContent='Heute geschlossen';hoursEl.textContent='Sonntags geschlossen';return;}
+  if(dow===0){statusEl.className='wsh-status-closed';statusEl.innerHTML='<span class="status-dot" style="background:var(--bad)"></span>Heute geschlossen';hoursEl.textContent='Sonntags geschlossen';return;}
   const timeStr=dow===6?sched.sa:sched.weekday;
   const parts=timeStr.split(/[–\-]/).map(t=>t.trim());
   const[open,close]=parts.map(t=>{const[hh,mm]=t.split(':');return parseInt(hh)+parseInt(mm)/60;});
   const isOpen=h>=open&&h<close;
   statusEl.className=isOpen?'wsh-status-open':'wsh-status-closed';
-  statusEl.textContent=isOpen?`Geöffnet · bis ${parts[1]} Uhr`:'Heute geschlossen';
+  statusEl.innerHTML=isOpen?`<span class="status-dot" style="background:var(--ok)"></span>Geöffnet · bis ${parts[1]} Uhr`:'<span class="status-dot" style="background:var(--bad)"></span>Heute geschlossen';
   hoursEl.textContent=dow===6?`Sa ${timeStr} Uhr`:`Mo–Fr ${sched.weekday} Uhr`;
 }
 function openWSHModal(){document.getElementById('wsh-modal').classList.add('open');}
@@ -1050,7 +1086,7 @@ function renderMuell(){
   const total=pickups.filter(p=>daysUntil(p.date)>=0).length;
   const done=pickups.filter(p=>daysUntil(p.date)<0).length;
   document.getElementById('muell-stats').innerHTML=pickups.length?
-    `<div class="card" style="margin:0 16px 4px;border-radius:14px"><div class="stats-row"><div class="stat-box"><div class="stat-num">${soon}</div><div class="stat-lbl">Diese Woche</div></div><div class="stat-box"><div class="stat-num">${total}</div><div class="stat-lbl">Ausstehend</div></div><div class="stat-box"><div class="stat-num">${done}</div><div class="stat-lbl">Erledigt</div></div></div></div>`:'';
+    `<div class="card" style="margin:0 16px 4px"><div class="stats-row"><div class="stat-box"><div class="stat-num">${soon}</div><div class="stat-lbl">Diese Woche</div></div><div class="stat-box"><div class="stat-num">${total}</div><div class="stat-lbl">Ausstehend</div></div><div class="stat-box"><div class="stat-num">${done}</div><div class="stat-lbl">Erledigt</div></div></div></div>`:'';
   const upEl=document.getElementById('muell-upcoming');
   if(!upcoming.length){
     upEl.innerHTML='<div class="empty-state"><i class="ti ti-calendar-off"></i><p>Keine Termine.<br>Unter „Mehr" hinzufügen.</p></div>';
@@ -1058,7 +1094,7 @@ function renderMuell(){
     const byMonth={};upcoming.forEach(p=>{const m=getMonthKey(p.date);(byMonth[m]=byMonth[m]||[]).push(p);});
     upEl.innerHTML=Object.entries(byMonth).map(([month,items],mi)=>
       `<div class="month-label">${month}</div>
-       <div class="card" style="margin:0 16px;border-radius:14px;overflow:hidden">
+       <div class="card" style="margin:0 16px;overflow:hidden">
          ${items.map((p,i)=>renderPickupRow(p,false,mi*20+i)).join('')}
        </div>`
     ).join('<div style="height:8px"></div>');
@@ -1066,25 +1102,23 @@ function renderMuell(){
   const pastLabel=document.getElementById('past-label'),pastEl=document.getElementById('muell-past');
   if(past.length){
     pastLabel.style.display='block';
-    pastEl.innerHTML=`<div class="card" style="margin:0 16px;border-radius:14px;overflow:hidden">${past.slice().reverse().slice(0,8).map(p=>renderPickupRow(p,true,0)).join('')}</div>`;
+    pastEl.innerHTML=`<div class="card" style="margin:0 16px;overflow:hidden">${past.slice().reverse().slice(0,8).map(p=>renderPickupRow(p,true,0)).join('')}</div>`;
   } else{pastLabel.style.display='none';pastEl.innerHTML='';}
 }
 
 function renderPickupRow(p,isPast,idx){
   const t=TYPES[p.type]||TYPES.restmuell;
   const days=daysUntil(p.date);
-  const bg=isDark?t.darkBg:t.bg;
   const isChecked=checkedIds.includes(p.id);
   let badge='';
   if(!isPast){
-    if(days===0)badge=`<span class="badge" style="background:rgba(58,122,85,0.15);color:#3A7A55">Heute</span>`;
-    else if(days===1)badge=`<span class="badge" style="background:rgba(176,136,48,0.15);color:#B08830">Morgen</span>`;
-    else if(days<=3)badge=`<span class="badge" style="background:var(--bg3);color:var(--text2)">in ${days} d</span>`;
+    if(days===0)badge=`<span class="badge" style="border-color:var(--accent);color:var(--accent)">Heute</span>`;
+    else if(days===1)badge=`<span class="badge" style="color:var(--text)">Morgen</span>`;
+    else if(days<=3)badge=`<span class="badge">in ${days} d</span>`;
   }
   const delay=isPast?0:Math.min(idx*30,200);
   return `<div class="pickup-row ${isPast?'past':''} ${isChecked&&!isPast?'done-row':''}" style="animation:cardIn 0.35s ease ${delay}ms both">
     <div class="pickup-accent" style="background:${t.color}"></div>
-    <div class="pickup-icon" style="background:${bg};color:${t.color};margin-left:6px"><i class="ti ${t.icon}"></i></div>
     <div class="pickup-info">
       <div class="pickup-type">${t.label} <span style="font-size:11px;color:var(--text3);font-weight:400">${t.kuerzel}</span></div>
       <div class="pickup-date">${fmtDate(p.date)}</div>
@@ -1123,7 +1157,7 @@ async function loadSprit(){
     renderSpritList(stations);
   }catch(e){
     wrap.innerHTML=`<div style="margin:16px">
-      <div style="padding:14px 16px;background:rgba(154,58,58,0.08);border-radius:12px;font-size:13px;color:#9A3A3A;margin-bottom:8px">
+      <div style="padding:14px 16px;border:1px solid rgba(140,59,46,0.3);border-radius:14px;font-size:13px;color:var(--bad);margin-bottom:8px">
         <i class="ti ti-alert-circle" style="margin-right:6px"></i>${e.message}
       </div>
       <button class="btn-secondary" onclick="spritCache=null;loadSprit()"><i class="ti ti-refresh"></i>Nochmal versuchen</button>
@@ -1164,16 +1198,16 @@ function renderSpritPreviewHome(stations){
     if(!price)return'';
     const priceStr=price.toFixed(3);
     const dist=s.dist<1?Math.round(s.dist*1000)+'m':s.dist.toFixed(1)+'km';
-    const rankBg=i===0?'rgba(176,136,48,0.15)':'var(--bg3)';
-    const rankC=i===0?'#B08830':'var(--text3)';
-    return `<div class="pickup-row ${!s.isOpen?'past':''}">
+    const rankBg=i===0?'var(--accent)':'var(--bg3)';
+    const rankC=i===0?'var(--hero-text)':'var(--text3)';
+    return `<div class="pickup-row ${!s.isOpen?'past':''}" style="padding-left:16px">
       <div class="rank-dot" style="background:${rankBg};color:${rankC}">${i+1}</div>
       <div class="pickup-info">
         <div class="pickup-type">${s.brand||s.name}</div>
         <div class="pickup-date">${dist}${!s.isOpen?' · geschlossen':''}</div>
       </div>
       <div style="text-align:right;flex-shrink:0">
-        <div class="sprit-price-big" style="color:${i===0?'#3A7A55':'var(--text)'}">${priceStr.slice(0,-1)}<sup style="font-size:11px">${priceStr.slice(-1)}</sup></div>
+        <div class="sprit-price-big" style="color:${i===0?'var(--accent)':'var(--text)'}">${priceStr.slice(0,-1)}<sup style="font-size:11px">${priceStr.slice(-1)}</sup></div>
       </div>
     </div>`;
   }).join('');
@@ -1195,7 +1229,7 @@ function renderSpritList(stations){
   const valid=stations.filter(s=>s[activeFuel]>0);
   if(!valid.length){
     wrap.innerHTML=`<div style="padding:20px 16px">
-      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;text-align:center">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:20px;text-align:center">
         <i class="ti ti-gas-station" style="font-size:28px;color:var(--text3);display:block;margin-bottom:10px"></i>
         <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px">Keine Preise verfügbar</div>
         <div style="font-size:13px;color:var(--text3);line-height:1.6">Tankerkönig liefert aktuell keine Daten.</div>
@@ -1207,19 +1241,19 @@ function renderSpritList(stations){
     return;
   }
   document.getElementById('sprit-updated').textContent=`Aktualisiert: ${new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr · Tankerkönig / MTS-K`;
-  wrap.innerHTML=`<div class="card" style="margin:0 16px;border-radius:14px;overflow:hidden">
+  wrap.innerHTML=`<div class="card" style="margin:0 16px;overflow:hidden">
     ${valid.slice(0,8).map((s,i)=>{
       const price=s[activeFuel],priceStr=price.toFixed(3);
       const dist=s.dist<1?Math.round(s.dist*1000)+'m':s.dist.toFixed(1)+'km';
-      const rankBg=i===0?'rgba(176,136,48,0.15)':'var(--bg3)',rankC=i===0?'#B08830':'var(--text3)';
-      return `<div class="pickup-row ${!s.isOpen?'past':''}" style="animation:cardIn 0.35s ease ${i*40}ms both">
+      const rankBg=i===0?'var(--accent)':'var(--bg3)',rankC=i===0?'var(--hero-text)':'var(--text3)';
+      return `<div class="pickup-row ${!s.isOpen?'past':''}" style="animation:cardIn 0.35s ease ${i*40}ms both;padding-left:16px">
         <div class="rank-dot" style="background:${rankBg};color:${rankC}">${i+1}</div>
         <div class="pickup-info">
           <div class="pickup-type">${s.brand||s.name}</div>
           <div class="pickup-date">${s.name} · ${dist}${!s.isOpen?' · geschlossen':''}</div>
         </div>
         <div style="text-align:right;flex-shrink:0">
-          <div class="sprit-price-big" style="color:${i===0?'#3A7A55':'var(--text)'}">${priceStr.slice(0,-1)}<sup style="font-size:11px">${priceStr.slice(-1)}</sup></div>
+          <div class="sprit-price-big" style="color:${i===0?'var(--accent)':'var(--text)'}">${priceStr.slice(0,-1)}<sup style="font-size:11px">${priceStr.slice(-1)}</sup></div>
         </div>
       </div>`;
     }).join('')}
@@ -1261,7 +1295,7 @@ function saveSettings(){settings.reminderDays=parseInt(document.getElementById('
 function renderVisibilitySettings(){
   document.getElementById('visibility-settings').innerHTML=Object.entries(TYPES).map(([key,t])=>`
     <div class="settings-row">
-      <div class="settings-icon" style="background:${isDark?t.darkBg:t.bg};color:${t.color}"><i class="ti ${t.icon}"></i></div>
+      <div class="settings-icon" style="color:${t.color}"><i class="ti ${t.icon}"></i></div>
       <div class="settings-info"><div class="settings-title">${t.label}</div><div class="settings-desc">${t.kuerzel}</div></div>
       <label class="toggle"><input type="checkbox" ${!hiddenTypes.includes(key)?'checked':''} onchange="toggleType('${key}',this.checked)"><div class="toggle-track"></div></label>
     </div>`).join('');
@@ -1297,7 +1331,7 @@ function setBusMode(mode){
 
 function renderStationTabs(){
   const sel=document.getElementById('bus-station-select');
-  if(sel)sel.innerHTML=BUS_STATIONS.map((s,i)=>`<option value="${i}" ${i===activeBusStation?'selected':''}>${s.type==='train'?'🚆':'🚌'} ${s.name}${i===favStation?' ★':''}</option>`).join('');
+  if(sel)sel.innerHTML=BUS_STATIONS.map((s,i)=>`<option value="${i}" ${i===activeBusStation?'selected':''}>${s.type==='train'?'Zug':'Bus'} · ${s.name}${i===favStation?' ★':''}</option>`).join('');
   const nameEl=document.getElementById('bus-station-name');
   if(nameEl)nameEl.textContent=BUS_STATIONS[activeBusStation].name;
   updateFavBtn();
@@ -1327,7 +1361,7 @@ function updateFavBtn(){
   const isFav=favStation===activeBusStation;
   icon.className=isFav?'ti ti-star-filled':'ti ti-star';
   const btn=document.getElementById('fav-btn');
-  if(btn)btn.style.color=isFav?'#B08830':'';
+  if(btn)btn.style.color=isFav?'#9A7B2F':'';
 }
 function loadFavoriteOnOpen(){if(favStation!==activeBusStation)activeBusStation=favStation;}
 function setDirection(dir){
@@ -1401,7 +1435,7 @@ async function loadDepartures(showLoader=true){
   }catch(e){
     allDepartures=[];
     if(showLoader)container.innerHTML=`<div style="margin:16px">
-      <div style="padding:14px 16px;background:rgba(154,58,58,0.1);border-radius:12px;font-size:13px;color:#9A3A3A;margin-bottom:12px">
+      <div style="padding:14px 16px;border:1px solid rgba(140,59,46,0.3);border-radius:14px;font-size:13px;color:var(--bad);margin-bottom:12px">
         <i class="ti ti-alert-circle" style="margin-right:6px"></i>${e.message}
       </div>
       <button class="btn-secondary" onclick="loadDepartures(true)"><i class="ti ti-refresh"></i>Nochmal versuchen</button>
@@ -1423,8 +1457,8 @@ function updateNextBanner(){
   const lc=getBusLineColor(d.line);
   banner.style.display='block';
   document.getElementById('bus-next-line').textContent=d.line;
-  document.getElementById('bus-next-line').style.background=lc.bg;
-  document.getElementById('bus-next-line').style.color=lc.text;
+  document.getElementById('bus-next-line').style.background='rgba(255,255,255,0.12)';
+  document.getElementById('bus-next-line').style.color='var(--hero-text)';
   document.getElementById('bus-next-dest').textContent=d.dest;
   document.getElementById('bus-next-sub').textContent=BUS_STATIONS[activeBusStation].name+(d.platform?' · Gleis '+d.platform:'');
   document.getElementById('bus-next-time').textContent=hhmm;
@@ -1443,16 +1477,16 @@ function renderDepartureList(deps,now){
   const ts=new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
   container.innerHTML=`
     <div style="font-size:11px;color:var(--text3);padding:0 20px 8px">Stand: ${ts} Uhr · EFA-BW · Auto-Refresh alle 60s</div>
-    <div class="card" style="margin:0 16px;border-radius:14px;overflow:hidden">
+    <div class="card" style="margin:0 16px;overflow:hidden">
       ${lines.map((d,i)=>{
-        const dc=d.delayMin>1?'#9A3A3A':'#3A7A55';
+        const dc=d.delayMin>1?'var(--bad)':'var(--ok)';
         const dt=d.delayMin>1?`+${d.delayMin} min`:'pünktlich';
-        const difc=d.diffMin<=0?'#3A7A55':d.diffMin<=5?'#B08830':'var(--text2)';
+        const difc=d.diffMin<=0?'var(--ok)':d.diffMin<=5?'var(--warn)':'var(--text2)';
         const dift=d.diffMin<=0?'jetzt':d.diffMin===1?'1 Min':`${d.diffMin} Min`;
         const lc=getBusLineColor(d.line);
         const plat=d.platform?`<div style="font-size:11px;color:var(--text3)">Gleis ${d.platform}</div>`:'';
-        return `<div class="pickup-row" style="animation:cardIn 0.3s ease ${i*30}ms both">
-          <div style="width:44px;height:28px;border-radius:7px;background:${lc.bg};color:${lc.text};display:flex;align-items:center;justify-content:center;font-size:${d.line.length>5?'10':'12'}px;font-weight:700;flex-shrink:0">${d.line}</div>
+        return `<div class="pickup-row" style="animation:cardIn 0.3s ease ${i*30}ms both;padding-left:16px">
+          <div style="width:44px;height:28px;border-radius:8px;background:${lc.bg};color:${lc.text};display:flex;align-items:center;justify-content:center;font-size:${d.line.length>5?'10':'12'}px;font-weight:700;flex-shrink:0">${d.line}</div>
           <div class="pickup-info"><div class="pickup-type">${d.dest}</div>${plat}</div>
           <div style="text-align:right;flex-shrink:0;min-width:58px">
             <div style="font-size:18px;font-weight:600;font-variant-numeric:tabular-nums">${d.hhmm}</div>
@@ -1466,14 +1500,14 @@ function renderDepartureList(deps,now){
 
 function getBusLineColor(name){
   const n=(name||'').toUpperCase();
-  if(n.startsWith('RE')||n.startsWith('RB')||n.startsWith('MEX'))return{bg:'rgba(176,100,40,0.15)',text:'#B06428'};
-  if(n.startsWith('IC')||n.startsWith('EC'))return{bg:'rgba(154,58,58,0.15)',text:'#9A3A3A'};
-  if(n.startsWith('S'))return{bg:'rgba(58,122,85,0.15)',text:'#3A7A55'};
-  if(n.startsWith('SEV'))return{bg:'rgba(176,136,48,0.15)',text:'#B08830'};
+  if(n.startsWith('RE')||n.startsWith('RB')||n.startsWith('MEX'))return{bg:'rgba(154,100,47,0.14)',text:'#9A642F'};
+  if(n.startsWith('IC')||n.startsWith('EC'))return{bg:'rgba(140,59,46,0.14)',text:'#8C3B2E'};
+  if(n.startsWith('S'))return{bg:'rgba(74,107,79,0.16)',text:'#4A6B4F'};
+  if(n.startsWith('SEV'))return{bg:'rgba(154,107,47,0.16)',text:'#9A6B2F'};
   const num=parseInt((name||'').replace(/\D/g,''))||0;
-  if(num>=7900&&num<=7999)return{bg:'rgba(176,136,48,0.15)',text:'#B08830'};
-  if(num>=260&&num<=270)return{bg:'rgba(42,90,138,0.15)',text:'#2A5A8A'};
-  return{bg:'rgba(107,104,96,0.12)',text:'#6B6860'};
+  if(num>=7900&&num<=7999)return{bg:'rgba(154,107,47,0.16)',text:'#9A6B2F'};
+  if(num>=260&&num<=270)return{bg:'rgba(62,90,119,0.14)',text:'#3E5A77'};
+  return{bg:'rgba(107,103,94,0.12)',text:'#6B675E'};
 }
 
 function swapConStops(){
@@ -1501,7 +1535,7 @@ async function searchConnection(){
     if(data.error)throw new Error(data.error);
     renderConnections(data.trips||[],from,to);
   }catch(e){
-    container.innerHTML=`<div style="margin-top:12px;padding:14px 16px;background:rgba(154,58,58,0.1);border-radius:12px;font-size:13px;color:#9A3A3A">
+    container.innerHTML=`<div style="margin-top:12px;padding:14px 16px;border:1px solid rgba(140,59,46,0.3);border-radius:14px;font-size:13px;color:var(--bad)">
       <i class="ti ti-alert-circle" style="margin-right:6px"></i>${e.message}
     </div>`;
   }
@@ -1510,7 +1544,7 @@ async function searchConnection(){
 function renderConnections(trips,from,to){
   const container=document.getElementById('con-container');
   if(!trips.length){container.innerHTML='<div class="empty-state"><i class="ti ti-route-off"></i><p>Keine Verbindungen gefunden</p></div>';return;}
-  container.innerHTML=`<div class="card" style="margin-top:12px;border-radius:14px;overflow:hidden">
+  container.innerHTML=`<div class="card" style="margin-top:12px;overflow:hidden">
     ${trips.slice(0,5).map((trip,i)=>{
       const dep=new Date(trip.departure);
       const arr=new Date(trip.arrival);
@@ -1521,7 +1555,7 @@ function renderConnections(trips,from,to){
       const legs=trip.legs||[];
       const changes=Math.max(0,legs.length-1);
       const linesUsed=legs.map(l=>l.line||'').filter(Boolean);
-      return `<div class="pickup-row" style="animation:cardIn 0.35s ease ${i*60}ms both;cursor:pointer" onclick="toggleTripDetail(${i})">
+      return `<div class="pickup-row" style="animation:cardIn 0.35s ease ${i*60}ms both;cursor:pointer;padding-left:16px" onclick="toggleTripDetail(${i})">
         <div style="flex:1">
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
             <span style="font-size:18px;font-weight:600;font-variant-numeric:tabular-nums">${depStr}</span>
@@ -1530,8 +1564,8 @@ function renderConnections(trips,from,to){
             <span style="font-size:12px;color:var(--text3);margin-left:4px">${durStr}</span>
           </div>
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-            ${linesUsed.map(l=>{const lc=getBusLineColor(l);return`<span style="font-size:11px;font-weight:700;padding:2px 7px;border-radius:5px;background:${lc.bg};color:${lc.text}">${l}</span>`;}).join('<i class="ti ti-arrow-right" style="font-size:10px;color:var(--text3)"></i>')}
-            ${changes>0?`<span style="font-size:11px;color:var(--text3)">${changes} Umstieg${changes>1?'e':''}</span>`:'<span style="font-size:11px;color:#3A7A55">Direkt</span>'}
+            ${linesUsed.map(l=>{const lc=getBusLineColor(l);return`<span style="font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px;background:${lc.bg};color:${lc.text}">${l}</span>`;}).join('<i class="ti ti-arrow-right" style="font-size:10px;color:var(--text3)"></i>')}
+            ${changes>0?`<span style="font-size:11px;color:var(--text3)">${changes} Umstieg${changes>1?'e':''}</span>`:'<span style="font-size:11px;color:var(--ok)">Direkt</span>'}
           </div>
           <div id="trip-detail-${i}" style="display:none;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">
             ${legs.map(leg=>{
@@ -1590,6 +1624,10 @@ function fmtEventDate(e) {
   return dateStr + (e.timeStart ? ` · ${e.timeStart}${e.timeEnd ? '–' + e.timeEnd : ''} Uhr` : '');
 }
 
+function eventInitial(e){
+  return (e.title.replace('[DEMO] ','').trim().charAt(0)||'E').toUpperCase();
+}
+
 function renderEventsList() {
   const list = document.getElementById('events-list');
   if (!list) return;
@@ -1601,11 +1639,11 @@ function renderEventsList() {
   list.innerHTML = filtered.map((e, i) => {
     const days = daysUntil(e.date);
     const urgency = days === 0 ? 'Heute' : days === 1 ? 'Morgen' : days < 0 ? 'Vergangen' : `in ${days} Tagen`;
-    const urgencyColor = days < 0 ? 'var(--text3)' : days <= 1 ? '#3A7A55' : days <= 7 ? '#B08830' : 'var(--text3)';
+    const urgencyColor = days < 0 ? 'var(--text3)' : days <= 1 ? 'var(--ok)' : days <= 7 ? 'var(--warn)' : 'var(--text3)';
     const imgHtml = e.image
       ? `<img class="event-img" src="${e.image}" alt="${e.title}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-        + `<div class="event-img-placeholder" style="display:none">🎉</div>`
-      : `<div class="event-img-placeholder">🎉</div>`;
+        + `<div class="event-img-placeholder" style="display:none">${eventInitial(e)}</div>`
+      : `<div class="event-img-placeholder">${eventInitial(e)}</div>`;
     return `<div class="event-card anim-card" style="animation-delay:${i*0.06}s" onclick="${e.website ? `window.open('${e.website}','_blank')` : ''}">
       ${imgHtml}
       <div class="event-body">
@@ -1620,7 +1658,7 @@ function renderEventsList() {
         <div class="event-meta-row">
           <div class="event-meta-item"><i class="ti ti-calendar"></i>${fmtEventDate(e)}</div>
           <div class="event-meta-item"><i class="ti ti-map-pin"></i>${e.location}</div>
-          ${e.website ? `<div class="event-meta-item"><i class="ti ti-world"></i><span style="color:var(--hero);text-decoration:underline">Mehr Infos</span></div>` : ''}
+          ${e.website ? `<div class="event-meta-item"><i class="ti ti-world"></i><span style="color:var(--accent);text-decoration:underline">Mehr Infos</span></div>` : ''}
         </div>
       </div>
     </div>`;
@@ -1644,16 +1682,16 @@ function renderHomeEventWidget() {
   const urgency = days === 0 ? 'Heute' : days === 1 ? 'Morgen' : `in ${days} Tagen`;
   const imgHtml = e.image
     ? `<img class="event-home-img" src="${e.image}" alt="${e.title}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-      + `<div class="event-home-img-placeholder" style="display:none">🎉</div>`
-    : `<div class="event-home-img-placeholder">🎉</div>`;
+      + `<div class="event-home-img-placeholder" style="display:none">${eventInitial(e)}</div>`
+    : `<div class="event-home-img-placeholder">${eventInitial(e)}</div>`;
   wrap.innerHTML = `<div class="event-home-card" onclick="switchTab('events')">
     ${imgHtml}
     <div class="event-home-body">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
         <span style="font-size:10px;font-weight:600;color:var(--hero-muted);text-transform:uppercase;letter-spacing:0.07em">${urgency}</span>
-        <span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;background:${e.isFree?'rgba(58,122,85,0.25)':'rgba(176,136,48,0.25)'};color:${e.isFree?'#8ECBA8':'#D4A84B'}">${e.isFree?'Kostenlos':e.price||'Eintritt'}</span>
+        <span style="font-size:11px;font-weight:600;padding:2px 9px;border-radius:999px;border:1px solid rgba(255,255,255,0.25);color:#E8EFE8">${e.isFree?'Kostenlos':e.price||'Eintritt'}</span>
       </div>
-      <div style="font-size:15px;font-weight:600;color:var(--hero-text);margin-bottom:3px;line-height:1.3">${e.title.replace('[DEMO] ','')}</div>
+      <div style="font-family:var(--font-display);font-size:16px;font-weight:520;color:var(--hero-text);margin-bottom:3px;line-height:1.3">${e.title.replace('[DEMO] ','')}</div>
       <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--hero-muted)">
         <i class="ti ti-map-pin" style="font-size:12px"></i>${e.location}
       </div>
