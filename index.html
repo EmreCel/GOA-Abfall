@@ -15,26 +15,16 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..600&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* ════════════════════════════════════════════
-   DESIGN SYSTEM — "Süddeutsch Editorial"
-   Papier · Tinte · Tannengrün
-   Regeln: kein #000/#FFF, keine Gradients auf
-   Flächen, keine farbigen Badge-Hintergründe,
-   Hairlines statt Schatten (Schatten NUR für
-   Schwebendes: Tab-Insel, Modals).
-   ════════════════════════════════════════════ */
 :root {
-  --bg:        #F6F4EE;   /* warmes Papier */
-  --bg2:       #FDFCF9;   /* Karten */
+  --bg:        #F6F4EE;
+  --bg2:       #FDFCF9;
   --bg3:       #EDEAE2;
   --bg4:       #E2DED4;
-  --text:      #1E1C17;   /* warme Tinte */
+  --text:      #1E1C17;
   --text2:     #5C584E;
   --text3:     #8B867A;
   --border:    rgba(30,28,23,0.10);
   --border2:   rgba(30,28,23,0.16);
-
-  /* Identitätsfarbe: Tannengrün */
   --hero:      #2E4639;
   --hero2:     #3A5547;
   --hero-deep: #22362C;
@@ -43,17 +33,12 @@
   --hero-dim:  #6F8475;
   --accent:      var(--hero);
   --accent-tint: #E8EDE7;
-
-  /* Funktional, gedeckt */
   --ok:   #4A6B4F;
   --warn: #9A6B2F;
   --bad:  #8C3B2E;
-
   --font-display: 'Fraunces', Georgia, serif;
   --font-ui:      'Instrument Sans', system-ui, sans-serif;
-
   --shadow-float: 0 8px 24px rgba(30,28,23,0.12), 0 2px 6px rgba(30,28,23,0.06);
-
   --nav-h:    78px;
   --safe-b:   env(safe-area-inset-bottom,0px);
 }
@@ -79,8 +64,6 @@
   --bad:  #D9A399;
   --shadow-float: 0 8px 24px rgba(0,0,0,0.45), 0 2px 6px rgba(0,0,0,0.3);
 }
-
-/* ── RESET ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{height:100%}
 body{background:var(--bg);color:var(--text);font-family:var(--font-ui);font-size:15px;line-height:1.5;min-height:100%;max-width:430px;margin:0 auto;overflow-x:hidden}
@@ -88,8 +71,6 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 input,select{font-family:inherit}
 a{color:inherit;text-decoration:none}
 .num{font-variant-numeric:tabular-nums}
-
-/* ── ANIMATIONS ── */
 @keyframes fadeSlideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes countUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
@@ -101,8 +82,7 @@ a{color:inherit;text-decoration:none}
 @keyframes greetFade{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
 @keyframes cardIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes viewIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-@keyframes dotSlide{from{left:0}to{left:var(--sun-pos,60%)}}
-
+@keyframes spin{to{transform:rotate(360deg)}}
 .anim-card{opacity:0;animation:cardIn 0.4s ease forwards}
 .anim-view{animation:viewIn 0.2s ease forwards}
 .weather-icon-sun{display:inline-block;animation:sunFloat 3s ease-in-out infinite}
@@ -110,8 +90,7 @@ a{color:inherit;text-decoration:none}
 .weather-icon-rain i{animation:rainDrop 1.2s ease-in-out infinite}
 .greeting-text{display:inline-block;animation:greetFade 0.4s ease forwards}
 .flip-num{animation:flip 0.3s ease}
-
-/* ── HEADER ── */
+.spin{display:inline-block;animation:spin 0.8s linear infinite}
 .app-header{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--border);padding:52px 20px 14px}
 .header-inner{display:flex;align-items:flex-end;justify-content:space-between}
 .header-sub{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:4px}
@@ -120,8 +99,6 @@ a{color:inherit;text-decoration:none}
 .header-actions{display:flex;gap:8px}
 .icon-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--border2);background:transparent;color:var(--text2);display:flex;align-items:center;justify-content:center;font-size:17px;transition:background 0.15s}
 .icon-btn:active{background:var(--bg3)}
-
-/* ── TAB ISLAND ── */
 .tab-island{position:fixed;bottom:calc(14px + var(--safe-b));left:50%;transform:translateX(-50%);width:calc(100% - 28px);max-width:402px;display:flex;align-items:center;justify-content:space-between;gap:2px;padding:6px;border-radius:28px;background:rgba(253,252,249,0.82);-webkit-backdrop-filter:blur(20px) saturate(1.4);backdrop-filter:blur(20px) saturate(1.4);border:1px solid var(--border);box-shadow:var(--shadow-float);z-index:100}
 [data-theme="dark"] .tab-island{background:rgba(30,27,22,0.85)}
 .nav-item{display:flex;align-items:center;justify-content:center;gap:6px;height:44px;min-width:42px;padding:0 8px;border-radius:999px;background:transparent;color:var(--text3);font-size:12.5px;font-weight:600;letter-spacing:0.01em;cursor:pointer;transition:background .35s cubic-bezier(.3,1.4,.4,1),color .25s ease,padding .35s cubic-bezier(.3,1.4,.4,1)}
@@ -130,12 +107,8 @@ a{color:inherit;text-decoration:none}
 .nav-item.active{background:var(--accent);color:var(--hero-text);padding:0 14px}
 .nav-item.active .nav-label{max-width:80px;opacity:1}
 .nav-item:active{transform:scale(0.94)}
-
-/* ── VIEWS ── */
 .view{display:none;padding:0 0 calc(var(--nav-h) + var(--safe-b) + 16px)}
 .view.active{display:block}
-
-/* ── HERO WEATHER CARD ── */
 .weather-hero{background:var(--hero);border-radius:24px;padding:20px;margin:14px 16px 10px;position:relative;overflow:hidden}
 .weather-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,0.03)}
 .wh-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
@@ -150,8 +123,6 @@ a{color:inherit;text-decoration:none}
 .sun-track{flex:1;height:4px;background:var(--hero2);border-radius:2px;position:relative;overflow:visible}
 .sun-track-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#C9A85C,#9BB39B);transition:width 1s ease}
 .sun-dot{width:8px;height:8px;background:#D9C268;border-radius:50%;position:absolute;top:-2px;transform:translateX(-50%);transition:left 1.2s ease}
-
-/* ── WEEK ROW ── */
 .week-row{display:flex;gap:5px;padding:0 16px;margin-bottom:12px}
 .wday{flex:1;border-radius:14px;padding:8px 3px;text-align:center;background:transparent;border:1px solid var(--border);cursor:pointer;transition:all 0.2s}
 .wday.today{background:var(--hero);border-color:var(--hero)}
@@ -161,17 +132,11 @@ a{color:inherit;text-decoration:none}
 .wday.today .wday-name{color:rgba(232,240,233,0.65)}
 .wday.today .wday-icon{color:#DCE8DD}
 .wday.today .wday-temp{color:var(--hero-text)}
-
-/* ── SECTION LABEL ── */
 .section-label{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:0.09em;text-transform:uppercase;padding:16px 20px 8px}
-
-/* ── CARDS: Hairline statt Schatten ── */
 .card{background:var(--bg2);border-radius:20px;border:1px solid var(--border);overflow:hidden}
 .card-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border)}
 .card-label{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase}
 .card-meta{font-size:12px;color:var(--text3);font-variant-numeric:tabular-nums}
-
-/* ── MÜLL ROWS ── */
 .muell-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border)}
 .muell-row:last-child{border-bottom:none}
 .muell-row.done{opacity:0.35}
@@ -185,8 +150,6 @@ a{color:inherit;text-decoration:none}
 .check-btn.checked{background:var(--accent);border-color:var(--accent);color:var(--hero-text);animation:checkBounce 0.3s ease}
 .delete-btn{width:26px;height:26px;border-radius:50%;background:transparent;color:var(--text3);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;opacity:0.4;transition:opacity 0.15s}
 .delete-btn:active{opacity:1;color:var(--bad)}
-
-/* ── PICKUP FULL LIST ── */
 .pickup-accent{position:absolute;left:0;top:0;bottom:0;width:3px}
 .pickup-row{display:flex;align-items:center;gap:12px;padding:12px 16px 12px 18px;background:var(--bg2);border-bottom:1px solid var(--border);position:relative;overflow:hidden;transition:opacity 0.2s}
 .pickup-row:last-child{border-bottom:none}
@@ -196,79 +159,63 @@ a{color:inherit;text-decoration:none}
 .pickup-type{font-size:14px;font-weight:500}
 .pickup-date{font-size:12px;color:var(--text3);margin-top:1px}
 .badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;border:1px solid var(--border2);background:transparent;color:var(--text2);flex-shrink:0}
-
-/* ── STATS ── */
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:14px 16px}
 .stat-box{text-align:center}
 .stat-num{font-family:var(--font-display);font-size:24px;font-weight:500;font-variant-numeric:tabular-nums}
 .stat-lbl{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-top:1px}
-
-/* ── FILTER CHIPS ── */
 .chip-bar{display:flex;gap:6px;padding:12px 16px;overflow-x:auto;scrollbar-width:none}
 .chip-bar::-webkit-scrollbar{display:none}
 .chip{flex-shrink:0;padding:6px 14px;border-radius:999px;font-size:12px;font-weight:500;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;transition:all 0.15s}
 .chip.active{background:var(--accent);color:var(--hero-text);border-color:var(--accent)}
 .month-label{font-family:var(--font-display);font-size:15px;font-weight:500;color:var(--text2);letter-spacing:-0.01em;padding:16px 20px 6px}
-
-/* ── SPRIT ── */
 .fuel-bar{display:flex;gap:6px;padding:12px 16px}
 .fuel-chip{flex:1;text-align:center;padding:8px 4px;border-radius:999px;font-size:12px;font-weight:600;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;transition:all 0.15s}
 .fuel-chip.active{background:var(--accent);color:var(--hero-text);border-color:var(--accent)}
 .sprit-price-big{font-family:var(--font-display);font-size:21px;font-weight:500;font-variant-numeric:tabular-nums}
 .rank-dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
-
-/* ── WSH ── */
 .wsh-status-open{font-size:12px;font-weight:500;color:var(--ok)}
 .wsh-status-closed{font-size:12px;font-weight:500;color:var(--bad)}
 .wsh-hours{font-size:11px;color:var(--text3);margin-top:1px}
 .wsh-detail-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
 .wsh-detail-row:last-child{border-bottom:none}
 .status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:1px}
-
-/* ── QUICK LINKS ── */
 .quicklinks{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 16px}
 .ql-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:background 0.15s}
 .ql-card:active{background:var(--bg3)}
 .ql-icon{font-size:19px;color:var(--text3);line-height:1}
 .ql-label{font-size:13px;font-weight:600;color:var(--text)}
 .ql-sub{font-size:11px;color:var(--text3);margin-top:1px}
-
-/* ── ONBOARDING ── */
 .onboarding-banner{margin:14px 16px;padding:14px 16px;background:var(--hero);border-radius:18px;display:flex;gap:12px;align-items:flex-start}
 .onboarding-banner.hidden{display:none}
 .onboarding-title{font-family:var(--font-display);font-size:15px;font-weight:520;color:var(--hero-text);margin-bottom:3px}
 .onboarding-sub{font-size:12px;color:var(--hero-muted);line-height:1.5}
 .onboarding-btn{margin-top:10px;background:rgba(255,255,255,0.12);color:var(--hero-text);border:1px solid rgba(255,255,255,0.18);border-radius:999px;padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:background 0.15s}
 .onboarding-btn:active{background:rgba(255,255,255,0.22)}
-
-/* ── NOTIF ── */
 .notif-banner{margin:12px 16px;padding:12px 16px;background:var(--hero);border-radius:16px;font-size:13px;color:var(--hero-text);cursor:pointer;display:flex;align-items:center;gap:10px;font-weight:500}
 .notif-banner.hidden{display:none}
-
-/* ── BUS ── */
 .coming-soon{margin:40px 20px;text-align:center;padding:40px 20px;background:var(--bg2);border-radius:20px;border:1px solid var(--border)}
 .coming-soon-icon{width:56px;height:56px;border-radius:16px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 16px;color:var(--text3)}
-
-/* ── FORMS ── */
 .form-section{margin:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:18px}
 .form-section h3{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:14px}
 .form-row{margin-bottom:10px}
 .form-label{font-size:12px;font-weight:500;color:var(--text2);margin-bottom:5px;display:block}
 select,input[type=date],input[type=text],input[type=password],input[type=time]{width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:12px;color:var(--text);padding:10px 14px;font-size:14px;font-family:var(--font-ui);outline:none;-webkit-appearance:none;appearance:none}
 select:focus,input:focus{border-color:var(--accent)}
+select:disabled{opacity:0.6}
 select option{background:var(--bg2)}
 .btn-primary{width:100%;background:var(--accent);color:var(--hero-text);border:none;border-radius:14px;padding:13px;font-size:14px;font-weight:600;font-family:var(--font-ui);cursor:pointer;transition:background 0.15s}
 .btn-primary:active{background:var(--hero-deep)}
+.btn-primary:disabled{opacity:0.6;cursor:default}
 .btn-secondary{width:100%;background:transparent;color:var(--text);border:1px solid var(--border2);border-radius:14px;padding:11px;font-size:13px;font-weight:500;font-family:var(--font-ui);cursor:pointer;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px}
 .btn-sm{background:transparent;color:var(--text);border:1px solid var(--border2);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:500;font-family:var(--font-ui);cursor:pointer}
 .btn-sm-green{background:var(--accent-tint);color:var(--accent);border:none;border-radius:999px;padding:9px 14px;font-size:13px;font-weight:600;font-family:var(--font-ui);cursor:pointer;white-space:nowrap}
 [data-theme="dark"] .btn-sm-green{color:var(--ok)}
 .key-row{display:flex;gap:8px}.key-row input{flex:1}
+.select-wrap{position:relative}
+.select-wrap > i{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--text3);pointer-events:none}
 .ics-drop{border:1.5px dashed var(--border2);border-radius:14px;padding:20px;text-align:center;cursor:pointer;transition:all 0.15s;margin-top:8px}
 .ics-drop:hover{border-color:var(--accent);background:var(--accent-tint)}
 #ics-file-input{display:none}
-
-/* ── SETTINGS ── */
 .settings-section{margin:0 16px 4px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;overflow:hidden}
 .settings-row{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border);gap:12px}
 .settings-row:last-child{border-bottom:none}
@@ -283,8 +230,6 @@ select option{background:var(--bg2)}
 .toggle-track::after{content:'';position:absolute;left:3px;top:50%;transform:translateY(-50%);width:18px;height:18px;border-radius:50%;background:var(--bg2);box-shadow:0 1px 3px rgba(0,0,0,0.15);transition:all 0.2s}
 .toggle input:checked+.toggle-track::after{left:calc(100% - 21px);background:#FDFCF9}
 select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
-
-/* ── MODAL ── */
 .modal-overlay{position:fixed;inset:0;background:rgba(20,18,14,0.45);z-index:300;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s}
 .modal-overlay.open{opacity:1;pointer-events:all}
 .modal-sheet{background:var(--bg2);border-radius:26px 26px 0 0;padding:20px 20px 32px;width:100%;max-width:430px;max-height:80vh;overflow-y:auto;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1);box-shadow:var(--shadow-float)}
@@ -292,8 +237,6 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
 .modal-handle{width:36px;height:4px;background:var(--bg4);border-radius:2px;margin:0 auto 16px}
 .modal-title{font-family:var(--font-display);font-size:19px;font-weight:520;letter-spacing:-0.01em;margin-bottom:4px}
 .modal-sub{font-size:13px;color:var(--text3);margin-bottom:16px}
-
-/* ── TOAST ── */
 .toast{position:fixed;bottom:calc(var(--nav-h) + var(--safe-b) + 16px);left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 20px;border-radius:999px;font-size:13px;font-weight:500;z-index:200;opacity:0;transition:opacity 0.2s;white-space:nowrap;pointer-events:none;box-shadow:var(--shadow-float)}
 .toast.show{opacity:1}
 .empty-state{text-align:center;padding:40px 24px;color:var(--text3)}
@@ -301,8 +244,6 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
 .empty-state p{font-size:14px;line-height:1.6}
 .install-hint{margin:0 16px 14px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;font-size:13px;color:var(--text2);line-height:1.6;display:none}
 .install-hint strong{color:var(--text);font-weight:600}
-
-/* ── EVENTS ── */
 .event-card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;overflow:hidden;margin:0 16px 12px;cursor:pointer;transition:transform 0.15s}
 .event-card:active{transform:scale(0.985)}
 .event-img{width:100%;height:160px;object-fit:cover;display:block;background:var(--bg3)}
@@ -320,15 +261,11 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
 .event-meta-row{display:flex;flex-direction:column;gap:4px}
 .event-meta-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text3)}
 .event-meta-item i{font-size:13px;flex-shrink:0}
-
-/* Event Home Widget */
 .event-home-card{background:var(--hero);border-radius:20px;margin:0 16px 12px;overflow:hidden;cursor:pointer;transition:opacity 0.15s}
 .event-home-card:active{opacity:0.85}
 .event-home-img{width:100%;height:100px;object-fit:cover;display:block}
 .event-home-img-placeholder{width:100%;height:100px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:34px;color:rgba(255,255,255,0.45);background:var(--hero2)}
 .event-home-body{padding:12px 14px}
-
-/* Event filter bar */
 .event-filter-bar{display:flex;gap:6px;padding:12px 16px 8px;overflow-x:auto;scrollbar-width:none}
 .event-filter-bar::-webkit-scrollbar{display:none}
 </style>
@@ -355,12 +292,11 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
   <i class="ti ti-calendar-plus" style="font-size:22px;color:var(--hero-muted);flex-shrink:0;margin-top:1px"></i>
   <div>
     <div class="onboarding-title">Abfuhrtermine laden</div>
-    <div class="onboarding-sub">Lade einmalig deinen GOA-Kalender für Abholtermine und Erinnerungen.</div>
-    <button class="onboarding-btn" onclick="switchTab('mehr');setTimeout(()=>{document.querySelector('.ics-drop')?.scrollIntoView({behavior:'smooth'})},200)">Jetzt einrichten</button>
+    <div class="onboarding-sub">Wähle einmalig deinen Ort und deine Straße — die Termine kommen direkt vom GOA-Kalender.</div>
+    <button class="onboarding-btn" onclick="switchTab('mehr');setTimeout(()=>{document.getElementById('goa-kommune')?.scrollIntoView({behavior:'smooth',block:'center'})},200)">Jetzt einrichten</button>
   </div>
 </div>
 
-<!-- ═══ HOME ═══ -->
 <div id="view-home" class="view active">
   <div id="weather-hero-wrap"></div>
   <div class="week-row" id="week-row-home"></div>
@@ -370,7 +306,6 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
   </div>
   <div class="section-label" id="home-event-label">Nächstes Event</div>
   <div id="home-event-wrap"></div>
-
   <div class="section-label" id="home-sprit-label">Spritpreise</div>
   <div class="card" style="margin:0 16px 12px" id="home-sprit-card">
     <div class="card-header">
@@ -386,7 +321,6 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
       <div style="padding:14px 16px;font-size:13px;color:var(--text3)">Tippe ↻ zum Laden</div>
     </div>
   </div>
-
   <div class="section-label">Schnellzugriff</div>
   <div class="quicklinks" style="margin-bottom:16px">
     <a href="https://www.goa-online.de/leistungen/abfuhrkalender/abfuhrkalender-fuer-privathaushalte/" target="_blank" class="ql-card">
@@ -406,7 +340,6 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
       <div><div class="ql-label">Wertstoffhof</div><div class="ql-sub">In Maps öffnen</div></div>
     </a>
   </div>
-  <!-- Wertstoffhof -->
   <div class="card" style="margin:0 16px 16px;cursor:pointer" onclick="openWSHModal()">
     <div style="display:flex;align-items:center;gap:12px;padding:14px 16px">
       <div style="flex:1">
@@ -419,7 +352,6 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
   </div>
 </div>
 
-<!-- ═══ MÜLL ═══ -->
 <div id="view-muell" class="view">
   <div class="chip-bar" id="filter-bar"></div>
   <div id="muell-stats"></div>
@@ -428,7 +360,6 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
   <div id="muell-past"></div>
 </div>
 
-<!-- ═══ SPRIT ═══ -->
 <div id="view-sprit" class="view">
   <div style="display:flex;align-items:center;gap:8px;padding:12px 16px 0">
     <div class="fuel-bar" style="flex:1;padding:0;margin:0">
@@ -444,10 +375,7 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
   <div id="sprit-updated" style="font-size:11px;color:var(--text3);text-align:center;padding:8px 16px 0"></div>
 </div>
 
-<!-- ═══ BUS ═══ -->
 <div id="view-bus" class="view">
-
-  <!-- Next departure banner -->
   <div id="bus-next-banner" style="display:none;margin:12px 16px 0;padding:12px 16px;background:var(--hero);border-radius:18px">
     <div style="font-size:10px;font-weight:600;color:var(--hero-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Nächste Abfahrt</div>
     <div id="bus-next-content" style="display:flex;align-items:center;gap:10px">
@@ -462,14 +390,10 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
       </div>
     </div>
   </div>
-
-  <!-- Mode tabs -->
   <div style="display:flex;gap:0;margin:12px 16px 0;background:var(--bg3);border-radius:999px;padding:3px">
     <button id="bus-mode-dep" onclick="setBusMode('dep')" style="flex:1;padding:7px;border-radius:999px;font-size:13px;font-weight:500;font-family:inherit;background:var(--bg2);color:var(--text);border:none;cursor:pointer;transition:all 0.2s">Abfahrten</button>
     <button id="bus-mode-con" onclick="setBusMode('con')" style="flex:1;padding:7px;border-radius:999px;font-size:13px;font-weight:500;font-family:inherit;background:transparent;color:var(--text3);border:none;cursor:pointer;transition:all 0.2s">Verbindung</button>
   </div>
-
-  <!-- ── ABFAHRTEN ── -->
   <div id="bus-dep-panel">
     <div style="padding:10px 16px 6px;display:flex;align-items:center;justify-content:space-between">
       <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em" id="bus-station-name">Mögglingen Bahnhof</div>
@@ -501,8 +425,6 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
       <div class="empty-state"><i class="ti ti-loader-2" style="font-size:28px"></i><p style="font-size:13px">Lade Abfahrten…</p></div>
     </div>
   </div>
-
-  <!-- ── VERBINDUNG ── -->
   <div id="bus-con-panel" style="display:none;padding:12px 16px 0">
     <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
       <div style="position:relative">
@@ -532,7 +454,6 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
   </div>
 </div>
 
-<!-- ═══ EVENTS ═══ -->
 <div id="view-events" class="view">
   <div class="event-filter-bar" id="event-filter-bar">
     <button class="chip active" id="efchip-alle" onclick="setEventFilter('alle')">Alle</button>
@@ -556,10 +477,47 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
   </div>
 </div>
 
-<!-- ═══ MEHR ═══ -->
 <div id="view-mehr" class="view">
+
   <div class="form-section" style="margin-top:16px">
+    <h3>Abfuhrtermine laden</h3>
+    <div style="font-size:12px;color:var(--text3);line-height:1.5;margin:-6px 0 14px">Wähle deinen Ort und deine Straße — die Termine kommen direkt vom GOA-Kalender. Funktioniert für alle Gemeinden im Ostalbkreis.</div>
+    <div class="form-row">
+      <label class="form-label">Ort / Gemeinde</label>
+      <div class="select-wrap">
+        <select id="goa-kommune" onchange="onGoaKommuneChange()">
+          <option value="">Lädt Orte…</option>
+        </select>
+        <i class="ti ti-chevron-down"></i>
+      </div>
+    </div>
+    <div class="form-row" id="goa-strasse-row" style="display:none">
+      <label class="form-label">Straße</label>
+      <div class="select-wrap">
+        <select id="goa-strasse" onchange="onGoaStrasseChange()">
+          <option value="">Bitte wählen…</option>
+        </select>
+        <i class="ti ti-chevron-down"></i>
+      </div>
+    </div>
+    <div class="form-row" id="goa-hnr-row" style="display:none">
+      <label class="form-label">Hausnummer</label>
+      <div class="select-wrap">
+        <select id="goa-hnr" onchange="onGoaHnrChange()">
+          <option value="">Bitte wählen…</option>
+        </select>
+        <i class="ti ti-chevron-down"></i>
+      </div>
+    </div>
+    <button class="btn-primary" id="goa-load-btn" onclick="loadTermineFromAPI()" style="display:none">
+      <i class="ti ti-calendar-down" style="margin-right:6px;vertical-align:-1px"></i>Termine laden
+    </button>
+    <div id="goa-saved-hint" style="display:none;font-size:12px;color:var(--text3);margin-top:10px"></div>
+  </div>
+
+  <div class="form-section">
     <h3>ICS importieren</h3>
+    <div style="font-size:12px;color:var(--text3);line-height:1.5;margin:-6px 0 4px">Alternativ: ICS-Datei manuell von goa-online.de hochladen.</div>
     <div class="ics-drop" onclick="document.getElementById('ics-file-input').click()">
       <i class="ti ti-upload" style="font-size:22px;color:var(--text3);margin-bottom:6px;display:block"></i>
       <div style="font-size:13px;color:var(--text2)">ICS-Datei von goa-online.de hochladen</div>
@@ -567,22 +525,24 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
     <input type="file" id="ics-file-input" accept=".ics">
   </div>
   <div class="form-section">
-    <h3>Termin hinzufügen</h3>
+    <h3>Termin manuell hinzufügen</h3>
     <div class="form-row"><label class="form-label">Abfallart</label>
-      <select id="add-type">
-        <option value="restmuell">Hausmüll (HM)</option>
-        <option value="bio">Bioabfälle (Bio)</option>
-        <option value="papier">Blaue Tonne (BT)</option>
-        <option value="gelb">Gelber Sack (GS)</option>
-        <option value="gartentonne">Gartentonne (GT)</option>
-        <option value="gruenabfuhr">Grünabfuhr (GA)</option>
-        <option value="altpapier_verein">AV Holsammlung (AVH)</option>
-        <option value="christbaum">Christbaumsammlung (CS)</option>
-      </select>
+      <div class="select-wrap">
+        <select id="add-type">
+          <option value="restmuell">Hausmüll (HM)</option>
+          <option value="bio">Bioabfälle (Bio)</option>
+          <option value="papier">Blaue Tonne (BT)</option>
+          <option value="gelb">Gelber Sack (GS)</option>
+          <option value="gartentonne">Gartentonne (GT)</option>
+          <option value="gruenabfuhr">Grünabfuhr (GA)</option>
+          <option value="altpapier_verein">AV Holsammlung (AVH)</option>
+          <option value="christbaum">Christbaumsammlung (CS)</option>
+        </select>
+        <i class="ti ti-chevron-down"></i>
+      </div>
     </div>
     <div class="form-row"><label class="form-label">Datum</label><input type="date" id="add-date"></div>
     <button class="btn-primary" onclick="addPickup()">Termin hinzufügen</button>
-    <button class="btn-secondary" onclick="loadGOAData()"><i class="ti ti-calendar-plus"></i>Alle GOA-Termine 2026/2027 laden</button>
   </div>
   <div class="section-label">Erinnerungen</div>
   <div class="settings-section">
@@ -643,7 +603,6 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
   </div>
 </div>
 
-<!-- TAB ISLAND -->
 <nav class="tab-island">
   <button class="nav-item active" id="nav-home" onclick="switchTab('home')"><i class="ti ti-home-2"></i><span class="nav-label">Start</span></button>
   <button class="nav-item" id="nav-muell" onclick="switchTab('muell')"><i class="ti ti-trash"></i><span class="nav-label">Abfall</span></button>
@@ -653,7 +612,6 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
   <button class="nav-item" id="nav-mehr" onclick="switchTab('mehr')"><i class="ti ti-dots"></i><span class="nav-label">Mehr</span></button>
 </nav>
 
-<!-- WSH MODAL -->
 <div class="modal-overlay" id="wsh-modal" onclick="closeWSHModal(event)">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
@@ -676,20 +634,6 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════
-// WICHTIG: In dieser Datei stehen ALLE Deklarationen
-// (const/let/function) zuerst. Der Init-Block steht
-// als init() GANZ AM ENDE des Scripts. Niemals
-// Render-/Init-Aufrufe mitten ins Script setzen —
-// das führt zu ReferenceErrors (Temporal Dead Zone)
-// und killt die komplette App.
-// ══════════════════════════════════════════
-
-// ══════════════════════════════════════════
-// TYPES — Farben sind FUNKTIONALE Tonnen-Codes,
-// bewusst gedeckt. Nur als 3px-Streifen + Icon-
-// Farbe verwenden, NIE als Flächen-Hintergrund.
-// ══════════════════════════════════════════
 const TYPES = {
   restmuell:       {label:'Hausmüll',          kuerzel:'HM',  icon:'ti-circle-dashed',  color:'#6B675E'},
   bio:             {label:'Bioabfälle',         kuerzel:'Bio', icon:'ti-plant',          color:'#4A6B4F'},
@@ -706,7 +650,6 @@ const GOA_TERMINE = [{"type":"bio","date":"2026-03-07"},{"type":"bio","date":"20
 const WSH_SOMMER = {weekday:'07:30–18:00',sa:'08:00–13:00'};
 const WSH_WINTER = {weekday:'07:30–17:00',sa:'08:00–13:00'};
 
-// ── STORAGE ──
 const DB_NAME='moeggling-app',DB_VER=1,DB_STORE='kv';
 let _db=null;
 function openDB(){return new Promise((res,rej)=>{if(_db){res(_db);return;}const r=indexedDB.open(DB_NAME,DB_VER);r.onupgradeneeded=e=>e.target.result.createObjectStore(DB_STORE);r.onsuccess=e=>{_db=e.target.result;res(_db);};r.onerror=()=>rej(r.error);});}
@@ -715,9 +658,6 @@ async function dbGet(key,fallback){try{const db=await openDB();return new Promis
 function lsGet(key,fallback){try{const v=localStorage.getItem(key);return v!==null?JSON.parse(v):fallback;}catch(e){return fallback;}}
 function storageSet(key,value){try{localStorage.setItem(key,JSON.stringify(value));}catch(e){}dbSet(key,value);}
 
-// ══════════════════════════════════════════
-// STATE (alle Variablen ZENTRAL hier)
-// ══════════════════════════════════════════
 let pickups     = lsGet('pickups',[]);
 let settings    = lsGet('settings',{reminderDays:2,reminderTime:'08:00',notificationsEnabled:false});
 let hiddenTypes = lsGet('hiddenTypes',[]);
@@ -730,15 +670,18 @@ let spritCache  = null;
 let weatherData = null;
 let activeEventFilter = 'alle';
 
+let goaAddress  = lsGet('goaAddress',null);
+let goaKommunen = null;
+
 const GREETINGS=['Hallo','Merhaba','Servus','Grüß Gott','Guten Tag','Hey','Willkommen','Salut'];
 let greetIdx=0;
 let scheduledTimers=[];
 
 const WORKER_URL = 'https://moegglingen-bus.emre18celik.workers.dev';
+const GOA_WORKER = 'https://goa-abfall.emre18celik.workers.dev';
 
 const TAB_TITLES={home:'Start',muell:'Abfall',sprit:'Spritpreise',bus:'Bus & Bahn',events:'Events',mehr:'Mehr'};
 
-// Bus-State
 const BUS_STATIONS=[
   {key:'bahnhof',       name:'Mögglingen Bahnhof',     type:'train'},
   {key:'bahnhof_bus',   name:'Bahnhof (Bussteig)',      type:'bus'},
@@ -758,41 +701,11 @@ let autoRefreshTimer=null;
 let lastRefreshTime=null;
 const DIRECTIONS={aalen:['aalen'],schorndorf:['schorndorf','waiblingen'],stuttgart:['stuttgart','waiblingen','schorndorf'],gmuend:['gmünd','gmuend','schwäbisch']};
 
-// Events-Daten
 const EVENTS = [
-  {
-    id: 1,
-    title: '[DEMO] Sommerfest Mögglingen 2026',
-    desc: 'Das jährliche Sommerfest auf dem Rathausplatz mit Live-Musik, Essen & Trinken und einem bunten Rahmenprogramm für die ganze Familie.',
-    date: '2026-07-19',
-    timeStart: '14:00',
-    timeEnd: '23:00',
-    location: 'Rathausplatz Mögglingen',
-    category: 'kultur',
-    isFree: true,
-    price: null,
-    website: 'https://www.moegglingen.de',
-    image: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=80',
-  },
-  {
-    id: 2,
-    title: '[DEMO] Flohmarkt Ostalbkreis',
-    desc: 'Großer Flohmarkt mit über 200 Ständen. Stöbern, handeln und entdecken — von Vintage-Möbeln bis Elektrokleinkram ist alles dabei.',
-    date: '2026-08-02',
-    timeStart: '08:00',
-    timeEnd: '16:00',
-    location: 'Messeplatz Schwäbisch Gmünd',
-    category: 'markt',
-    isFree: false,
-    price: '2,00 €',
-    website: null,
-    image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=80',
-  }
+  {id:1,title:'[DEMO] Sommerfest Mögglingen 2026',desc:'Das jährliche Sommerfest auf dem Rathausplatz mit Live-Musik, Essen & Trinken und einem bunten Rahmenprogramm für die ganze Familie.',date:'2026-07-19',timeStart:'14:00',timeEnd:'23:00',location:'Rathausplatz Mögglingen',category:'kultur',isFree:true,price:null,website:'https://www.moegglingen.de',image:'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=80'},
+  {id:2,title:'[DEMO] Flohmarkt Ostalbkreis',desc:'Großer Flohmarkt mit über 200 Ständen. Stöbern, handeln und entdecken — von Vintage-Möbeln bis Elektrokleinkram ist alles dabei.',date:'2026-08-02',timeStart:'08:00',timeEnd:'16:00',location:'Messeplatz Schwäbisch Gmünd',category:'markt',isFree:false,price:'2,00 €',website:null,image:'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=80'}
 ];
 
-// ══════════════════════════════════════════
-// DB-SYNC
-// ══════════════════════════════════════════
 async function loadFromDB(){
   const [p,s,h,c]=await Promise.all([dbGet('pickups',null),dbGet('settings',null),dbGet('hiddenTypes',null),dbGet('checkedIds',null)]);
   let changed=false;
@@ -804,9 +717,6 @@ async function loadFromDB(){
   if(p!==null)try{localStorage.setItem('pickups',JSON.stringify(p));}catch(e){}
 }
 
-// ══════════════════════════════════════════
-// THEME
-// ══════════════════════════════════════════
 function applyTheme(){
   document.documentElement.setAttribute('data-theme',isDark?'dark':'light');
   document.getElementById('theme-icon').className=isDark?'ti ti-moon':'ti ti-sun';
@@ -814,9 +724,6 @@ function applyTheme(){
 }
 function toggleTheme(){isDark=!isDark;try{localStorage.setItem('theme',isDark?'dark':'light');}catch(e){}applyTheme();renderHome();renderMuell();}
 
-// ══════════════════════════════════════════
-// NAVIGATION
-// ══════════════════════════════════════════
 function switchTab(tab){
   activeTab=tab;
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -837,9 +744,6 @@ function switchTab(tab){
   checkOnboarding();
 }
 
-// ══════════════════════════════════════════
-// HELPERS
-// ══════════════════════════════════════════
 function daysUntil(ds){const t=new Date();t.setHours(0,0,0,0);const d=new Date(ds+'T00:00:00');d.setHours(0,0,0,0);return Math.round((d-t)/86400000);}
 function fmtDate(ds){return new Date(ds+'T12:00:00').toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'});}
 function fmtDateShort(ds){return new Date(ds+'T12:00:00').toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'});}
@@ -847,9 +751,6 @@ function getMonthKey(ds){return new Date(ds+'T12:00:00').toLocaleDateString('de-
 function countdownText(days){if(days===0)return{text:'Heute',urgent:true};if(days===1)return{text:'Morgen',urgent:true};if(days<=3)return{text:`in ${days} Tagen`,urgent:false};return{text:`in ${days} Tagen`,urgent:false};}
 function save(){storageSet('pickups',pickups);storageSet('checkedIds',checkedIds);scheduleAllReminders();}
 
-// ══════════════════════════════════════════
-// ONBOARDING
-// ══════════════════════════════════════════
 function checkOnboarding(){
   const banner=document.getElementById('onboarding-banner');
   if(!banner)return;
@@ -857,10 +758,6 @@ function checkOnboarding(){
   const onAllowedTab=['home','muell'].includes(activeTab);
   banner.classList.toggle('hidden',hasFuture||!onAllowedTab);
 }
-
-// ══════════════════════════════════════════
-// WEATHER
-// ══════════════════════════════════════════
 async function loadWeather(){
   const wrap=document.getElementById('weather-hero-wrap');
   if(!wrap)return;
@@ -892,10 +789,8 @@ function renderWeatherHero(data){
   const code=cur.weathercode;
   const {desc,icon,animClass}=wCode(code);
   const wind=Math.round(cur.windspeed_10m);
-  const sunriseStr=day.sunrise[0];
-  const sunsetStr=day.sunset[0];
-  const sunrise=new Date(sunriseStr);
-  const sunset=new Date(sunsetStr);
+  const sunrise=new Date(day.sunrise[0]);
+  const sunset=new Date(day.sunset[0]);
   const now=new Date();
   const totalDayMs=sunset-sunrise;
   const elapsedMs=Math.max(0,Math.min(now-sunrise,totalDayMs));
@@ -975,9 +870,6 @@ function wCode(code){
   return{desc:'Gewitter',icon:'ti-bolt',animClass:''};
 }
 
-// ══════════════════════════════════════════
-// WERTSTOFFHOF
-// ══════════════════════════════════════════
 function renderWSH(){
   const now=new Date(),dow=now.getDay(),h=now.getHours()+now.getMinutes()/60;
   const isSummer=(now.getMonth()+1)>=3&&(now.getMonth()+1)<=10;
@@ -996,9 +888,6 @@ function renderWSH(){
 function openWSHModal(){document.getElementById('wsh-modal').classList.add('open');}
 function closeWSHModal(e){if(e.target===document.getElementById('wsh-modal'))document.getElementById('wsh-modal').classList.remove('open');}
 
-// ══════════════════════════════════════════
-// HOME
-// ══════════════════════════════════════════
 function renderHome(){
   renderHomePickups();
   loadSpritPreview();
@@ -1048,9 +937,6 @@ function toggleCheckHome(id,event){
   showToast(checkedIds.includes(id)?'Rausgestellt ✓':'Markierung entfernt');
 }
 
-// ══════════════════════════════════════════
-// MÜLL TAB
-// ══════════════════════════════════════════
 function addPickup(){
   const type=document.getElementById('add-type').value,date=document.getElementById('add-date').value;
   if(!date){showToast('Bitte ein Datum wählen');return;}
@@ -1129,16 +1015,204 @@ function renderPickupRow(p,isPast,idx){
   </div>`;
 }
 
-// ══════════════════════════════════════════
-// SPRIT — via Cloudflare Worker (kein Key im Frontend)
-// ══════════════════════════════════════════
+// ── GOA-ABFALL: Adressbasierte Termine (ganz Ostalb) via goa-abfall Worker ──
+// Endpoints: /kommunen /strassen /hnr /termine — Listenformat {value,label}.
+// /hnr ist OPTIONAL: liefert es [], wird das Dropdown übersprungen.
+async function goaJSON(path){
+  const ctrl=new AbortController();
+  const tid=setTimeout(()=>ctrl.abort(),12000);
+  let res;
+  try{ res=await fetch(`${GOA_WORKER}${path}`,{signal:ctrl.signal}); }
+  finally{ clearTimeout(tid); }
+  if(!res.ok)throw new Error('HTTP '+res.status);
+  const data=await res.json();
+  if(data&&data.ok===false)throw new Error(data.error||'API-Fehler');
+  return data;
+}
+function fillGoaSelect(sel,items,placeholder){
+  sel.innerHTML=`<option value="">${placeholder}</option>`+
+    items.map(it=>`<option value="${it.value}">${it.label}</option>`).join('');
+}
+async function loadGoaKommunen(){
+  const sel=document.getElementById('goa-kommune');
+  if(goaKommunen){fillGoaSelect(sel,goaKommunen,'Ort wählen…');return;}
+  const data=await goaJSON('/kommunen');
+  goaKommunen=data.kommunen||[];
+  fillGoaSelect(sel,goaKommunen,'Ort wählen…');
+}
+async function loadGoaStrassen(kommune,preselect){
+  const sel=document.getElementById('goa-strasse');
+  const data=await goaJSON(`/strassen?kommune=${encodeURIComponent(kommune)}`);
+  fillGoaSelect(sel,data.strassen||[],'Straße wählen…');
+  document.getElementById('goa-strasse-row').style.display='block';
+  if(preselect)sel.value=preselect;
+}
+async function loadGoaHnr(kommune,strasse,preselect){
+  const hnrRow=document.getElementById('goa-hnr-row');
+  const hnrSel=document.getElementById('goa-hnr');
+  const loadBtn=document.getElementById('goa-load-btn');
+  const data=await goaJSON(`/hnr?kommune=${encodeURIComponent(kommune)}&strasse=${encodeURIComponent(strasse)}`);
+  const hnr=data.hnr||[];
+  if(hnr.length){
+    fillGoaSelect(hnrSel,hnr,'Hausnummer wählen…');
+    hnrRow.style.display='block';
+    if(preselect){hnrSel.value=preselect;loadBtn.style.display=hnrSel.value?'block':'none';}
+    else loadBtn.style.display='none';
+  } else {
+    hnrRow.style.display='none';
+    loadBtn.style.display='block';
+  }
+}
+async function onGoaKommuneChange(){
+  const kommune=document.getElementById('goa-kommune').value;
+  const strasseRow=document.getElementById('goa-strasse-row');
+  const strasseSel=document.getElementById('goa-strasse');
+  document.getElementById('goa-hnr-row').style.display='none';
+  document.getElementById('goa-load-btn').style.display='none';
+  if(!kommune){strasseRow.style.display='none';return;}
+  strasseRow.style.display='block';
+  strasseSel.innerHTML='<option value="">Lädt Straßen…</option>';
+  strasseSel.disabled=true;
+  try{ await loadGoaStrassen(kommune,null); }
+  catch(e){ strasseSel.innerHTML='<option value="">Straßen konnten nicht geladen werden</option>'; }
+  strasseSel.disabled=false;
+}
+async function onGoaStrasseChange(){
+  const kommune=document.getElementById('goa-kommune').value;
+  const strasse=document.getElementById('goa-strasse').value;
+  const hnrRow=document.getElementById('goa-hnr-row');
+  const hnrSel=document.getElementById('goa-hnr');
+  const loadBtn=document.getElementById('goa-load-btn');
+  hnrRow.style.display='none';
+  loadBtn.style.display='none';
+  if(!strasse)return;
+  hnrSel.innerHTML='<option value="">Prüfe Hausnummern…</option>';
+  try{ await loadGoaHnr(kommune,strasse,null); }
+  catch(e){ hnrRow.style.display='none'; loadBtn.style.display='block'; }
+}
+function onGoaHnrChange(){
+  const hnrSel=document.getElementById('goa-hnr');
+  document.getElementById('goa-load-btn').style.display=hnrSel.value?'block':'none';
+}
+async function loadTermineFromAPI(){
+  const kommuneSel=document.getElementById('goa-kommune');
+  const strasseSel=document.getElementById('goa-strasse');
+  const hnrSel=document.getElementById('goa-hnr');
+  const hnrVisible=document.getElementById('goa-hnr-row').style.display!=='none';
+  const kommune=kommuneSel.value;
+  const strasse=strasseSel.value;
+  const hnr=hnrVisible?hnrSel.value:'';
+  if(!kommune||!strasse){showToast('Bitte Ort und Straße wählen');return;}
+  if(hnrVisible&&!hnr){showToast('Bitte Hausnummer wählen');return;}
+  const kommuneLabel=kommuneSel.selectedOptions[0]?.textContent||'';
+  const strasseLabel=strasseSel.selectedOptions[0]?.textContent||'';
+  const hnrLabel=hnr?(hnrSel.selectedOptions[0]?.textContent||''):'';
+  const btn=document.getElementById('goa-load-btn');
+  const orig=btn.innerHTML;
+  btn.disabled=true;
+  btn.innerHTML='<i class="ti ti-loader-2 spin" style="margin-right:6px;vertical-align:-1px"></i>Lädt Termine…';
+  try{
+    let url=`${GOA_WORKER}/termine?kommune=${encodeURIComponent(kommune)}&strasse=${encodeURIComponent(strasse)}`;
+    if(hnr)url+=`&hnr=${encodeURIComponent(hnr)}`;
+    const ctrl=new AbortController();
+    const tid=setTimeout(()=>ctrl.abort(),15000);
+    let res;
+    try{ res=await fetch(url,{signal:ctrl.signal}); }
+    finally{ clearTimeout(tid); }
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    const raw=await res.text();
+    const added=ingestTermine(raw);
+    if(added<0)throw new Error('Antwort nicht lesbar');
+    goaAddress={kommune,strasse,hnr,kommuneLabel,strasseLabel,hnrLabel};
+    storageSet('goaAddress',goaAddress);
+    renderGoaSavedHint();
+    showToast(added===0?'Termine sind bereits aktuell':`${added} Termine geladen`);
+    switchTab('muell');
+  }catch(e){
+    showToast('Fehler: '+(e.message||'Laden fehlgeschlagen'));
+  }finally{
+    btn.disabled=false;
+    btn.innerHTML=orig;
+  }
+}
+function ingestTermine(raw){
+  const txt=(raw||'').trim();
+  if(txt.includes('BEGIN:VEVENT'))return mergeICS(txt);
+  try{
+    const data=JSON.parse(txt);
+    if(typeof data.ics==='string'&&data.ics.includes('BEGIN:VEVENT'))return mergeICS(data.ics);
+    if(Array.isArray(data.termine))return mergeTermineArray(data.termine);
+    return -1;
+  }catch(e){return -1;}
+}
+function mergeICS(text){
+  const events=[];
+  text.split('BEGIN:VEVENT').slice(1).forEach(block=>{
+    const sm=block.match(/SUMMARY[^:]*:(.+)/),dm=block.match(/DTSTART[^:]*:(\d{8})/);
+    if(!sm||!dm)return;
+    const s=sm[1].trim().toLowerCase(),rawd=dm[1];
+    const date=`${rawd.slice(0,4)}-${rawd.slice(4,6)}-${rawd.slice(6,8)}`;
+    events.push({id:Date.now()+Math.floor(Math.random()*100000),type:mapAbfallType(s),date});
+  });
+  return mergeTermineArray(events);
+}
+function mergeTermineArray(arr){
+  const normalized=arr.map(e=>({
+    id:e.id||Date.now()+Math.floor(Math.random()*100000),
+    type:e.type||mapAbfallType((e.fraktion||e.summary||e.title||'').toLowerCase()),
+    date:e.date
+  })).filter(e=>e.date);
+  const existing=new Set(pickups.map(p=>`${p.type}-${p.date}`));
+  const newOnes=normalized.filter(e=>!existing.has(`${e.type}-${e.date}`));
+  pickups=[...pickups,...newOnes].sort((a,b)=>a.date.localeCompare(b.date));
+  save();renderMuell();renderHomePickups();checkOnboarding();
+  return newOnes.length;
+}
+function mapAbfallType(s){
+  if(s.includes('bio'))return'bio';
+  if(s.includes('verein')||s.includes('avh')||s.includes('holsammlung'))return'altpapier_verein';
+  if(s.includes('blaue')||s.includes('papier'))return'papier';
+  if(s.includes('gelb')||s.includes('wertstoff')||s.includes('lvp')||s.includes('verpack'))return'gelb';
+  if(s.includes('gartentonne'))return'gartentonne';
+  if(s.includes('grün')||s.includes('gruen'))return'gruenabfuhr';
+  if(s.includes('christbaum')||s.includes('weihnacht')||s.includes('tannenbaum'))return'christbaum';
+  if(s.includes('rest')||s.includes('haus')||s.includes('schwarz'))return'restmuell';
+  return'restmuell';
+}
+function renderGoaSavedHint(){
+  const el=document.getElementById('goa-saved-hint');
+  if(!el)return;
+  if(goaAddress&&goaAddress.strasseLabel){
+    const adr=`${goaAddress.strasseLabel}${goaAddress.hnrLabel?' '+goaAddress.hnrLabel:''}, ${goaAddress.kommuneLabel}`;
+    el.innerHTML=`<i class="ti ti-map-pin" style="font-size:12px;margin-right:4px;vertical-align:-1px"></i>Gespeichert: ${adr}`;
+    el.style.display='block';
+  } else { el.style.display='none'; }
+}
+async function initGoaAddress(){
+  const sel=document.getElementById('goa-kommune');
+  if(!sel)return;
+  try{
+    await loadGoaKommunen();
+    if(goaAddress&&goaAddress.kommune){
+      sel.value=goaAddress.kommune;
+      await loadGoaStrassen(goaAddress.kommune,goaAddress.strasse);
+      if(goaAddress.strasse)await loadGoaHnr(goaAddress.kommune,goaAddress.strasse,goaAddress.hnr);
+      renderGoaSavedHint();
+    } else {
+      sel.value='1338';
+      onGoaKommuneChange();
+    }
+  }catch(e){
+    sel.innerHTML='<option value="">Orte konnten nicht geladen werden</option>';
+  }
+}
+
 function setFuel(f){
   activeFuel=f;
   ['e5','e10','diesel'].forEach(x=>document.getElementById('fchip-'+x).classList.toggle('active',x===f));
   spritCache=null;
   loadSprit();
 }
-
 async function loadSprit(){
   const wrap=document.getElementById('sprit-list-wrap');
   if(!wrap)return;
@@ -1164,7 +1238,6 @@ async function loadSprit(){
     </div>`;
   }
 }
-
 async function loadSpritPreview(){
   try{
     if(spritCache&&spritCache.fuel===activeFuel&&Date.now()-spritCache.ts<300000){
@@ -1181,7 +1254,6 @@ async function loadSpritPreview(){
     renderSpritPreviewHome(data.stations.filter(s=>s[activeFuel]>0).slice(0,3));
   }catch(e){}
 }
-
 function renderSpritPreviewHome(stations){
   const body=document.getElementById('home-sprit-body');
   const label=document.getElementById('home-sprit-fuel-label');
@@ -1212,7 +1284,6 @@ function renderSpritPreviewHome(stations){
     </div>`;
   }).join('');
 }
-
 function refreshSpritHome(){
   const icon=document.getElementById('sprit-home-refresh-icon');
   if(icon){icon.style.transition='transform 0.6s';icon.style.transform='rotate(360deg)';setTimeout(()=>{icon.style.transition='';icon.style.transform='';},600);}
@@ -1223,7 +1294,6 @@ function refreshSprit(){
   if(icon){icon.style.transition='transform 0.6s';icon.style.transform='rotate(360deg)';setTimeout(()=>{icon.style.transition='';icon.style.transform='';},600);}
   spritCache=null;loadSprit();showToast('Spritpreise aktualisiert');
 }
-
 function renderSpritList(stations){
   const wrap=document.getElementById('sprit-list-wrap');
   const valid=stations.filter(s=>s[activeFuel]>0);
@@ -1260,9 +1330,6 @@ function renderSpritList(stations){
   </div>`;
 }
 
-// ══════════════════════════════════════════
-// ICS
-// ══════════════════════════════════════════
 function parseICS(text){
   const events=[];
   text.split('BEGIN:VEVENT').slice(1).forEach(block=>{
@@ -1270,15 +1337,7 @@ function parseICS(text){
     if(!sm||!dm)return;
     const s=sm[1].trim().toLowerCase(),raw=dm[1];
     const date=`${raw.slice(0,4)}-${raw.slice(4,6)}-${raw.slice(6,8)}`;
-    let type='restmuell';
-    if(s.includes('bio'))type='bio';
-    else if(s.includes('blaue')||(s.includes('altpapier')&&!s.includes('verein')))type='papier';
-    else if(s.includes('gelb')||s.includes('wertstoff'))type='gelb';
-    else if(s.includes('gartentonne'))type='gartentonne';
-    else if(s.includes('grün')||s.includes('gruen'))type='gruenabfuhr';
-    else if(s.includes('verein')||s.includes('avh'))type='altpapier_verein';
-    else if(s.includes('christbaum'))type='christbaum';
-    events.push({id:Date.now()+Math.floor(Math.random()*100000),type,date});
+    events.push({id:Date.now()+Math.floor(Math.random()*100000),type:mapAbfallType(s),date});
   });
   if(!events.length){showToast('Keine Termine gefunden');return;}
   const existing=new Set(pickups.map(p=>`${p.type}-${p.date}`));
@@ -1288,9 +1347,6 @@ function parseICS(text){
   showToast(`${newOnes.length} Termine importiert`);switchTab('muell');
 }
 
-// ══════════════════════════════════════════
-// EINSTELLUNGEN
-// ══════════════════════════════════════════
 function saveSettings(){settings.reminderDays=parseInt(document.getElementById('reminder-days').value);settings.reminderTime=document.getElementById('reminder-time').value;storageSet('settings',settings);scheduleAllReminders();}
 function renderVisibilitySettings(){
   document.getElementById('visibility-settings').innerHTML=Object.entries(TYPES).map(([key,t])=>`
@@ -1304,9 +1360,6 @@ function toggleType(key,visible){if(visible)hiddenTypes=hiddenTypes.filter(t=>t!
 function clearAll(){if(!confirm('Wirklich alle Termine löschen?'))return;pickups=[];checkedIds=[];save();renderMuell();renderHomePickups();checkOnboarding();showToast('Alle Termine gelöscht');}
 function showInstallHint(){const el=document.getElementById('install-hint');el.style.display=el.style.display==='block'?'none':'block';}
 
-// ══════════════════════════════════════════
-// BUS & BAHN
-// ══════════════════════════════════════════
 function setBusMode(mode){
   busMode=mode;
   const depBtn=document.getElementById('bus-mode-dep');
@@ -1328,7 +1381,6 @@ function setBusMode(mode){
     if(timeEl&&!timeEl.value)timeEl.value=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
   }
 }
-
 function renderStationTabs(){
   const sel=document.getElementById('bus-station-select');
   if(sel)sel.innerHTML=BUS_STATIONS.map((s,i)=>`<option value="${i}" ${i===activeBusStation?'selected':''}>${s.type==='train'?'Zug':'Bus'} · ${s.name}${i===favStation?' ★':''}</option>`).join('');
@@ -1340,7 +1392,6 @@ function renderStationTabs(){
   if(dateEl&&!dateEl.value)dateEl.value=n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');
   if(timeEl&&!timeEl.value)timeEl.value=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
 }
-
 function selectStation(i){activeBusStation=parseInt(i);renderStationTabs();loadDepartures(true);}
 function updateBusTime(){stopAutoRefresh();loadDepartures(true);}
 function resetToNow(){
@@ -1384,7 +1435,6 @@ function applyDirectionFilter(){
   }
   renderDepartureList(filtered,new Date());
 }
-
 function startAutoRefresh(){
   stopAutoRefresh();
   autoRefreshTimer=setInterval(()=>{
@@ -1395,14 +1445,12 @@ function startAutoRefresh(){
   },60000);
 }
 function stopAutoRefresh(){if(autoRefreshTimer){clearInterval(autoRefreshTimer);autoRefreshTimer=null;}}
-
 function updateRefreshLabel(){
   const lbl=document.getElementById('bus-autoupdate-lbl');
   if(!lbl||!lastRefreshTime)return;
   const sec=Math.round((Date.now()-lastRefreshTime)/1000);
   lbl.textContent=sec<10?'gerade aktualisiert':sec<60?`vor ${sec}s aktuell`:'';
 }
-
 async function loadDepartures(showLoader=true){
   const container=document.getElementById('bus-container');
   if(!container)return;
@@ -1442,7 +1490,6 @@ async function loadDepartures(showLoader=true){
     </div>`;
   }
 }
-
 function updateNextBanner(){
   const banner=document.getElementById('bus-next-banner');
   if(!banner||!allDepartures.length){if(banner)banner.style.display='none';return;}
@@ -1454,7 +1501,6 @@ function updateNextBanner(){
   const hhmm=planned.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
   const diffMin=d.diffMin!==undefined?d.diffMin:Math.round((new Date(d.realtime||d.planned)-now)/60000);
   const inText=diffMin<=0?'jetzt':diffMin===1?'in 1 Min':`in ${diffMin} Min`;
-  const lc=getBusLineColor(d.line);
   banner.style.display='block';
   document.getElementById('bus-next-line').textContent=d.line;
   document.getElementById('bus-next-line').style.background='rgba(255,255,255,0.12)';
@@ -1464,7 +1510,6 @@ function updateNextBanner(){
   document.getElementById('bus-next-time').textContent=hhmm;
   document.getElementById('bus-next-in').textContent=inText;
 }
-
 function renderDepartureList(deps,now){
   const container=document.getElementById('bus-container');
   const lines=deps.map(d=>{
@@ -1497,7 +1542,6 @@ function renderDepartureList(deps,now){
       }).join('')}
     </div>`;
 }
-
 function getBusLineColor(name){
   const n=(name||'').toUpperCase();
   if(n.startsWith('RE')||n.startsWith('RB')||n.startsWith('MEX'))return{bg:'rgba(154,100,47,0.14)',text:'#9A642F'};
@@ -1509,13 +1553,11 @@ function getBusLineColor(name){
   if(num>=260&&num<=270)return{bg:'rgba(62,90,119,0.14)',text:'#3E5A77'};
   return{bg:'rgba(107,103,94,0.12)',text:'#6B675E'};
 }
-
 function swapConStops(){
   const from=document.getElementById('con-from');
   const to=document.getElementById('con-to');
   const tmp=from.value;from.value=to.value;to.value=tmp;
 }
-
 async function searchConnection(){
   const from=document.getElementById('con-from').value.trim();
   const to=document.getElementById('con-to').value.trim();
@@ -1540,7 +1582,6 @@ async function searchConnection(){
     </div>`;
   }
 }
-
 function renderConnections(trips,from,to){
   const container=document.getElementById('con-container');
   if(!trips.length){container.innerHTML='<div class="empty-state"><i class="ti ti-route-off"></i><p>Keine Verbindungen gefunden</p></div>';return;}
@@ -1588,7 +1629,6 @@ function renderConnections(trips,from,to){
     }).join('')}
   </div>`;
 }
-
 function toggleTripDetail(i){
   const el=document.getElementById('trip-detail-'+i);
   const ch=document.getElementById('trip-chevron-'+i);
@@ -1598,59 +1638,47 @@ function toggleTripDetail(i){
   if(ch)ch.style.transform=open?'':'rotate(180deg)';
 }
 
-// ══════════════════════════════════════════
-// EVENTS
-// ══════════════════════════════════════════
-function setEventFilter(f) {
-  activeEventFilter = f;
-  document.querySelectorAll('[id^="efchip-"]').forEach(el => el.classList.remove('active'));
-  const chip = document.getElementById('efchip-' + f);
-  if (chip) chip.classList.add('active');
+function setEventFilter(f){
+  activeEventFilter=f;
+  document.querySelectorAll('[id^="efchip-"]').forEach(el=>el.classList.remove('active'));
+  const chip=document.getElementById('efchip-'+f);
+  if(chip)chip.classList.add('active');
   renderEventsList();
 }
-
-function getFilteredEvents() {
-  return EVENTS.filter(e => {
-    if (activeEventFilter === 'kostenlos') return e.isFree;
-    if (activeEventFilter === 'eintritt') return !e.isFree;
-    if (['sport','kultur','markt','musik'].includes(activeEventFilter)) return e.category === activeEventFilter;
+function getFilteredEvents(){
+  return EVENTS.filter(e=>{
+    if(activeEventFilter==='kostenlos')return e.isFree;
+    if(activeEventFilter==='eintritt')return !e.isFree;
+    if(['sport','kultur','markt','musik'].includes(activeEventFilter))return e.category===activeEventFilter;
     return true;
-  }).sort((a, b) => a.date.localeCompare(b.date));
+  }).sort((a,b)=>a.date.localeCompare(b.date));
 }
-
-function fmtEventDate(e) {
-  const d = new Date(e.date + 'T12:00:00');
-  const dateStr = d.toLocaleDateString('de-DE', {weekday:'long', day:'2-digit', month:'long', year:'numeric'});
-  return dateStr + (e.timeStart ? ` · ${e.timeStart}${e.timeEnd ? '–' + e.timeEnd : ''} Uhr` : '');
+function fmtEventDate(e){
+  const d=new Date(e.date+'T12:00:00');
+  const dateStr=d.toLocaleDateString('de-DE',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+  return dateStr+(e.timeStart?` · ${e.timeStart}${e.timeEnd?'–'+e.timeEnd:''} Uhr`:'');
 }
-
-function eventInitial(e){
-  return (e.title.replace('[DEMO] ','').trim().charAt(0)||'E').toUpperCase();
-}
-
-function renderEventsList() {
-  const list = document.getElementById('events-list');
-  if (!list) return;
-  const filtered = getFilteredEvents();
-  if (!filtered.length) {
-    list.innerHTML = '<div class="empty-state"><i class="ti ti-calendar-off"></i><p>Keine Events gefunden.</p></div>';
-    return;
-  }
-  list.innerHTML = filtered.map((e, i) => {
-    const days = daysUntil(e.date);
-    const urgency = days === 0 ? 'Heute' : days === 1 ? 'Morgen' : days < 0 ? 'Vergangen' : `in ${days} Tagen`;
-    const urgencyColor = days < 0 ? 'var(--text3)' : days <= 1 ? 'var(--ok)' : days <= 7 ? 'var(--warn)' : 'var(--text3)';
-    const imgHtml = e.image
+function eventInitial(e){return (e.title.replace('[DEMO] ','').trim().charAt(0)||'E').toUpperCase();}
+function renderEventsList(){
+  const list=document.getElementById('events-list');
+  if(!list)return;
+  const filtered=getFilteredEvents();
+  if(!filtered.length){list.innerHTML='<div class="empty-state"><i class="ti ti-calendar-off"></i><p>Keine Events gefunden.</p></div>';return;}
+  list.innerHTML=filtered.map((e,i)=>{
+    const days=daysUntil(e.date);
+    const urgency=days===0?'Heute':days===1?'Morgen':days<0?'Vergangen':`in ${days} Tagen`;
+    const urgencyColor=days<0?'var(--text3)':days<=1?'var(--ok)':days<=7?'var(--warn)':'var(--text3)';
+    const imgHtml=e.image
       ? `<img class="event-img" src="${e.image}" alt="${e.title}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
         + `<div class="event-img-placeholder" style="display:none">${eventInitial(e)}</div>`
       : `<div class="event-img-placeholder">${eventInitial(e)}</div>`;
-    return `<div class="event-card anim-card" style="animation-delay:${i*0.06}s" onclick="${e.website ? `window.open('${e.website}','_blank')` : ''}">
+    return `<div class="event-card anim-card" style="animation-delay:${i*0.06}s" onclick="${e.website?`window.open('${e.website}','_blank')`:''}">
       ${imgHtml}
       <div class="event-body">
         <div class="event-badges">
-          ${e.title.includes('[DEMO]') ? '<span class="event-badge event-badge-demo">Demo</span>' : ''}
-          <span class="event-badge ${e.isFree ? 'event-badge-free' : 'event-badge-paid'}">${e.isFree ? 'Kostenlos' : e.price || 'Eintritt'}</span>
-          <span class="event-badge event-badge-cat">${e.category.charAt(0).toUpperCase() + e.category.slice(1)}</span>
+          ${e.title.includes('[DEMO]')?'<span class="event-badge event-badge-demo">Demo</span>':''}
+          <span class="event-badge ${e.isFree?'event-badge-free':'event-badge-paid'}">${e.isFree?'Kostenlos':e.price||'Eintritt'}</span>
+          <span class="event-badge event-badge-cat">${e.category.charAt(0).toUpperCase()+e.category.slice(1)}</span>
           <span style="font-size:11px;font-weight:600;color:${urgencyColor};margin-left:auto;align-self:center">${urgency}</span>
         </div>
         <div class="event-title">${e.title.replace('[DEMO] ','')}</div>
@@ -1658,33 +1686,28 @@ function renderEventsList() {
         <div class="event-meta-row">
           <div class="event-meta-item"><i class="ti ti-calendar"></i>${fmtEventDate(e)}</div>
           <div class="event-meta-item"><i class="ti ti-map-pin"></i>${e.location}</div>
-          ${e.website ? `<div class="event-meta-item"><i class="ti ti-world"></i><span style="color:var(--accent);text-decoration:underline">Mehr Infos</span></div>` : ''}
+          ${e.website?`<div class="event-meta-item"><i class="ti ti-world"></i><span style="color:var(--accent);text-decoration:underline">Mehr Infos</span></div>`:''}
         </div>
       </div>
     </div>`;
   }).join('');
 }
-
-function renderHomeEventWidget() {
-  const wrap = document.getElementById('home-event-wrap');
-  const label = document.getElementById('home-event-label');
-  if (!wrap) return;
-  const upcoming = EVENTS.filter(e => daysUntil(e.date) >= 0).sort((a,b) => a.date.localeCompare(b.date));
-  if (!upcoming.length) {
-    if (label) label.style.display = 'none';
-    wrap.style.display = 'none';
-    return;
-  }
-  if (label) label.style.display = 'block';
-  wrap.style.display = 'block';
-  const e = upcoming[0];
-  const days = daysUntil(e.date);
-  const urgency = days === 0 ? 'Heute' : days === 1 ? 'Morgen' : `in ${days} Tagen`;
-  const imgHtml = e.image
+function renderHomeEventWidget(){
+  const wrap=document.getElementById('home-event-wrap');
+  const label=document.getElementById('home-event-label');
+  if(!wrap)return;
+  const upcoming=EVENTS.filter(e=>daysUntil(e.date)>=0).sort((a,b)=>a.date.localeCompare(b.date));
+  if(!upcoming.length){if(label)label.style.display='none';wrap.style.display='none';return;}
+  if(label)label.style.display='block';
+  wrap.style.display='block';
+  const e=upcoming[0];
+  const days=daysUntil(e.date);
+  const urgency=days===0?'Heute':days===1?'Morgen':`in ${days} Tagen`;
+  const imgHtml=e.image
     ? `<img class="event-home-img" src="${e.image}" alt="${e.title}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
       + `<div class="event-home-img-placeholder" style="display:none">${eventInitial(e)}</div>`
     : `<div class="event-home-img-placeholder">${eventInitial(e)}</div>`;
-  wrap.innerHTML = `<div class="event-home-card" onclick="switchTab('events')">
+  wrap.innerHTML=`<div class="event-home-card" onclick="switchTab('events')">
     ${imgHtml}
     <div class="event-home-body">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
@@ -1699,20 +1722,11 @@ function renderHomeEventWidget() {
   </div>`;
 }
 
-// ══════════════════════════════════════════
-// NOTIFICATIONS
-// ══════════════════════════════════════════
 async function checkNotifStatus(){
   const banner=document.getElementById('notif-banner'),toggle=document.getElementById('toggle-notifs'),status=document.getElementById('notif-status');
-  // iOS PWA check
   const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
   const isStandalone=window.navigator.standalone===true;
-  if(isIOS&&!isStandalone){
-    status.textContent='Nur als installierte App (iOS)';
-    toggle.disabled=true;
-    banner.classList.add('hidden');
-    return;
-  }
+  if(isIOS&&!isStandalone){status.textContent='Nur als installierte App (iOS)';toggle.disabled=true;banner.classList.add('hidden');return;}
   if(!('Notification' in window)){status.textContent='Nicht unterstützt';toggle.disabled=true;return;}
   if(Notification.permission==='granted'){banner.classList.add('hidden');toggle.checked=settings.notificationsEnabled;status.textContent=settings.notificationsEnabled?'Aktiv':'Deaktiviert';if(settings.notificationsEnabled)scheduleAllReminders();}
   else if(Notification.permission==='denied'){status.textContent='Berechtigung verweigert';toggle.disabled=true;}
@@ -1740,9 +1754,6 @@ function scheduleAllReminders(){
 function refreshReminders(){scheduleAllReminders();showToast('Erinnerungen aktualisiert');}
 function testNotification(){if(Notification.permission!=='granted'){showToast('Erst Benachrichtigungen aktivieren');return;}new Notification('Hausmüll – Tonne rausstellen',{body:'Test-Erinnerung der Mögglingen App.',icon:'icon-192.png'});showToast('Test gesendet');}
 
-// ══════════════════════════════════════════
-// GREETING
-// ══════════════════════════════════════════
 function startGreeting(){
   setInterval(()=>{
     if(activeTab!=='home')return;
@@ -1754,19 +1765,13 @@ function startGreeting(){
   },5000);
 }
 
-// ══════════════════════════════════════════
-// TOAST
-// ══════════════════════════════════════════
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
 
-// ══════════════════════════════════════════
-// INIT — bleibt IMMER ganz am Ende des Scripts.
-// Erst hier sind alle const/let initialisiert.
-// ══════════════════════════════════════════
+// ── INIT — bleibt IMMER ganz am Ende. Erst hier sind alle const/let initialisiert. ──
 function init(){
-  document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
-  document.getElementById('reminder-days').value = settings.reminderDays;
-  document.getElementById('reminder-time').value = settings.reminderTime;
+  document.getElementById('add-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('reminder-days').value=settings.reminderDays;
+  document.getElementById('reminder-time').value=settings.reminderTime;
 
   document.getElementById('ics-file-input').addEventListener('change',e=>{
     const f=e.target.files[0];if(!f)return;
@@ -1781,6 +1786,7 @@ function init(){
   startGreeting();
   checkOnboarding();
   loadFromDB();
+  initGoaAddress();
 
   if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
