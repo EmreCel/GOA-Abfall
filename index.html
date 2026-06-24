@@ -275,7 +275,7 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
 <header class="app-header">
   <div class="header-inner">
     <div>
-      <div class="header-sub">73563 · Mögglingen</div>
+      <div class="header-sub" id="header-location">Community Ostalb</div>
       <div class="header-title" id="header-title"><span id="greeting-text" class="greeting-text">Hallo</span></div>
     </div>
     <div class="header-actions">
@@ -327,20 +327,20 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
       <div class="ql-icon"><i class="ti ti-calendar-down"></i></div>
       <div><div class="ql-label">GOA Kalender</div><div class="ql-sub">ICS herunterladen</div></div>
     </a>
-    <a href="https://www.moegglingen.de" target="_blank" class="ql-card">
+    <a href="https://www.ostalbkreis.de" target="_blank" class="ql-card" id="ql-gemeinde">
       <div class="ql-icon"><i class="ti ti-building"></i></div>
-      <div><div class="ql-label">Gemeinde</div><div class="ql-sub">moegglingen.de</div></div>
+      <div><div class="ql-label">Gemeinde</div><div class="ql-sub" id="ql-gemeinde-sub">Ostalbkreis</div></div>
     </a>
     <a href="tel:+4971742711555" class="ql-card">
       <div class="ql-icon"><i class="ti ti-phone"></i></div>
       <div><div class="ql-label">GOA Bürgertel.</div><div class="ql-sub">07174 / 2711-555</div></div>
     </a>
-    <a href="https://maps.google.com/?q=Wertstoffhof+Ellert+Mögglingen" target="_blank" class="ql-card">
+    <a href="https://www.goa-online.de" target="_blank" class="ql-card">
       <div class="ql-icon"><i class="ti ti-recycle"></i></div>
-      <div><div class="ql-label">Wertstoffhof</div><div class="ql-sub">In Maps öffnen</div></div>
+      <div><div class="ql-label">Wertstoffhöfe</div><div class="ql-sub">GOA Standorte</div></div>
     </a>
   </div>
-  <div class="card" style="margin:0 16px 16px;cursor:pointer" onclick="openWSHModal()">
+  <div class="card" id="wsh-card" style="margin:0 16px 16px;cursor:pointer" onclick="openWSHModal()">
     <div style="display:flex;align-items:center;gap:12px;padding:14px 16px">
       <div style="flex:1">
         <div style="font-size:14px;font-weight:500">Wertstoffhof Ellert</div>
@@ -395,6 +395,7 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
     <button id="bus-mode-con" onclick="setBusMode('con')" style="flex:1;padding:7px;border-radius:999px;font-size:13px;font-weight:500;font-family:inherit;background:transparent;color:var(--text3);border:none;cursor:pointer;transition:all 0.2s">Verbindung</button>
   </div>
   <div id="bus-dep-panel">
+    <div id="bus-loc-hint" style="display:none;margin:10px 16px 0;padding:9px 12px;background:var(--bg3);border-radius:12px;font-size:11px;color:var(--text2);line-height:1.45"><i class="ti ti-info-circle" style="font-size:12px;margin-right:5px;vertical-align:-1px"></i>Fahrpläne sind aktuell nur für Mögglingen verfügbar. Ostalb-weite Haltestellen folgen.</div>
     <div style="padding:10px 16px 6px;display:flex;align-items:center;justify-content:space-between">
       <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em" id="bus-station-name">Mögglingen Bahnhof</div>
       <div style="display:flex;align-items:center;gap:6px">
@@ -672,6 +673,9 @@ let activeEventFilter = 'alle';
 
 let goaAddress  = lsGet('goaAddress',null);
 let goaKommunen = null;
+// Eigenständiger App-Standort. Default = Mögglingen (Heimatbasis).
+// Wird aus der gewählten GOA-Kommune gefüllt; später ggf. manuell überschreibbar.
+const DEFAULT_LOC={name:'Mögglingen',lat:48.825,lng:9.9589,kommune:'1338'};
 
 const GREETINGS=['Hallo','Merhaba','Servus','Grüß Gott','Guten Tag','Hey','Willkommen','Salut'];
 let greetIdx=0;
@@ -762,7 +766,8 @@ async function loadWeather(){
   const wrap=document.getElementById('weather-hero-wrap');
   if(!wrap)return;
   try{
-    const url='https://api.open-meteo.com/v1/forecast?latitude=48.825&longitude=9.9589&current=temperature_2m,weathercode,windspeed_10m&daily=temperature_2m_max,temperature_2m_min,weathercode,precipitation_sum,sunrise,sunset&timezone=Europe%2FBerlin&forecast_days=7';
+    const loc=getActiveLocation();
+    const url=`https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lng}&current=temperature_2m,weathercode,windspeed_10m&daily=temperature_2m_max,temperature_2m_min,weathercode,precipitation_sum,sunrise,sunset&timezone=Europe%2FBerlin&forecast_days=7`;
     const ctrl=new AbortController();
     const tid=setTimeout(()=>ctrl.abort(),8000);
     const res=await fetch(url,{signal:ctrl.signal});
@@ -1124,8 +1129,13 @@ async function loadTermineFromAPI(){
     const added=ingestTermine(raw);
     if(added<0)throw new Error('Antwort nicht lesbar');
     goaAddress={kommune,strasse,hnr,kommuneLabel,strasseLabel,hnrLabel};
+    const coords=await geocodeKommune(kommuneLabel);
+    if(coords){goaAddress.lat=coords.lat;goaAddress.lng=coords.lng;}
     storageSet('goaAddress',goaAddress);
     renderGoaSavedHint();
+    updateLocationUI();
+    loadWeather();
+    spritCache=null;loadSpritPreview();
     showToast(added===0?'Termine sind bereits aktuell':`${added} Termine geladen`);
     switchTab('muell');
   }catch(e){
@@ -1188,6 +1198,47 @@ function renderGoaSavedHint(){
     el.style.display='block';
   } else { el.style.display='none'; }
 }
+// ── App-Standort: aus gewählter GOA-Kommune abgeleitet, eigenständig gespeichert ──
+async function geocodeKommune(name){
+  if(!name)return null;
+  try{
+    const ctrl=new AbortController();const tid=setTimeout(()=>ctrl.abort(),8000);
+    const res=await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=1&language=de&country=DE`,{signal:ctrl.signal});
+    clearTimeout(tid);
+    const data=await res.json();
+    const r=(data.results||[])[0];
+    if(r&&typeof r.latitude==='number')return{lat:r.latitude,lng:r.longitude};
+  }catch(e){}
+  return null;
+}
+function getActiveLocation(){
+  if(goaAddress&&typeof goaAddress.lat==='number'&&typeof goaAddress.lng==='number')
+    return {name:goaAddress.kommuneLabel||'Ostalb',lat:goaAddress.lat,lng:goaAddress.lng,kommune:goaAddress.kommune};
+  return DEFAULT_LOC;
+}
+function isMoegglingen(){
+  // An der tatsächlich gewählten Kommune festmachen — unabhängig davon,
+  // ob das Geocoding Koordinaten geliefert hat.
+  if(goaAddress&&goaAddress.kommune)return goaAddress.kommune==='1338';
+  return true; // kein Ort gewählt → Default-Basis Mögglingen
+}
+// Aktualisiert alle ortsabhängigen UI-Elemente (Header, Schnellzugriff, WSH-Karte, Bus-Hinweis).
+function updateLocationUI(){
+  const sub=document.getElementById('header-location');
+  if(sub)sub.textContent=(goaAddress&&goaAddress.kommuneLabel)?`${goaAddress.kommuneLabel} · Ostalb`:'Community Ostalb';
+  const g=document.getElementById('ql-gemeinde'),gs=document.getElementById('ql-gemeinde-sub');
+  if(g&&gs){
+    if(goaAddress&&goaAddress.kommuneLabel){
+      g.href=`https://www.google.com/search?q=${encodeURIComponent('Gemeinde '+goaAddress.kommuneLabel+' Ostalbkreis offizielle Website')}`;
+      gs.textContent=goaAddress.kommuneLabel;
+    } else { g.href='https://www.ostalbkreis.de'; gs.textContent='Ostalbkreis'; }
+  }
+  const wsh=document.getElementById('wsh-card');
+  if(wsh)wsh.style.display=isMoegglingen()?'':'none';
+  const bh=document.getElementById('bus-loc-hint');
+  if(bh)bh.style.display=isMoegglingen()?'none':'block';
+}
+
 async function initGoaAddress(){
   const sel=document.getElementById('goa-kommune');
   if(!sel)return;
@@ -1197,6 +1248,10 @@ async function initGoaAddress(){
       sel.value=goaAddress.kommune;
       await loadGoaStrassen(goaAddress.kommune,goaAddress.strasse);
       if(goaAddress.strasse)await loadGoaHnr(goaAddress.kommune,goaAddress.strasse,goaAddress.hnr);
+      if((typeof goaAddress.lat!=='number'||typeof goaAddress.lng!=='number')&&goaAddress.kommuneLabel){
+        const c=await geocodeKommune(goaAddress.kommuneLabel);
+        if(c){goaAddress.lat=c.lat;goaAddress.lng=c.lng;storageSet('goaAddress',goaAddress);updateLocationUI();loadWeather();spritCache=null;loadSpritPreview();}
+      }
       renderGoaSavedHint();
     } else {
       sel.value='1338';
@@ -1219,9 +1274,10 @@ async function loadSprit(){
   if(spritCache&&spritCache.fuel===activeFuel&&Date.now()-spritCache.ts<300000){renderSpritList(spritCache.data);return;}
   wrap.innerHTML='<div style="text-align:center;padding:32px;color:var(--text3)"><i class="ti ti-loader-2" style="font-size:22px;margin-bottom:8px;display:block"></i>Lade Preise…</div>';
   try{
+    const loc=getActiveLocation();
     const ctrl=new AbortController();
     const tid=setTimeout(()=>ctrl.abort(),10000);
-    const res=await fetch(`${WORKER_URL}/prices?type=${activeFuel}`,{signal:ctrl.signal});
+    const res=await fetch(`${WORKER_URL}/prices?type=${activeFuel}&lat=${loc.lat}&lng=${loc.lng}`,{signal:ctrl.signal});
     clearTimeout(tid);
     if(!res.ok)throw new Error('HTTP '+res.status);
     const data=await res.json();
@@ -1244,9 +1300,10 @@ async function loadSpritPreview(){
       renderSpritPreviewHome(spritCache.data.filter(s=>s[activeFuel]>0).slice(0,3));
       return;
     }
+    const loc=getActiveLocation();
     const ctrl=new AbortController();
     const tid=setTimeout(()=>ctrl.abort(),10000);
-    const res=await fetch(`${WORKER_URL}/prices?type=${activeFuel}`,{signal:ctrl.signal});
+    const res=await fetch(`${WORKER_URL}/prices?type=${activeFuel}&lat=${loc.lat}&lng=${loc.lng}`,{signal:ctrl.signal});
     clearTimeout(tid);
     const data=await res.json();
     if(!data.ok)return;
@@ -1660,66 +1717,25 @@ function fmtEventDate(e){
 }
 function eventInitial(e){return (e.title.replace('[DEMO] ','').trim().charAt(0)||'E').toUpperCase();}
 function renderEventsList(){
+  const bar=document.getElementById('event-filter-bar');
+  if(bar)bar.style.display='none';
   const list=document.getElementById('events-list');
   if(!list)return;
-  const filtered=getFilteredEvents();
-  if(!filtered.length){list.innerHTML='<div class="empty-state"><i class="ti ti-calendar-off"></i><p>Keine Events gefunden.</p></div>';return;}
-  list.innerHTML=filtered.map((e,i)=>{
-    const days=daysUntil(e.date);
-    const urgency=days===0?'Heute':days===1?'Morgen':days<0?'Vergangen':`in ${days} Tagen`;
-    const urgencyColor=days<0?'var(--text3)':days<=1?'var(--ok)':days<=7?'var(--warn)':'var(--text3)';
-    const imgHtml=e.image
-      ? `<img class="event-img" src="${e.image}" alt="${e.title}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-        + `<div class="event-img-placeholder" style="display:none">${eventInitial(e)}</div>`
-      : `<div class="event-img-placeholder">${eventInitial(e)}</div>`;
-    return `<div class="event-card anim-card" style="animation-delay:${i*0.06}s" onclick="${e.website?`window.open('${e.website}','_blank')`:''}">
-      ${imgHtml}
-      <div class="event-body">
-        <div class="event-badges">
-          ${e.title.includes('[DEMO]')?'<span class="event-badge event-badge-demo">Demo</span>':''}
-          <span class="event-badge ${e.isFree?'event-badge-free':'event-badge-paid'}">${e.isFree?'Kostenlos':e.price||'Eintritt'}</span>
-          <span class="event-badge event-badge-cat">${e.category.charAt(0).toUpperCase()+e.category.slice(1)}</span>
-          <span style="font-size:11px;font-weight:600;color:${urgencyColor};margin-left:auto;align-self:center">${urgency}</span>
-        </div>
-        <div class="event-title">${e.title.replace('[DEMO] ','')}</div>
-        <div class="event-desc">${e.desc}</div>
-        <div class="event-meta-row">
-          <div class="event-meta-item"><i class="ti ti-calendar"></i>${fmtEventDate(e)}</div>
-          <div class="event-meta-item"><i class="ti ti-map-pin"></i>${e.location}</div>
-          ${e.website?`<div class="event-meta-item"><i class="ti ti-world"></i><span style="color:var(--accent);text-decoration:underline">Mehr Infos</span></div>`:''}
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
-function renderHomeEventWidget(){
-  const wrap=document.getElementById('home-event-wrap');
-  const label=document.getElementById('home-event-label');
-  if(!wrap)return;
-  const upcoming=EVENTS.filter(e=>daysUntil(e.date)>=0).sort((a,b)=>a.date.localeCompare(b.date));
-  if(!upcoming.length){if(label)label.style.display='none';wrap.style.display='none';return;}
-  if(label)label.style.display='block';
-  wrap.style.display='block';
-  const e=upcoming[0];
-  const days=daysUntil(e.date);
-  const urgency=days===0?'Heute':days===1?'Morgen':`in ${days} Tagen`;
-  const imgHtml=e.image
-    ? `<img class="event-home-img" src="${e.image}" alt="${e.title}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-      + `<div class="event-home-img-placeholder" style="display:none">${eventInitial(e)}</div>`
-    : `<div class="event-home-img-placeholder">${eventInitial(e)}</div>`;
-  wrap.innerHTML=`<div class="event-home-card" onclick="switchTab('events')">
-    ${imgHtml}
-    <div class="event-home-body">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-        <span style="font-size:10px;font-weight:600;color:var(--hero-muted);text-transform:uppercase;letter-spacing:0.07em">${urgency}</span>
-        <span style="font-size:11px;font-weight:600;padding:2px 9px;border-radius:999px;border:1px solid rgba(255,255,255,0.25);color:#E8EFE8">${e.isFree?'Kostenlos':e.price||'Eintritt'}</span>
-      </div>
-      <div style="font-family:var(--font-display);font-size:16px;font-weight:520;color:var(--hero-text);margin-bottom:3px;line-height:1.3">${e.title.replace('[DEMO] ','')}</div>
-      <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--hero-muted)">
-        <i class="ti ti-map-pin" style="font-size:12px"></i>${e.location}
-      </div>
+  list.innerHTML=`<div style="margin:8px 16px 0">
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:30px 22px;text-align:center">
+      <div style="width:54px;height:54px;border-radius:16px;background:var(--accent-tint);display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--accent);margin:0 auto 16px"><i class="ti ti-calendar-star"></i></div>
+      <div style="font-family:var(--font-display);font-size:20px;font-weight:520;color:var(--text);margin-bottom:6px">Events – in Arbeit</div>
+      <div style="font-size:13px;color:var(--text3);line-height:1.6;max-width:280px;margin:0 auto">Hier entsteht ein kuratierter Veranstaltungskalender für die Region. Wir füllen ihn gerade mit den ersten echten Events.</div>
+      <div style="display:inline-flex;align-items:center;gap:6px;margin-top:18px;padding:7px 14px;border-radius:999px;border:1px solid var(--border2);font-size:12px;font-weight:600;color:var(--text2)"><i class="ti ti-tools" style="font-size:13px"></i>Bald verfügbar</div>
     </div>
   </div>`;
+}
+function renderHomeEventWidget(){
+  // Events noch nicht live → Home-Widget komplett ausblenden.
+  const wrap=document.getElementById('home-event-wrap');
+  const label=document.getElementById('home-event-label');
+  if(label)label.style.display='none';
+  if(wrap){wrap.style.display='none';wrap.innerHTML='';}
 }
 
 async function checkNotifStatus(){
@@ -1779,6 +1795,7 @@ function init(){
   });
 
   applyTheme();
+  updateLocationUI();
   checkNotifStatus();
   renderHome();
   loadWeather();
