@@ -313,6 +313,9 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
       <span class="card-label" id="home-sprit-fuel-label">Super E5</span>
       <div style="display:flex;align-items:center;gap:8px">
         <span class="card-meta" id="home-sprit-meta"></span>
+        <button class="icon-btn" id="home-sprit-gps-btn" onclick="toggleSpritLocation()" style="width:26px;height:26px;font-size:13px" aria-label="Standort verwenden" title="Preise an meinem Standort">
+          <i class="ti ti-current-location" id="home-sprit-gps-icon"></i>
+        </button>
         <button onclick="refreshSpritHome()" style="width:26px;height:26px;border-radius:50%;background:transparent;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--text2)" aria-label="Aktualisieren">
           <i class="ti ti-refresh" id="sprit-home-refresh-icon"></i>
         </button>
@@ -1266,30 +1269,41 @@ async function initGoaAddress(){
   }
 }
 
-let spritGpsCoords=null; // {lat,lng} wenn Nutzer GPS für Sprit gewählt hat — nur Sprit-Reiter, nicht Wetter
+let spritGpsCoords=null; // {lat,lng} wenn Nutzer GPS für Sprit gewählt hat — geteilt von Home-Widget UND Sprit-Reiter
 function getSpritCoords(){ return spritGpsCoords||getActiveLocation(); }
+// hält beide GPS-Buttons (Home + Reiter) im selben Zustand
+function updateSpritGpsButtons(){
+  const on=!!spritGpsCoords;
+  ['sprit-gps-btn','home-sprit-gps-btn'].forEach(id=>{const b=document.getElementById(id);if(b)b.classList.toggle('active',on);});
+  ['sprit-gps-icon','home-sprit-gps-icon'].forEach(id=>{const ic=document.getElementById(id);if(ic)ic.className='ti ti-current-location';});
+}
+function setSpritGpsBusy(){
+  ['sprit-gps-icon','home-sprit-gps-icon'].forEach(id=>{const ic=document.getElementById(id);if(ic)ic.className='ti ti-loader-2 spin';});
+}
+// lädt beide Sprit-Ansichten neu → garantierte Synchronisierung
+function reloadSpritBoth(){ loadSprit(); loadSpritPreview(); }
 function toggleSpritLocation(){
   if(spritGpsCoords){
     spritGpsCoords=null;
-    const b=document.getElementById('sprit-gps-btn');if(b)b.classList.remove('active');
-    const ic=document.getElementById('sprit-gps-icon');if(ic)ic.className='ti ti-current-location';
-    loadSprit();showToast('Zurück zu deinem Ort');return;
+    updateSpritGpsButtons();
+    reloadSpritBoth();
+    showToast('Zurück zu deinem Ort');
+    return;
   }
   useSpritLocation();
 }
 function useSpritLocation(){
   if(!('geolocation' in navigator)){showToast('GPS auf diesem Gerät nicht verfügbar');return;}
-  const ic=document.getElementById('sprit-gps-icon');
-  if(ic)ic.className='ti ti-loader-2 spin';
+  setSpritGpsBusy();
   navigator.geolocation.getCurrentPosition(
     pos=>{
       spritGpsCoords={lat:+pos.coords.latitude.toFixed(5),lng:+pos.coords.longitude.toFixed(5)};
-      const b=document.getElementById('sprit-gps-btn');if(b)b.classList.add('active');
-      if(ic)ic.className='ti ti-current-location';
-      loadSprit();showToast('Preise an deinem Standort');
+      updateSpritGpsButtons();
+      reloadSpritBoth();
+      showToast('Preise an deinem Standort');
     },
     err=>{
-      if(ic)ic.className='ti ti-current-location';
+      updateSpritGpsButtons();
       const msg=err.code===1?'Standort-Freigabe abgelehnt':err.code===3?'Standort-Abfrage zu langsam':'Standort nicht verfügbar';
       showToast(msg);
     },
@@ -1300,7 +1314,7 @@ function setFuel(f){
   activeFuel=f;
   ['e5','e10','diesel'].forEach(x=>document.getElementById('fchip-'+x).classList.toggle('active',x===f));
   spritCache=null;
-  loadSprit();
+  loadSprit();loadSpritPreview();
 }
 async function loadSprit(){
   const wrap=document.getElementById('sprit-list-wrap');
@@ -1331,18 +1345,19 @@ async function loadSprit(){
 }
 async function loadSpritPreview(){
   try{
-    if(spritCache&&spritCache.fuel===activeFuel&&Date.now()-spritCache.ts<300000){
+    const loc=getSpritCoords();
+    const useCache=!spritGpsCoords;
+    if(useCache&&spritCache&&spritCache.fuel===activeFuel&&Date.now()-spritCache.ts<300000){
       renderSpritPreviewHome(spritCache.data.filter(s=>s[activeFuel]>0).slice(0,3));
       return;
     }
-    const loc=getActiveLocation();
     const ctrl=new AbortController();
     const tid=setTimeout(()=>ctrl.abort(),10000);
     const res=await fetch(`${WORKER_URL}/prices?type=${activeFuel}&lat=${loc.lat}&lng=${loc.lng}`,{signal:ctrl.signal});
     clearTimeout(tid);
     const data=await res.json();
     if(!data.ok)return;
-    spritCache={data:data.stations,fuel:activeFuel,ts:Date.now()};
+    if(useCache)spritCache={data:data.stations,fuel:activeFuel,ts:Date.now()};
     renderSpritPreviewHome(data.stations.filter(s=>s[activeFuel]>0).slice(0,3));
   }catch(e){}
 }
@@ -1352,7 +1367,10 @@ function renderSpritPreviewHome(stations){
   const meta=document.getElementById('home-sprit-meta');
   if(!body)return;
   if(label)label.textContent=activeFuel==='e5'?'Super E5':activeFuel==='e10'?'Super E10':'Diesel';
-  if(meta)meta.textContent=new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})+' Uhr';
+  if(meta){
+    const src=spritGpsCoords?'Dein Standort':((goaAddress&&goaAddress.kommuneLabel)?goaAddress.kommuneLabel:'Mögglingen');
+    meta.innerHTML=`<i class="ti ti-map-pin" style="font-size:11px;margin-right:3px;vertical-align:-1px"></i>${src}`;
+  }
   if(!stations.length){
     body.innerHTML='<div style="padding:14px 16px;font-size:13px;color:var(--text3)">Keine Preise verfügbar</div>';
     return;
@@ -1379,12 +1397,12 @@ function renderSpritPreviewHome(stations){
 function refreshSpritHome(){
   const icon=document.getElementById('sprit-home-refresh-icon');
   if(icon){icon.style.transition='transform 0.6s';icon.style.transform='rotate(360deg)';setTimeout(()=>{icon.style.transition='';icon.style.transform='';},600);}
-  spritCache=null;loadSpritPreview();showToast('Spritpreise aktualisiert');
+  spritCache=null;loadSprit();loadSpritPreview();showToast('Spritpreise aktualisiert');
 }
 function refreshSprit(){
   const icon=document.getElementById('sprit-tab-refresh-icon');
   if(icon){icon.style.transition='transform 0.6s';icon.style.transform='rotate(360deg)';setTimeout(()=>{icon.style.transition='';icon.style.transform='';},600);}
-  spritCache=null;loadSprit();showToast('Spritpreise aktualisiert');
+  spritCache=null;loadSprit();loadSpritPreview();showToast('Spritpreise aktualisiert');
 }
 function renderSpritList(stations){
   const wrap=document.getElementById('sprit-list-wrap');
