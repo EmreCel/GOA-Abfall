@@ -99,6 +99,7 @@ a{color:inherit;text-decoration:none}
 .header-actions{display:flex;gap:8px}
 .icon-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--border2);background:transparent;color:var(--text2);display:flex;align-items:center;justify-content:center;font-size:17px;transition:background 0.15s}
 .icon-btn:active{background:var(--bg3)}
+.icon-btn.active{background:var(--accent);border-color:var(--accent);color:var(--hero-text)}
 .tab-island{position:fixed;bottom:calc(14px + var(--safe-b));left:50%;transform:translateX(-50%);width:calc(100% - 28px);max-width:402px;display:flex;align-items:center;justify-content:space-between;gap:2px;padding:6px;border-radius:28px;background:rgba(253,252,249,0.82);-webkit-backdrop-filter:blur(20px) saturate(1.4);backdrop-filter:blur(20px) saturate(1.4);border:1px solid var(--border);box-shadow:var(--shadow-float);z-index:100}
 [data-theme="dark"] .tab-island{background:rgba(30,27,22,0.85)}
 .nav-item{display:flex;align-items:center;justify-content:center;gap:6px;height:44px;min-width:42px;padding:0 8px;border-radius:999px;background:transparent;color:var(--text3);font-size:12.5px;font-weight:600;letter-spacing:0.01em;cursor:pointer;transition:background .35s cubic-bezier(.3,1.4,.4,1),color .25s ease,padding .35s cubic-bezier(.3,1.4,.4,1)}
@@ -367,6 +368,9 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
       <button class="fuel-chip" id="fchip-e10" onclick="setFuel('e10')">Super E10</button>
       <button class="fuel-chip" id="fchip-diesel" onclick="setFuel('diesel')">Diesel</button>
     </div>
+    <button class="icon-btn" id="sprit-gps-btn" onclick="toggleSpritLocation()" aria-label="Standort verwenden" title="Preise an meinem Standort">
+      <i class="ti ti-current-location" id="sprit-gps-icon"></i>
+    </button>
     <button class="icon-btn" onclick="refreshSprit()" aria-label="Aktualisieren" title="Preise aktualisieren">
       <i class="ti ti-refresh" id="sprit-tab-refresh-icon"></i>
     </button>
@@ -1262,6 +1266,36 @@ async function initGoaAddress(){
   }
 }
 
+let spritGpsCoords=null; // {lat,lng} wenn Nutzer GPS für Sprit gewählt hat — nur Sprit-Reiter, nicht Wetter
+function getSpritCoords(){ return spritGpsCoords||getActiveLocation(); }
+function toggleSpritLocation(){
+  if(spritGpsCoords){
+    spritGpsCoords=null;
+    const b=document.getElementById('sprit-gps-btn');if(b)b.classList.remove('active');
+    const ic=document.getElementById('sprit-gps-icon');if(ic)ic.className='ti ti-current-location';
+    loadSprit();showToast('Zurück zu deinem Ort');return;
+  }
+  useSpritLocation();
+}
+function useSpritLocation(){
+  if(!('geolocation' in navigator)){showToast('GPS auf diesem Gerät nicht verfügbar');return;}
+  const ic=document.getElementById('sprit-gps-icon');
+  if(ic)ic.className='ti ti-loader-2 spin';
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      spritGpsCoords={lat:+pos.coords.latitude.toFixed(5),lng:+pos.coords.longitude.toFixed(5)};
+      const b=document.getElementById('sprit-gps-btn');if(b)b.classList.add('active');
+      if(ic)ic.className='ti ti-current-location';
+      loadSprit();showToast('Preise an deinem Standort');
+    },
+    err=>{
+      if(ic)ic.className='ti ti-current-location';
+      const msg=err.code===1?'Standort-Freigabe abgelehnt':err.code===3?'Standort-Abfrage zu langsam':'Standort nicht verfügbar';
+      showToast(msg);
+    },
+    {enableHighAccuracy:false,timeout:10000,maximumAge:300000}
+  );
+}
 function setFuel(f){
   activeFuel=f;
   ['e5','e10','diesel'].forEach(x=>document.getElementById('fchip-'+x).classList.toggle('active',x===f));
@@ -1271,10 +1305,11 @@ function setFuel(f){
 async function loadSprit(){
   const wrap=document.getElementById('sprit-list-wrap');
   if(!wrap)return;
-  if(spritCache&&spritCache.fuel===activeFuel&&Date.now()-spritCache.ts<300000){renderSpritList(spritCache.data);return;}
+  const loc=getSpritCoords();
+  const useCache=!spritGpsCoords;
+  if(useCache&&spritCache&&spritCache.fuel===activeFuel&&Date.now()-spritCache.ts<300000){renderSpritList(spritCache.data);return;}
   wrap.innerHTML='<div style="text-align:center;padding:32px;color:var(--text3)"><i class="ti ti-loader-2" style="font-size:22px;margin-bottom:8px;display:block"></i>Lade Preise…</div>';
   try{
-    const loc=getActiveLocation();
     const ctrl=new AbortController();
     const tid=setTimeout(()=>ctrl.abort(),10000);
     const res=await fetch(`${WORKER_URL}/prices?type=${activeFuel}&lat=${loc.lat}&lng=${loc.lng}`,{signal:ctrl.signal});
@@ -1283,7 +1318,7 @@ async function loadSprit(){
     const data=await res.json();
     if(!data.ok)throw new Error(data.error||'API Fehler');
     const stations=data.stations||[];
-    spritCache={data:stations,fuel:activeFuel,ts:Date.now()};
+    if(useCache)spritCache={data:stations,fuel:activeFuel,ts:Date.now()};
     renderSpritList(stations);
   }catch(e){
     wrap.innerHTML=`<div style="margin:16px">
@@ -1367,7 +1402,8 @@ function renderSpritList(stations){
     </div>`;
     return;
   }
-  document.getElementById('sprit-updated').textContent=`Aktualisiert: ${new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr · Tankerkönig / MTS-K`;
+  const src=spritGpsCoords?'Dein Standort':((goaAddress&&goaAddress.kommuneLabel)?goaAddress.kommuneLabel:'Mögglingen');
+  document.getElementById('sprit-updated').textContent=`${src} · Aktualisiert ${new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr · Tankerkönig`;
   wrap.innerHTML=`<div class="card" style="margin:0 16px;overflow:hidden">
     ${valid.slice(0,8).map((s,i)=>{
       const price=s[activeFuel],priceStr=price.toFixed(3);
