@@ -1,4 +1,6 @@
-const CACHE_NAME = 'muelltonne-v7';
+const CACHE_NAME = 'muelltonne-v8';
+// Worker, der Push-Nachrichten verschickt und die "pending"-Texte vorhält.
+const GOA_WORKER = 'https://goa-abfall.emre18celik.workers.dev';
 // App-Shell: wird beim Install vorgeladen → App startet offline
 const PRECACHE = [
   './',
@@ -58,9 +60,49 @@ self.addEventListener('fetch', e => {
       )
   );
 });
+
+// ── PUSH: feuert auch bei GESCHLOSSENER App ──
+// Wir senden vom Server bewusst OHNE verschlüsselte Payload (spart fehleranfällige
+// Crypto im Worker). Stattdessen holt sich der SW den konkreten Text per fetch von
+// /push/pending. Klappt das nicht, zeigen wir trotzdem eine generische Notification
+// (iOS verlangt zwingend eine sichtbare Notification pro Push).
+self.addEventListener('push', e => {
+  e.waitUntil((async () => {
+    let title = 'Ostalb App';
+    let body  = 'Erinnerung';
+    // 1) Falls doch eine Payload mitkam (Zukunft): direkt nutzen.
+    if (e.data) {
+      try { const p = e.data.json(); if (p && p.title) { title = p.title; body = p.body || ''; } }
+      catch (_) {}
+    }
+    // 2) Sonst: den vorgemerkten Text beim Worker abholen.
+    if (title === 'Ostalb App') {
+      try {
+        const sub = await self.registration.pushManager.getSubscription();
+        if (sub) {
+          const r = await fetch(GOA_WORKER + '/push/pending?ep=' + encodeURIComponent(sub.endpoint), { cache: 'no-store' });
+          if (r.ok) {
+            const d = await r.json();
+            if (d && d.title) { title = d.title; body = d.body || ''; }
+          }
+        }
+      } catch (_) {}
+    }
+    await self.registration.showNotification(title, {
+      body,
+      icon: './icon-192.png',
+      badge: './icon-192.png',
+      tag: 'goa-reminder',
+      renotify: true,
+      requireInteraction: true,
+      data: { url: './' }
+    });
+  })());
+});
+
 self.addEventListener('notificationclick', e => {
   e.notification.close();
-  e.waitUntil(clients.matchAll({type:'window'}).then(list => {
+  e.waitUntil(clients.matchAll({ type: 'window' }).then(list => {
     for (const c of list) { if (c.url && 'focus' in c) return c.focus(); }
     if (clients.openWindow) return clients.openWindow('./');
   }));
