@@ -580,8 +580,13 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
     </div>
     <div class="settings-row">
       <div class="settings-icon"><i class="ti ti-test-pipe"></i></div>
-      <div class="settings-info"><div class="settings-title">Test-Benachrichtigung</div></div>
+      <div class="settings-info"><div class="settings-title">Test-Benachrichtigung</div><div class="settings-desc">Lokal (nur bei offener App)</div></div>
       <button class="btn-sm" onclick="testNotification()">Senden</button>
+    </div>
+    <div class="settings-row">
+      <div class="settings-icon"><i class="ti ti-cloud-bolt"></i></div>
+      <div class="settings-info"><div class="settings-title">Server-Push testen</div><div class="settings-desc">Echt — auch bei geschlossener App</div></div>
+      <button class="btn-sm" onclick="testServerPush()">Senden</button>
     </div>
   </div>
   <div class="section-label">Tonnen ein-/ausblenden</div>
@@ -695,6 +700,9 @@ let scheduledTimers=[];
 
 const WORKER_URL = 'https://moegglingen-bus.emre18celik.workers.dev';
 const GOA_WORKER = 'https://goa-abfall.emre18celik.workers.dev';
+// Web-Push: öffentlicher VAPID-Schlüssel (darf im Client stehen). Muss exakt zum
+// Worker-Secret VAPID_PRIVATE passen — beide gehören zum selben Schlüsselpaar.
+const VAPID_PUBLIC = 'BKPZsH7SysrsrHTabzsGeHT6-IdGXRr4mhIhRxTzzEw1Dx6hZZeYhapRSAEAuktjLo8yktuVNl8gQC2gVdhzxL0';
 
 const TAB_TITLES={home:'Start',muell:'Abfall',sprit:'Spritpreise',bus:'Bus & Bahn',events:'Events',mehr:'Mehr'};
 
@@ -765,7 +773,7 @@ function fmtDate(ds){return new Date(ds+'T12:00:00').toLocaleDateString('de-DE',
 function fmtDateShort(ds){return new Date(ds+'T12:00:00').toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'});}
 function getMonthKey(ds){return new Date(ds+'T12:00:00').toLocaleDateString('de-DE',{month:'long',year:'numeric'});}
 function countdownText(days){if(days===0)return{text:'Heute',urgent:true};if(days===1)return{text:'Morgen',urgent:true};if(days<=3)return{text:`in ${days} Tagen`,urgent:false};return{text:`in ${days} Tagen`,urgent:false};}
-function save(){storageSet('pickups',pickups);storageSet('checkedIds',checkedIds);scheduleAllReminders();}
+function save(){storageSet('pickups',pickups);storageSet('checkedIds',checkedIds);scheduleAllReminders();syncPushData();}
 
 function checkOnboarding(){
   const banner=document.getElementById('onboarding-banner');
@@ -1463,7 +1471,7 @@ function parseICS(text){
   showToast(`${newOnes.length} Termine importiert`);switchTab('muell');
 }
 
-function saveSettings(){settings.reminderDays=parseInt(document.getElementById('reminder-days').value);settings.reminderTime=document.getElementById('reminder-time').value;storageSet('settings',settings);scheduleAllReminders();}
+function saveSettings(){settings.reminderDays=parseInt(document.getElementById('reminder-days').value);settings.reminderTime=document.getElementById('reminder-time').value;storageSet('settings',settings);scheduleAllReminders();syncPushData();}
 function renderVisibilitySettings(){
   document.getElementById('visibility-settings').innerHTML=Object.entries(TYPES).map(([key,t])=>`
     <div class="settings-row">
@@ -1475,6 +1483,18 @@ function renderVisibilitySettings(){
 function toggleType(key,visible){if(visible)hiddenTypes=hiddenTypes.filter(t=>t!==key);else if(!hiddenTypes.includes(key))hiddenTypes.push(key);storageSet('hiddenTypes',hiddenTypes);renderMuell();renderHomePickups();}
 function clearAll(){if(!confirm('Wirklich alle Termine löschen?'))return;pickups=[];checkedIds=[];save();renderMuell();renderHomePickups();checkOnboarding();showToast('Alle Termine gelöscht');}
 function showInstallHint(){const el=document.getElementById('install-hint');el.style.display=el.style.display==='block'?'none':'block';}
+
+// ── PWA: läuft die App installiert (Homescreen) oder im Browser-Tab? ──
+// Plattformübergreifend: matchMedia ist die verlässliche Primärquelle,
+// navigator.standalone existiert nur auf iOS-Safari (dort als Fallback genutzt).
+function isStandalone(){
+  return window.matchMedia('(display-mode: standalone)').matches
+      || window.matchMedia('(display-mode: fullscreen)').matches
+      || window.navigator.standalone === true; // iOS-Fallback
+}
+function isIOSDevice(){
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+}
 
 function setBusMode(mode){
   busMode=mode;
@@ -1797,18 +1817,88 @@ function renderHomeEventWidget(){
   if(wrap){wrap.style.display='none';wrap.innerHTML='';}
 }
 
+// ── WEB PUSH (echte Erinnerungen bei geschlossener App, via goa-abfall Worker) ──
+function urlB64ToUint8Array(base64){
+  const pad='='.repeat((4-base64.length%4)%4);
+  const b64=(base64+pad).replace(/-/g,'+').replace(/_/g,'/');
+  const raw=atob(b64);
+  const arr=new Uint8Array(raw.length);
+  for(let i=0;i<raw.length;i++)arr[i]=raw.charCodeAt(i);
+  return arr;
+}
+function pushSupported(){return ('serviceWorker' in navigator)&&('PushManager' in window);}
+// Meldet die Subscription beim Worker an UND lädt die kommenden Termine + Einstellungen hoch.
+// Der Cron-Worker (Phase 2) liest genau diese Daten, um zur richtigen Zeit zu pushen.
+async function syncPushData(){
+  try{
+    if(!pushSupported())return;
+    if(Notification.permission!=='granted'||!settings.notificationsEnabled)return;
+    const reg=await navigator.serviceWorker.ready;
+    const sub=await reg.pushManager.getSubscription();
+    if(!sub)return;
+    const upcoming=pickups
+      .filter(p=>daysUntil(p.date)>=0&&!hiddenTypes.includes(p.type))
+      .map(p=>({type:p.type,label:(TYPES[p.type]||TYPES.restmuell).label,date:p.date}));
+    await fetch(GOA_WORKER+'/push/subscribe',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        subscription:sub,
+        prefs:{reminderDays:settings.reminderDays,reminderTime:settings.reminderTime},
+        pickups:upcoming,tz:'Europe/Berlin'
+      })
+    });
+  }catch(e){}
+}
+async function enablePush(){
+  if(!pushSupported()){return false;}
+  try{
+    const reg=await navigator.serviceWorker.ready;
+    let sub=await reg.pushManager.getSubscription();
+    if(!sub){
+      sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlB64ToUint8Array(VAPID_PUBLIC)});
+    }
+    await syncPushData();
+    return !!sub;
+  }catch(e){return false;}
+}
+async function disablePush(){
+  try{
+    if(!pushSupported())return;
+    const reg=await navigator.serviceWorker.ready;
+    const sub=await reg.pushManager.getSubscription();
+    if(sub){
+      await fetch(GOA_WORKER+'/push/unsubscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({endpoint:sub.endpoint})});
+    }
+  }catch(e){}
+}
+// Löst einen ECHTEN Server-Push aus → beweist, dass Push bei geschlossener App ankommt.
+async function testServerPush(){
+  if(!pushSupported()){showToast('Push wird hier nicht unterstützt');return;}
+  if(Notification.permission!=='granted'){showToast('Erst Benachrichtigungen aktivieren');return;}
+  try{
+    const reg=await navigator.serviceWorker.ready;
+    const sub=await reg.pushManager.getSubscription();
+    if(!sub){showToast('Erst Benachrichtigungen aktivieren');return;}
+    showToast('Sende… App jetzt schließen');
+    const r=await fetch(GOA_WORKER+'/push/test',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({endpoint:sub.endpoint})});
+    const d=await r.json().catch(()=>({}));
+    if(d.ok)showToast('Gesendet ✓ — App schließen & warten');
+    else showToast('Fehler: '+(d.error||('Status '+(d.status||'?'))));
+  }catch(e){showToast('Fehler: '+e.message);}
+}
+
 async function checkNotifStatus(){
   const banner=document.getElementById('notif-banner'),toggle=document.getElementById('toggle-notifs'),status=document.getElementById('notif-status');
-  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
-  const isStandalone=window.navigator.standalone===true;
-  if(isIOS&&!isStandalone){status.textContent='Nur als installierte App (iOS)';toggle.disabled=true;banner.classList.add('hidden');return;}
+  const isIOS=isIOSDevice();
+  const standalone=isStandalone();
+  if(isIOS&&!standalone){status.textContent='Nur als installierte App (iOS)';toggle.disabled=true;banner.classList.add('hidden');return;}
   if(!('Notification' in window)){status.textContent='Nicht unterstützt';toggle.disabled=true;return;}
   if(Notification.permission==='granted'){banner.classList.add('hidden');toggle.checked=settings.notificationsEnabled;status.textContent=settings.notificationsEnabled?'Aktiv':'Deaktiviert';if(settings.notificationsEnabled)scheduleAllReminders();}
   else if(Notification.permission==='denied'){status.textContent='Berechtigung verweigert';toggle.disabled=true;}
   else{banner.classList.remove('hidden');toggle.checked=false;status.textContent='Berechtigung ausstehend';}
 }
-async function requestNotifications(){const perm=await Notification.requestPermission();if(perm==='granted'){settings.notificationsEnabled=true;storageSet('settings',settings);document.getElementById('toggle-notifs').checked=true;document.getElementById('notif-status').textContent='Aktiv';document.getElementById('notif-banner').classList.add('hidden');scheduleAllReminders();showToast('Benachrichtigungen aktiv');}}
-function toggleNotifications(enabled){if(enabled&&Notification.permission!=='granted'){requestNotifications();return;}settings.notificationsEnabled=enabled;storageSet('settings',settings);document.getElementById('notif-status').textContent=enabled?'Aktiv':'Deaktiviert';if(enabled){scheduleAllReminders();showToast('Erinnerungen aktiviert');}else{clearScheduled();showToast('Erinnerungen deaktiviert');}}
+async function requestNotifications(){const perm=await Notification.requestPermission();if(perm==='granted'){settings.notificationsEnabled=true;storageSet('settings',settings);document.getElementById('toggle-notifs').checked=true;document.getElementById('notif-status').textContent='Aktiv';document.getElementById('notif-banner').classList.add('hidden');scheduleAllReminders();enablePush();showToast('Benachrichtigungen aktiv');}}
+function toggleNotifications(enabled){if(enabled&&Notification.permission!=='granted'){requestNotifications();return;}settings.notificationsEnabled=enabled;storageSet('settings',settings);document.getElementById('notif-status').textContent=enabled?'Aktiv':'Deaktiviert';if(enabled){scheduleAllReminders();enablePush();showToast('Erinnerungen aktiviert');}else{clearScheduled();disablePush();showToast('Erinnerungen deaktiviert');}}
 function clearScheduled(){scheduledTimers.forEach(clearTimeout);scheduledTimers=[];}
 function scheduleAllReminders(){
   clearScheduled();if(!settings.notificationsEnabled||Notification.permission!=='granted')return;
