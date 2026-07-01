@@ -328,6 +328,9 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
       <span class="card-label" id="home-sprit-fuel-label">Super E5</span>
       <div style="display:flex;align-items:center;gap:8px">
         <span class="card-meta" id="home-sprit-meta"></span>
+        <button class="icon-btn" id="home-sprit-sort-btn" onclick="toggleSpritSort()" style="width:26px;height:26px;font-size:13px" aria-label="Sortierung wechseln" title="Nach Entfernung oder Preis sortieren">
+          <i class="ti ti-arrows-sort" id="home-sprit-sort-icon"></i>
+        </button>
         <button class="icon-btn" id="home-sprit-gps-btn" onclick="toggleSpritLocation()" style="width:26px;height:26px;font-size:13px" aria-label="Standort verwenden" title="Preise an meinem Standort">
           <i class="ti ti-current-location" id="home-sprit-gps-icon"></i>
         </button>
@@ -392,6 +395,10 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
     <button class="icon-btn" onclick="refreshSprit()" aria-label="Aktualisieren" title="Preise aktualisieren">
       <i class="ti ti-refresh" id="sprit-tab-refresh-icon"></i>
     </button>
+  </div>
+  <div style="display:flex;gap:0;margin:10px 16px 0;background:var(--bg3);border-radius:999px;padding:3px">
+    <button id="sprit-sort-dist" onclick="setSpritSort('dist')" style="flex:1;padding:7px;border-radius:999px;font-size:13px;font-weight:500;font-family:inherit;background:var(--bg2);color:var(--text);border:none;cursor:pointer;transition:all 0.2s"><i class="ti ti-map-pin" style="font-size:13px;margin-right:4px;vertical-align:-2px"></i>Nächste</button>
+    <button id="sprit-sort-price" onclick="setSpritSort('price')" style="flex:1;padding:7px;border-radius:999px;font-size:13px;font-weight:500;font-family:inherit;background:transparent;color:var(--text3);border:none;cursor:pointer;transition:all 0.2s"><i class="ti ti-coin" style="font-size:13px;margin-right:4px;vertical-align:-2px"></i>Günstigste</button>
   </div>
   <div id="sprit-list-wrap"></div>
   <div id="sprit-updated" style="font-size:11px;color:var(--text3);text-align:center;padding:8px 16px 0"></div>
@@ -1300,6 +1307,57 @@ async function initGoaAddress(){
 
 let spritGpsCoords=null; // {lat,lng} wenn Nutzer GPS für Sprit gewählt hat — geteilt von Home-Widget UND Sprit-Reiter
 function getSpritCoords(){ return spritGpsCoords||getActiveLocation(); }
+// Sortiermodus: 'dist' = nächste zuerst (Default — Melanies Kernpunkt: eine 10km
+// entfernte "günstigere" Tankstelle nützt niemandem), 'price' = günstigste zuerst.
+let spritSortMode = lsGet('spritSortMode','dist');
+// Zuletzt gerenderte Stationslisten — brauchen wir, um beim Klick auf eine Zeile
+// per Index (nicht per Inline-JSON) die richtige Station für die Maps-Navigation
+// wiederzufinden. Getrennt für Home-Widget und Sprit-Tab, da unabhängig gerendert.
+let spritHomeStations=[];
+let spritTabStations=[];
+function sortStations(list,mode,fuel){
+  const arr=list.slice();
+  if(mode==='price')arr.sort((a,b)=>(a[fuel]||Infinity)-(b[fuel]||Infinity));
+  else arr.sort((a,b)=>(a.dist??Infinity)-(b.dist??Infinity));
+  return arr;
+}
+function setSpritSort(mode){
+  spritSortMode=mode;
+  try{localStorage.setItem('spritSortMode',JSON.stringify(mode));}catch(e){}
+  applySpritSortUI();
+  // Kein Refetch nötig — wir haben die Daten schon, nur neu sortieren+rendern.
+  if(spritCache){
+    renderSpritList(spritCache.data);
+    renderSpritPreviewHome(sortStations(spritCache.data.filter(s=>s[activeFuel]>0),spritSortMode,activeFuel).slice(0,3));
+  }
+}
+function toggleSpritSort(){ setSpritSort(spritSortMode==='dist'?'price':'dist'); }
+function applySpritSortUI(){
+  const distBtn=document.getElementById('sprit-sort-dist'),priceBtn=document.getElementById('sprit-sort-price');
+  if(distBtn&&priceBtn){
+    const distOn=spritSortMode==='dist';
+    distBtn.style.background=distOn?'var(--bg2)':'transparent';distBtn.style.color=distOn?'var(--text)':'var(--text3)';
+    priceBtn.style.background=distOn?'transparent':'var(--bg2)';priceBtn.style.color=distOn?'var(--text3)':'var(--text)';
+  }
+  const homeIcon=document.getElementById('home-sprit-sort-icon');
+  const homeBtn=document.getElementById('home-sprit-sort-btn');
+  if(homeIcon){homeIcon.className=spritSortMode==='dist'?'ti ti-map-pin':'ti ti-coin';}
+  if(homeBtn)homeBtn.title=spritSortMode==='dist'?'Sortiert nach Entfernung — tippen für Preis':'Sortiert nach Preis — tippen für Entfernung';
+}
+// Öffnet Navigation zur Tankstelle: Apple Maps auf iOS, Google Maps sonst.
+// Nutzt Koordinaten wenn vorhanden (präzise), sonst Namen/Marke/Ort als Textsuche
+// (funktioniert immer, auch ohne bekannte Feldnamen vom Worker — kein Crash, kein "undefined").
+function openStationMaps(station){
+  if(!station)return;
+  const lat=station.lat,lng=station.lng;
+  const hasCoords=typeof lat==='number'&&typeof lng==='number';
+  const ort=station.place||station.ort||station.city||'';
+  const dest=hasCoords?`${lat},${lng}`:encodeURIComponent([station.brand,station.name,ort].filter(Boolean).join(' '));
+  const url=isIOSDevice()
+    ? `https://maps.apple.com/?daddr=${dest}&dirflg=d`
+    : `https://www.google.com/maps/dir/?api=1&destination=${dest}`;
+  window.open(url,'_blank');
+}
 // hält beide GPS-Buttons (Home + Reiter) im selben Zustand
 function updateSpritGpsButtons(){
   const on=!!spritGpsCoords;
@@ -1377,7 +1435,7 @@ async function loadSpritPreview(){
     const loc=getSpritCoords();
     const useCache=!spritGpsCoords;
     if(useCache&&spritCache&&spritCache.fuel===activeFuel&&Date.now()-spritCache.ts<300000){
-      renderSpritPreviewHome(spritCache.data.filter(s=>s[activeFuel]>0).slice(0,3));
+      renderSpritPreviewHome(sortStations(spritCache.data.filter(s=>s[activeFuel]>0),spritSortMode,activeFuel).slice(0,3));
       return;
     }
     const ctrl=new AbortController();
@@ -1387,7 +1445,7 @@ async function loadSpritPreview(){
     const data=await res.json();
     if(!data.ok)return;
     if(useCache)spritCache={data:data.stations,fuel:activeFuel,ts:Date.now()};
-    renderSpritPreviewHome(data.stations.filter(s=>s[activeFuel]>0).slice(0,3));
+    renderSpritPreviewHome(sortStations(data.stations.filter(s=>s[activeFuel]>0),spritSortMode,activeFuel).slice(0,3));
   }catch(e){}
 }
 function renderSpritPreviewHome(stations){
@@ -1395,6 +1453,7 @@ function renderSpritPreviewHome(stations){
   const label=document.getElementById('home-sprit-fuel-label');
   const meta=document.getElementById('home-sprit-meta');
   if(!body)return;
+  spritHomeStations=stations;
   if(label)label.textContent=activeFuel==='e5'?'Super E5':activeFuel==='e10'?'Super E10':'Diesel';
   if(meta){
     const src=spritGpsCoords?'Dein Standort':((goaAddress&&goaAddress.kommuneLabel)?goaAddress.kommuneLabel:'Mögglingen');
@@ -1409,16 +1468,18 @@ function renderSpritPreviewHome(stations){
     if(!price)return'';
     const priceStr=price.toFixed(3);
     const dist=s.dist<1?Math.round(s.dist*1000)+'m':s.dist.toFixed(1)+'km';
+    const ort=s.place||s.ort||s.city||'';
     const rankBg=i===0?'var(--accent)':'var(--bg3)';
     const rankC=i===0?'var(--hero-text)':'var(--text3)';
-    return `<div class="pickup-row ${!s.isOpen?'past':''}" style="padding-left:16px">
+    return `<div class="pickup-row ${!s.isOpen?'past':''}" style="padding-left:16px;cursor:pointer" onclick="openStationMaps(spritHomeStations[${i}])">
       <div class="rank-dot" style="background:${rankBg};color:${rankC}">${i+1}</div>
       <div class="pickup-info">
         <div class="pickup-type">${s.brand||s.name}</div>
-        <div class="pickup-date">${dist}${!s.isOpen?' · geschlossen':''}</div>
+        <div class="pickup-date">${ort?ort+' · ':''}${dist}${!s.isOpen?' · geschlossen':''}</div>
       </div>
-      <div style="text-align:right;flex-shrink:0">
+      <div style="text-align:right;flex-shrink:0;display:flex;align-items:center;gap:6px">
         <div class="sprit-price-big" style="color:${i===0?'var(--accent)':'var(--text)'}">${priceStr.slice(0,-1)}<sup style="font-size:11px">${priceStr.slice(-1)}</sup></div>
+        <i class="ti ti-navigation" style="font-size:14px;color:var(--text3)"></i>
       </div>
     </div>`;
   }).join('');
@@ -1435,7 +1496,8 @@ function refreshSprit(){
 }
 function renderSpritList(stations){
   const wrap=document.getElementById('sprit-list-wrap');
-  const valid=stations.filter(s=>s[activeFuel]>0);
+  const valid=sortStations(stations.filter(s=>s[activeFuel]>0),spritSortMode,activeFuel);
+  spritTabStations=valid;
   if(!valid.length){
     wrap.innerHTML=`<div style="padding:20px 16px">
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:20px;text-align:center">
@@ -1455,15 +1517,17 @@ function renderSpritList(stations){
     ${valid.slice(0,8).map((s,i)=>{
       const price=s[activeFuel],priceStr=price.toFixed(3);
       const dist=s.dist<1?Math.round(s.dist*1000)+'m':s.dist.toFixed(1)+'km';
+      const ort=s.place||s.ort||s.city||'';
       const rankBg=i===0?'var(--accent)':'var(--bg3)',rankC=i===0?'var(--hero-text)':'var(--text3)';
-      return `<div class="pickup-row ${!s.isOpen?'past':''}" style="animation:cardIn 0.35s ease ${i*40}ms both;padding-left:16px">
+      return `<div class="pickup-row ${!s.isOpen?'past':''}" style="animation:cardIn 0.35s ease ${i*40}ms both;padding-left:16px;cursor:pointer" onclick="openStationMaps(spritTabStations[${i}])">
         <div class="rank-dot" style="background:${rankBg};color:${rankC}">${i+1}</div>
         <div class="pickup-info">
           <div class="pickup-type">${s.brand||s.name}</div>
-          <div class="pickup-date">${s.name} · ${dist}${!s.isOpen?' · geschlossen':''}</div>
+          <div class="pickup-date">${ort?ort+' · ':''}${dist}${!s.isOpen?' · geschlossen':''}</div>
         </div>
-        <div style="text-align:right;flex-shrink:0">
+        <div style="text-align:right;flex-shrink:0;display:flex;align-items:center;gap:6px">
           <div class="sprit-price-big" style="color:${i===0?'var(--accent)':'var(--text)'}">${priceStr.slice(0,-1)}<sup style="font-size:11px">${priceStr.slice(-1)}</sup></div>
+          <i class="ti ti-navigation" style="font-size:14px;color:var(--text3)"></i>
         </div>
       </div>`;
     }).join('')}
@@ -2097,6 +2161,7 @@ function init(){
 
   applyTheme();
   updateLocationUI();
+  applySpritSortUI();
   if(isStandalone())hideAndroidInstallBanner(); // bereits installiert → Banner kann nie zutreffen
   checkNotifStatus();
   renderHome();
