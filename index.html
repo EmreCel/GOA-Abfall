@@ -1892,18 +1892,28 @@ function getSWVersion(){
   });
 }
 // Ermittelt Registrierungs-Zustand (active/waiting/installing) + Version — mit Timeout.
+// Findet sich keine Registrierung, wird AKTIV nachregistriert, um den echten
+// Fehlergrund (z. B. "MIME type text/html" = 404) sichtbar zu machen.
 async function swDiagnose(){
-  const info={reg:'—',version:'—'};
+  const info={reg:'—',version:'—',regError:null};
   try{
     if(!('serviceWorker' in navigator)){info.reg='nicht unterstützt';return info;}
-    const reg=await withTimeout(navigator.serviceWorker.getRegistration(),2500,'getRegistration');
-    if(!reg){info.reg='keine Registrierung';}
-    else{
+    let reg=await withTimeout(navigator.serviceWorker.getRegistration(),2500,'getRegistration');
+    if(!reg){
+      try{
+        reg=await withTimeout(navigator.serviceWorker.register('sw.js'),5000,'register');
+        info.reg='soeben registriert';
+      }catch(e){
+        info.reg='keine Registrierung';
+        info.regError=(e&&e.message)?e.message:String(e);
+      }
+    }
+    if(reg){
       const parts=[];
       if(reg.active)parts.push('active');
       if(reg.waiting)parts.push('waiting');
       if(reg.installing)parts.push('installing');
-      info.reg=parts.join('+')||'unbekannt';
+      if(parts.length)info.reg=parts.join('+');
     }
   }catch(e){info.reg=e.message;}
   info.version=await getSWVersion();
@@ -1922,7 +1932,13 @@ async function testServerPush(){
     const diag=await swDiagnose();
     show('Service Worker: <b>'+diag.reg+'</b> · Version <b>'+diag.version+'</b><br>Prüfe Subscription…');
     if(diag.reg==='keine Registrierung'){
-      show('✗ <b>Kein Service Worker registriert.</b><br>Das heißt: <b>sw.js wird nicht geladen.</b><br><span style="color:var(--text3)">Prüfe: Liegt sw.js im selben Ordner wie index.html im Repo? Öffnet <b>ostalbapp.de/sw.js</b> im Browser den Code (nicht 404)?</span>','var(--bad)');
+      show('✗ <b>Kein Service Worker registriert.</b><br>'+
+        (diag.regError?('Grund: <b>'+diag.regError+'</b><br>'):'')+
+        '<span style="color:var(--text3)">Öffne <b>ostalbapp.de/sw.js</b> im Browser: Kommt JavaScript-Code oder eine 404-Seite? Steht im Grund oben „MIME type" oder „text/html", ist es ein 404 — dann liegt sw.js nicht im selben Ordner wie index.html im Repo.</span>','var(--bad)');
+      return;
+    }
+    if(diag.reg==='soeben registriert'){
+      show('◐ Service Worker war nicht aktiv, wurde aber <b>gerade neu registriert</b> (Version wird geladen).<br><b>App jetzt komplett schließen &amp; neu öffnen</b>, dann „Senden" erneut tippen.','var(--warn)');
       return;
     }
     let sub=null;
@@ -1941,7 +1957,7 @@ async function testServerPush(){
     const r=await fetch(GOA_WORKER+'/push/test',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({endpoint:sub.endpoint})});
     let d={};try{d=await r.json();}catch(_){}
     if(d.ok){
-      const swWarn=(diag.version!=='v9')?'<br><b style="color:var(--warn)">⚠ SW ist '+diag.version+', erwartet v9 — App ganz schließen &amp; neu öffnen, dann erneut testen.</b>':'';
+      const swWarn=(diag.version!=='v10')?'<br><b style="color:var(--warn)">⚠ SW ist '+diag.version+', erwartet v10 — App ganz schließen &amp; neu öffnen, dann erneut testen.</b>':'';
       show('✓ Server hat den Push angenommen (HTTP '+(d.status||r.status)+').<br>Service Worker: <b>'+diag.version+'</b>'+swWarn+'<br>➡️ <b>App jetzt schließen.</b> Die Benachrichtigung sollte in Sekunden kommen.<br><span style="color:var(--text3)">Bleibt sie aus, obwohl SW = v9: liegt an iOS-Zustellung — dann sag mir das.</span>','var(--ok)');
     }else{
       show('✗ Worker meldet Fehler:<br><b>'+(d.error||('HTTP '+r.status))+'</b><br>Service Worker: <b>'+diag.version+'</b>','var(--bad)');
