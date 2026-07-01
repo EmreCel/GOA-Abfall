@@ -1874,6 +1874,10 @@ async function disablePush(){
     }
   }catch(e){}
 }
+// Bricht ein hängendes await nach ms ab, statt die ganze Diagnose zu blockieren.
+function withTimeout(promise,ms,label){
+  return Promise.race([promise,new Promise((_,rej)=>setTimeout(()=>rej(new Error('Timeout '+label)),ms))]);
+}
 // Fragt den aktiven Service Worker nach seiner Version (deckt auf, ob noch ein
 // alter SW ohne push-Handler läuft — die häufigste Ursache für "nichts kommt an").
 function getSWVersion(){
@@ -1884,40 +1888,66 @@ function getSWVersion(){
     const t=setTimeout(()=>{if(!done){done=true;res('alt (antwortet nicht)');}},1500);
     ch.port1.onmessage=ev=>{if(done)return;done=true;clearTimeout(t);res((ev.data&&ev.data.version)||'?');};
     try{navigator.serviceWorker.controller.postMessage({type:'getVersion'},[ch.port2]);}
-    catch(e){clearTimeout(t);res('Fehler: '+e.message);}
+    catch(e){clearTimeout(t);res('Fehler');}
   });
+}
+// Ermittelt Registrierungs-Zustand (active/waiting/installing) + Version — mit Timeout.
+async function swDiagnose(){
+  const info={reg:'—',version:'—'};
+  try{
+    if(!('serviceWorker' in navigator)){info.reg='nicht unterstützt';return info;}
+    const reg=await withTimeout(navigator.serviceWorker.getRegistration(),2500,'getRegistration');
+    if(!reg){info.reg='keine Registrierung';}
+    else{
+      const parts=[];
+      if(reg.active)parts.push('active');
+      if(reg.waiting)parts.push('waiting');
+      if(reg.installing)parts.push('installing');
+      info.reg=parts.join('+')||'unbekannt';
+    }
+  }catch(e){info.reg=e.message;}
+  info.version=await getSWVersion();
+  return info;
 }
 // Löst einen ECHTEN Server-Push aus UND zeigt jeden Schritt sichtbar an.
 async function testServerPush(){
   const out=document.getElementById('push-test-status');
   const btn=document.getElementById('btn-server-push');
   const show=(html,color)=>{if(!out)return;out.style.display='block';out.innerHTML=html;out.style.borderColor=color||'var(--border2)';};
-  if(!pushSupported()){show('✗ Dieses Gerät/dieser Browser unterstützt kein Web Push.<br><span style="color:var(--text3)">Auf iPhone: App muss vom Home-Bildschirm laufen, nicht im Safari-Tab.</span>','var(--bad)');return;}
+  if(!pushSupported()){show('✗ Dieses Gerät/dieser Browser unterstützt kein Web Push.<br><span style="color:var(--text3)">iPhone: App muss vom Home-Bildschirm laufen, nicht im Safari-Tab.</span>','var(--bad)');return;}
   if(Notification.permission!=='granted'){show('✗ Keine Berechtigung. Schalte oben zuerst „Benachrichtigungen" ein.','var(--bad)');return;}
-  if(btn){btn.disabled=true;btn.textContent='Sende…';}
-  show('Prüfe Status…');
+  if(btn){btn.disabled=true;btn.textContent='…';}
+  show('Prüfe Service Worker…');
   try{
-    const reg=await navigator.serviceWorker.ready;
-    const swVer=await getSWVersion();
-    const sub=await reg.pushManager.getSubscription();
-    if(!sub){
-      show('✗ Keine aktive Subscription.<br>Aktiver Service Worker: <b>'+swVer+'</b><br><span style="color:var(--text3)">Schalte den Benachrichtigungs-Schalter oben einmal aus und wieder ein.</span>','var(--bad)');
+    const diag=await swDiagnose();
+    show('Service Worker: <b>'+diag.reg+'</b> · Version <b>'+diag.version+'</b><br>Prüfe Subscription…');
+    if(diag.reg==='keine Registrierung'){
+      show('✗ <b>Kein Service Worker registriert.</b><br>Das heißt: <b>sw.js wird nicht geladen.</b><br><span style="color:var(--text3)">Prüfe: Liegt sw.js im selben Ordner wie index.html im Repo? Öffnet <b>ostalbapp.de/sw.js</b> im Browser den Code (nicht 404)?</span>','var(--bad)');
       return;
     }
-    show('Sende an Server…<br>Service Worker: <b>'+swVer+'</b>');
+    let sub=null;
+    try{
+      const reg=await withTimeout(navigator.serviceWorker.ready,3000,'serviceWorker.ready');
+      sub=await withTimeout(reg.pushManager.getSubscription(),3000,'getSubscription');
+    }catch(e){
+      show('✗ Service Worker nicht bereit (<b>'+e.message+'</b>).<br>Status: '+diag.reg+' · '+diag.version+'<br><span style="color:var(--text3)">Der Worker steckt beim Aktivieren fest. App komplett schließen &amp; neu öffnen; hilft das nicht, PWA einmal löschen und neu zum Home-Bildschirm hinzufügen.</span>','var(--bad)');
+      return;
+    }
+    if(!sub){
+      show('✗ Keine aktive Subscription.<br>Service Worker: <b>'+diag.reg+' · '+diag.version+'</b><br><span style="color:var(--text3)">Schalte den Benachrichtigungs-Schalter oben einmal aus und wieder ein.</span>','var(--bad)');
+      return;
+    }
+    show('Sende an Server… (SW '+diag.version+')');
     const r=await fetch(GOA_WORKER+'/push/test',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({endpoint:sub.endpoint})});
     let d={};try{d=await r.json();}catch(_){}
     if(d.ok){
-      const swWarn=(swVer!=='v9')?'<br><b style="color:var(--warn)">⚠ SW ist '+swVer+', erwartet v9 — App ganz schließen & neu öffnen, dann erneut testen.</b>':'';
-      show('✓ Server hat den Push angenommen (HTTP '+(d.status||r.status)+').<br>'+
-           'Aktiver Service Worker: <b>'+swVer+'</b>'+swWarn+'<br>'+
-           '➡️ <b>App jetzt schließen.</b> Die Benachrichtigung sollte in wenigen Sekunden kommen.<br>'+
-           '<span style="color:var(--text3)">Bleibt sie aus, obwohl SW = v9: liegt an der iOS-Zustellung, nicht am Server — dann sag mir das.</span>','var(--ok)');
-    } else {
-      show('✗ Worker meldet Fehler:<br><b>'+(d.error||('HTTP '+r.status))+'</b><br>Service Worker: <b>'+swVer+'</b>','var(--bad)');
+      const swWarn=(diag.version!=='v9')?'<br><b style="color:var(--warn)">⚠ SW ist '+diag.version+', erwartet v9 — App ganz schließen &amp; neu öffnen, dann erneut testen.</b>':'';
+      show('✓ Server hat den Push angenommen (HTTP '+(d.status||r.status)+').<br>Service Worker: <b>'+diag.version+'</b>'+swWarn+'<br>➡️ <b>App jetzt schließen.</b> Die Benachrichtigung sollte in Sekunden kommen.<br><span style="color:var(--text3)">Bleibt sie aus, obwohl SW = v9: liegt an iOS-Zustellung — dann sag mir das.</span>','var(--ok)');
+    }else{
+      show('✗ Worker meldet Fehler:<br><b>'+(d.error||('HTTP '+r.status))+'</b><br>Service Worker: <b>'+diag.version+'</b>','var(--bad)');
     }
   }catch(e){
-    show('✗ Konnte den Worker nicht erreichen:<br><b>'+e.message+'</b>','var(--bad)');
+    show('✗ Unerwarteter Fehler:<br><b>'+e.message+'</b>','var(--bad)');
   }finally{
     if(btn){btn.disabled=false;btn.textContent='Senden';}
   }
