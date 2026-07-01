@@ -1,5 +1,5 @@
-const CACHE_NAME = 'muelltonne-v9';
-const SW_VERSION = 'v9';
+const CACHE_NAME = 'muelltonne-v10';
+const SW_VERSION = 'v10';
 // Worker, der Push-Nachrichten verschickt und die "pending"-Texte vorhält.
 const GOA_WORKER = 'https://goa-abfall.emre18celik.workers.dev';
 // App-Shell: wird beim Install vorgeladen → App startet offline
@@ -18,9 +18,16 @@ const NO_CACHE_HOSTS = [
 ];
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(PRECACHE))
-      .then(() => self.skipWaiting())
+    caches.open(CACHE_NAME).then(async cache => {
+      // WICHTIG: cache.addAll() ist alles-oder-nichts — EIN fehlender/404er
+      // Precache-Eintrag hätte bisher die GESAMTE Installation zu Fall gebracht,
+      // wodurch der SW nie aktiv wurde (→ "keine Registrierung", obwohl sw.js
+      // selbst einwandfrei lädt). Jetzt: jede Datei einzeln, best-effort.
+      const results = await Promise.allSettled(PRECACHE.map(url => cache.add(url)));
+      results.forEach((r, i) => {
+        if (r.status === 'rejected') console.warn('[SW] Precache übersprungen:', PRECACHE[i], r.reason);
+      });
+    }).then(() => self.skipWaiting())
   );
 });
 self.addEventListener('activate', e => {
