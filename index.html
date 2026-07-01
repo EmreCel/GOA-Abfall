@@ -299,6 +299,19 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
     <button class="onboarding-btn" onclick="switchTab('mehr');setTimeout(()=>{document.getElementById('goa-kommune')?.scrollIntoView({behavior:'smooth',block:'center'})},200)">Jetzt einrichten</button>
   </div>
 </div>
+<!-- Nur Android/Chrome: erscheint automatisch, sobald der Browser beforeinstallprompt
+     feuert. Ein Tipp installiert die App direkt — kein Menü-Suchen mehr nötig. -->
+<div id="android-install-banner" class="onboarding-banner hidden">
+  <i class="ti ti-download" style="font-size:22px;color:var(--hero-muted);flex-shrink:0;margin-top:1px"></i>
+  <div style="flex:1">
+    <div class="onboarding-title">App installieren</div>
+    <div class="onboarding-sub">Einmal installieren, dann bleiben Termine gespeichert und Benachrichtigungen funktionieren zuverlässig.</div>
+    <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
+      <button class="onboarding-btn" style="margin-top:0" onclick="triggerAndroidInstall()">Jetzt installieren</button>
+      <button onclick="dismissAndroidInstallBanner()" style="background:transparent;border:none;color:var(--hero-muted);font-size:12px;font-weight:600;padding:7px 4px;cursor:pointer;font-family:inherit">Später</button>
+    </div>
+  </div>
+</div>
 
 <div id="view-home" class="view active">
   <div id="weather-hero-wrap"></div>
@@ -599,7 +612,7 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
     <div class="settings-row">
       <div class="settings-icon"><i class="ti ti-device-mobile"></i></div>
       <div class="settings-info"><div class="settings-title">Zum Homescreen</div><div class="settings-desc">Als PWA installieren</div></div>
-      <button class="btn-sm" onclick="showInstallHint()">Anleitung</button>
+      <button class="btn-sm" onclick="handleInstallClick()">Installieren</button>
     </div>
     <div class="settings-row">
       <div class="settings-icon"><i class="ti ti-trash"></i></div>
@@ -1499,6 +1512,56 @@ function isIOSDevice(){
   return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 }
 
+// ── ANDROID: Ein-Tipp-Installation via beforeinstallprompt ──
+// Chrome/Edge/Samsung Internet feuern dieses Event, WENN der Browser die Seite
+// für installierbar hält (Manifest + SW + HTTPS erfüllt). Wir fangen es ab,
+// unterdrücken den Standard-Mini-Infobalken und zeigen stattdessen unseren
+// eigenen Banner + Button — das eliminiert das "Menü ⋮ suchen"-Problem.
+let deferredInstallPrompt = null;
+const DISMISS_KEY = 'androidInstallDismissedAt';
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  const dismissedAt = parseInt(localStorage.getItem(DISMISS_KEY) || '0', 10);
+  const cooldownOver = (Date.now() - dismissedAt) > 7 * 24 * 60 * 60 * 1000; // 7 Tage nicht nerven
+  if (!isStandalone() && cooldownOver) showAndroidInstallBanner();
+});
+window.addEventListener('appinstalled', () => {
+  deferredInstallPrompt = null;
+  hideAndroidInstallBanner();
+  showToast('App installiert ✓');
+});
+function showAndroidInstallBanner(){
+  const b = document.getElementById('android-install-banner');
+  if (b) b.classList.remove('hidden');
+}
+function hideAndroidInstallBanner(){
+  const b = document.getElementById('android-install-banner');
+  if (b) b.classList.add('hidden');
+}
+function dismissAndroidInstallBanner(){
+  try{ localStorage.setItem(DISMISS_KEY, String(Date.now())); }catch(e){}
+  hideAndroidInstallBanner();
+}
+async function triggerAndroidInstall(){
+  if (!deferredInstallPrompt){ hideAndroidInstallBanner(); return; }
+  const promptEvent = deferredInstallPrompt;
+  deferredInstallPrompt = null; // jedes Prompt-Event ist nur einmal verwendbar
+  hideAndroidInstallBanner();
+  try{
+    await promptEvent.prompt();
+    const choice = await promptEvent.userChoice;
+    if (choice && choice.outcome === 'accepted') showToast('Wird installiert…');
+  }catch(e){}
+}
+// Verhält sich je nach Plattform anders: Android mit verfügbarem Prompt →
+// installiert direkt mit einem Tipp; sonst (iOS, bereits installiert, oder
+// Browser ohne beforeinstallprompt-Unterstützung) → zeigt die Text-Anleitung.
+function handleInstallClick(){
+  if (deferredInstallPrompt) triggerAndroidInstall();
+  else showInstallHint();
+}
+
 function setBusMode(mode){
   busMode=mode;
   const depBtn=document.getElementById('bus-mode-dep');
@@ -1855,7 +1918,7 @@ async function syncPushData(){
 async function enablePush(){
   if(!pushSupported()){return false;}
   try{
-    const reg=await navigator.serviceWorker.ready;
+    const reg=await withTimeout(navigator.serviceWorker.ready,8000,'serviceWorker.ready');
     let sub=await reg.pushManager.getSubscription();
     if(!sub){
       sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlB64ToUint8Array(VAPID_PUBLIC)});
@@ -1863,6 +1926,13 @@ async function enablePush(){
     await syncPushData();
     return !!sub;
   }catch(e){return false;}
+}
+// Migration für Nutzer, die den Schalter schon VOR dem SW-Fix aktiviert hatten:
+// beim App-Start still im Hintergrund nachsubscriben, ohne den Start zu blockieren
+// und ohne störenden Toast — läuft einfach unauffällig mit.
+function ensurePushSubscribed(){
+  if(!pushSupported())return;
+  enablePush().catch(()=>{});
 }
 async function disablePush(){
   try{
@@ -1975,7 +2045,7 @@ async function checkNotifStatus(){
   const standalone=isStandalone();
   if(isIOS&&!standalone){status.textContent='Nur als installierte App (iOS)';toggle.disabled=true;banner.classList.add('hidden');return;}
   if(!('Notification' in window)){status.textContent='Nicht unterstützt';toggle.disabled=true;return;}
-  if(Notification.permission==='granted'){banner.classList.add('hidden');toggle.checked=settings.notificationsEnabled;status.textContent=settings.notificationsEnabled?'Aktiv':'Deaktiviert';if(settings.notificationsEnabled)scheduleAllReminders();}
+  if(Notification.permission==='granted'){banner.classList.add('hidden');toggle.checked=settings.notificationsEnabled;status.textContent=settings.notificationsEnabled?'Aktiv':'Deaktiviert';if(settings.notificationsEnabled){scheduleAllReminders();ensurePushSubscribed();}}
   else if(Notification.permission==='denied'){status.textContent='Berechtigung verweigert';toggle.disabled=true;}
   else{banner.classList.remove('hidden');toggle.checked=false;status.textContent='Berechtigung ausstehend';}
 }
@@ -2027,6 +2097,7 @@ function init(){
 
   applyTheme();
   updateLocationUI();
+  if(isStandalone())hideAndroidInstallBanner(); // bereits installiert → Banner kann nie zutreffen
   checkNotifStatus();
   renderHome();
   loadWeather();
