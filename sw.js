@@ -1,4 +1,5 @@
-const CACHE_NAME = 'muelltonne-v8';
+const CACHE_NAME = 'muelltonne-v9';
+const SW_VERSION = 'v9';
 // Worker, der Push-Nachrichten verschickt und die "pending"-Texte vorhält.
 const GOA_WORKER = 'https://goa-abfall.emre18celik.workers.dev';
 // App-Shell: wird beim Install vorgeladen → App startet offline
@@ -106,4 +107,13 @@ self.addEventListener('notificationclick', e => {
     for (const c of list) { if (c.url && 'focus' in c) return c.focus(); }
     if (clients.openWindow) return clients.openWindow('./');
   }));
+});
+
+// Diagnose: erlaubt der App zu fragen, WELCHE SW-Version gerade aktiv ist.
+self.addEventListener('message', e => {
+  if (e.data && e.data.type === 'getVersion') {
+    const reply = { version: SW_VERSION };
+    if (e.ports && e.ports[0]) e.ports[0].postMessage(reply);
+    else if (e.source && e.source.postMessage) e.source.postMessage(reply);
+  }
 });
