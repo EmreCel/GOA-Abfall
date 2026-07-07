@@ -1,17 +1,22 @@
-const CACHE_NAME = 'muelltonne-v10';
-const SW_VERSION = 'v10';
+const CACHE_NAME = 'muelltonne-v11';
+const SW_VERSION = 'v11';
 // Worker, der Push-Nachrichten verschickt und die "pending"-Texte vorhält.
 const GOA_WORKER = 'https://goa-abfall.emre18celik.workers.dev';
 // App-Shell: wird beim Install vorgeladen → App startet offline
+// opening_hours.min.js (self-hosted, Essen & Trinken) gehört dazu — fehlt die
+// Datei im Repo, überspringt Promise.allSettled sie einfach (siehe unten).
 const PRECACHE = [
   './',
   './index.html',
   './manifest.json',
-  './icon-192.png'
+  './icon-192.png',
+  './opening_hours.min.js'
 ];
 // Live-Daten NIEMALS aus dem Cache servieren — veraltete
 // Abfahrtszeiten oder Spritpreise sind schlimmer als eine
 // Fehlermeldung (die App hat dafür eigene Error-States).
+// Der ostalb-gastro Worker steht hier BEWUSST NICHT drin: Gastro-Daten ändern
+// sich wöchentlich, ein Offline-Fallback aus dem Cache ist dort erwünscht.
 const NO_CACHE_HOSTS = [
   'moegglingen-bus.emre18celik.workers.dev',
   'api.open-meteo.com'
