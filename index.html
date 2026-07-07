@@ -102,11 +102,12 @@ a{color:inherit;text-decoration:none}
 .icon-btn.active{background:var(--accent);border-color:var(--accent);color:var(--hero-text)}
 .tab-island{position:fixed;bottom:calc(14px + var(--safe-b));left:50%;transform:translateX(-50%);width:calc(100% - 28px);max-width:402px;display:flex;align-items:center;justify-content:space-between;gap:2px;padding:6px;border-radius:28px;background:rgba(253,252,249,0.82);-webkit-backdrop-filter:blur(20px) saturate(1.4);backdrop-filter:blur(20px) saturate(1.4);border:1px solid var(--border);box-shadow:var(--shadow-float);z-index:100}
 [data-theme="dark"] .tab-island{background:rgba(30,27,22,0.85)}
-.nav-item{display:flex;align-items:center;justify-content:center;gap:6px;height:44px;min-width:42px;padding:0 8px;border-radius:999px;background:transparent;color:var(--text3);font-size:12.5px;font-weight:600;letter-spacing:0.01em;cursor:pointer;transition:background .35s cubic-bezier(.3,1.4,.4,1),color .25s ease,padding .35s cubic-bezier(.3,1.4,.4,1)}
+/* 7 Tabs: min-width/Padding leicht verdichtet, damit die Island auch auf 375px-Displays nicht überläuft */
+.nav-item{display:flex;align-items:center;justify-content:center;gap:6px;height:44px;min-width:34px;padding:0 6px;border-radius:999px;background:transparent;color:var(--text3);font-size:12.5px;font-weight:600;letter-spacing:0.01em;cursor:pointer;transition:background .35s cubic-bezier(.3,1.4,.4,1),color .25s ease,padding .35s cubic-bezier(.3,1.4,.4,1)}
 .nav-item i{font-size:20px}
 .nav-label{max-width:0;opacity:0;overflow:hidden;white-space:nowrap;transition:max-width .35s cubic-bezier(.3,1.4,.4,1),opacity .25s ease .08s}
-.nav-item.active{background:var(--accent);color:var(--hero-text);padding:0 14px}
-.nav-item.active .nav-label{max-width:80px;opacity:1}
+.nav-item.active{background:var(--accent);color:var(--hero-text);padding:0 12px}
+.nav-item.active .nav-label{max-width:64px;opacity:1}
 .nav-item:active{transform:scale(0.94)}
 .view{display:none;padding:0 0 calc(var(--nav-h) + var(--safe-b) + 16px)}
 .view.active{display:block}
@@ -271,6 +272,10 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
 .event-home-body{padding:12px 14px}
 .event-filter-bar{display:flex;gap:6px;padding:12px 16px 8px;overflow-x:auto;scrollbar-width:none}
 .event-filter-bar::-webkit-scrollbar{display:none}
+/* ── Essen & Trinken (Gastro) ── */
+.gastro-action{width:34px;height:34px;border-radius:50%;border:1px solid var(--border2);background:transparent;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:15px;flex-shrink:0;transition:background 0.15s}
+.gastro-action:active{background:var(--bg3)}
+.gastro-status-neutral{font-size:12px;font-weight:500;color:var(--text3)}
 </style>
 </head>
 <body>
@@ -507,6 +512,39 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
   </div>
 </div>
 
+<!-- ── ESSEN & TRINKEN: Gastronomie im Ostalbkreis ──
+     Datenquelle: OpenStreetMap (ODbL) via ostalb-gastro Worker (wöchentlicher Cron → KV).
+     Distanzberechnung & Geolocation laufen KOMPLETT im Browser — der Standort des
+     Nutzers verlässt das Gerät nie (Datenschutz-Kernversprechen dieses Features). -->
+<div id="view-essen" class="view">
+  <div style="display:flex;align-items:center;gap:8px;padding:12px 16px 0">
+    <div class="chip-bar" id="gastro-cat-bar" style="flex:1;padding:0;min-width:0">
+      <button class="chip active" id="gchip-alle" onclick="setGastroFilter('alle')">Alle</button>
+      <button class="chip" id="gchip-restaurant" onclick="setGastroFilter('restaurant')">Restaurant</button>
+      <button class="chip" id="gchip-cafe" onclick="setGastroFilter('cafe')">Café</button>
+      <button class="chip" id="gchip-imbiss" onclick="setGastroFilter('imbiss')">Imbiss</button>
+      <button class="chip" id="gchip-biergarten" onclick="setGastroFilter('biergarten')">Biergarten</button>
+      <button class="chip" id="gchip-kneipe" onclick="setGastroFilter('kneipe')">Kneipe &amp; Bar</button>
+      <button class="chip" id="gchip-eis" onclick="setGastroFilter('eis')">Eisdiele</button>
+    </div>
+    <button class="icon-btn" id="gastro-gps-btn" onclick="toggleGastroLocation()" aria-label="Standort verwenden" title="Läden an meinem Standort">
+      <i class="ti ti-current-location" id="gastro-gps-icon"></i>
+    </button>
+    <button class="icon-btn" onclick="refreshGastro()" aria-label="Aktualisieren" title="Neu laden">
+      <i class="ti ti-refresh" id="gastro-refresh-icon"></i>
+    </button>
+  </div>
+  <div class="chip-bar" style="padding:8px 16px">
+    <button class="chip" id="grad-2" onclick="setGastroRadius(2)">2 km</button>
+    <button class="chip active" id="grad-5" onclick="setGastroRadius(5)">5 km</button>
+    <button class="chip" id="grad-10" onclick="setGastroRadius(10)">10 km</button>
+    <button class="chip" id="grad-0" onclick="setGastroRadius(0)">Ganzer Kreis</button>
+  </div>
+  <div id="gastro-src" style="font-size:11px;color:var(--text3);padding:0 20px 8px"></div>
+  <div id="gastro-list"></div>
+  <div style="font-size:11px;color:var(--text3);text-align:center;padding:14px 24px 4px;line-height:1.6">Quelle: OpenStreetMap · © OpenStreetMap-Mitwirkende (ODbL)<br>Einträge können unvollständig oder veraltet sein · Angaben ohne Gewähr</div>
+</div>
+
 <div id="view-mehr" class="view">
 
   <div class="form-section" style="margin-top:16px">
@@ -650,6 +688,7 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
   <button class="nav-item" id="nav-sprit" onclick="switchTab('sprit')"><i class="ti ti-gas-station"></i><span class="nav-label">Tanken</span></button>
   <button class="nav-item" id="nav-bus" onclick="switchTab('bus')"><i class="ti ti-bus"></i><span class="nav-label">Bus</span></button>
   <button class="nav-item" id="nav-events" onclick="switchTab('events')"><i class="ti ti-calendar-event"></i><span class="nav-label">Events</span></button>
+  <button class="nav-item" id="nav-essen" onclick="switchTab('essen')"><i class="ti ti-tools-kitchen-2"></i><span class="nav-label">Essen</span></button>
   <button class="nav-item" id="nav-mehr" onclick="switchTab('mehr')"><i class="ti ti-dots"></i><span class="nav-label">Mehr</span></button>
 </nav>
 
@@ -727,7 +766,7 @@ const GOA_WORKER = 'https://goa-abfall.emre18celik.workers.dev';
 // Worker-Secret VAPID_PRIVATE passen — beide gehören zum selben Schlüsselpaar.
 const VAPID_PUBLIC = 'BKPZsH7SysrsrHTabzsGeHT6-IdGXRr4mhIhRxTzzEw1Dx6hZZeYhapRSAEAuktjLo8yktuVNl8gQC2gVdhzxL0';
 
-const TAB_TITLES={home:'Start',muell:'Abfall',sprit:'Spritpreise',bus:'Bus & Bahn',events:'Events',mehr:'Mehr'};
+const TAB_TITLES={home:'Start',muell:'Abfall',sprit:'Spritpreise',bus:'Bus & Bahn',events:'Events',essen:'Essen & Trinken',mehr:'Mehr'};
 
 const BUS_STATIONS=[
   {key:'bahnhof',       name:'Mögglingen Bahnhof',     type:'train'},
@@ -787,6 +826,7 @@ function switchTab(tab){
   if(tab==='sprit'){loadSprit();}
   if(tab==='bus'){loadFavoriteOnOpen();renderStationTabs();loadDepartures(true);startAutoRefresh();}
   if(tab==='events'){renderEventsList();}
+  if(tab==='essen'){loadGastro(false);}
   if(tab==='mehr'){renderVisibilitySettings();}
   checkOnboarding();
 }
@@ -1947,6 +1987,219 @@ function renderHomeEventWidget(){
   if(wrap){wrap.style.display='none';wrap.innerHTML='';}
 }
 
+// ── ESSEN & TRINKEN: Gastro im Ostalbkreis (OpenStreetMap via ostalb-gastro Worker) ──
+// Datenschutz-Design: Geolocation & Distanzberechnung laufen ausschließlich im Browser.
+// GPS-Koordinaten werden auf 5 Dezimalen gerundet und NIE an einen Server gesendet —
+// der Worker liefert immer den kompletten Kreis-Datensatz, gefiltert wird lokal.
+const GASTRO_WORKER='https://ostalb-gastro.emre18celik.workers.dev';
+let gastroItems=null;        // kompletter Datensatz nach erstem Laden (Session-Cache)
+let gastroUpdated=null;      // Datenstand aus dem Worker-Payload
+let gastroFilter='alle';
+let gastroRadiusKm=5;        // 0 = ganzer Kreis
+let gastroGpsCoords=null;    // {lat,lng} nur wenn Nutzer GPS aktiviert hat
+let gastroShowLimit=40;      // Pagination: 818 DOM-Zeilen auf einmal wären zu träge
+let gastroRendered=[];       // zuletzt gerenderte (gefilterte, sortierte) Liste für Index-Klicks
+let ohLibPromise=null;       // Lazy-Load-Promise für opening_hours.min.js
+const GASTRO_CATS={restaurant:['restaurant'],cafe:['cafe'],imbiss:['fast_food'],biergarten:['biergarten'],kneipe:['pub','bar'],eis:['ice_cream']};
+const GASTRO_TYPE_LABEL={restaurant:'Restaurant',cafe:'Café',fast_food:'Imbiss',biergarten:'Biergarten',pub:'Kneipe',bar:'Bar',ice_cream:'Eisdiele'};
+const CUISINE_LABEL={german:'Deutsch',regional:'Regional',swabian:'Schwäbisch',bavarian:'Bayrisch',italian:'Italienisch',pizza:'Pizza',pasta:'Pasta',turkish:'Türkisch',kebab:'Döner',greek:'Griechisch',asian:'Asiatisch',chinese:'Chinesisch',thai:'Thailändisch',vietnamese:'Vietnamesisch',japanese:'Japanisch',sushi:'Sushi',indian:'Indisch',mexican:'Mexikanisch',american:'Amerikanisch',burger:'Burger',fish:'Fisch',steak_house:'Steakhaus',steak:'Steak',coffee_shop:'Kaffee',ice_cream:'Eis',international:'International',mediterranean:'Mediterran',balkan:'Balkan',croatian:'Kroatisch',spanish:'Spanisch',french:'Französisch',portuguese:'Portugiesisch',syrian:'Syrisch',lebanese:'Libanesisch',persian:'Persisch',korean:'Koreanisch',chicken:'Hähnchen',sandwich:'Sandwich',friture:'Frittiertes'};
+// PH/SH-Regeln (Feiertage) in OSM-Öffnungszeiten brauchen einen Standortkontext —
+// wir sind immer in BW, also fest verdrahtet statt Nominatim-Anfrage (kein Netzwerk-Call).
+const OH_NOMINATIM={address:{country_code:'de',state:'Baden-Württemberg'}};
+
+function escHtml(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function haversineKm(lat1,lon1,lat2,lon2){
+  const toRad=x=>x*Math.PI/180,R=6371;
+  const dLat=toRad(lat2-lat1),dLon=toRad(lon2-lon1);
+  const a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)*Math.sin(dLon/2);
+  return 2*R*Math.asin(Math.sqrt(a));
+}
+function getGastroCoords(){ return gastroGpsCoords||getActiveLocation(); }
+function cuisineText(c){
+  if(!c)return'';
+  const first=String(c).split(';')[0].trim().toLowerCase();
+  if(!first)return'';
+  return CUISINE_LABEL[first]||(first.charAt(0).toUpperCase()+first.slice(1).replace(/_/g,' '));
+}
+// opening_hours.min.js liegt SELF-HOSTED im Repo-Root (kein Runtime-CDN!) und wird
+// erst beim ersten Öffnen des Essen-Tabs nachgeladen (~spart Startup-Payload).
+// Fehlt die Datei oder schlägt das Laden fehl, degradiert die Anzeige sauber
+// auf den Rohtext der Öffnungszeiten — kein Crash, kein leerer Status.
+function loadOpeningHoursLib(){
+  if(window.opening_hours)return Promise.resolve(true);
+  if(ohLibPromise)return ohLibPromise;
+  ohLibPromise=new Promise(res=>{
+    const s=document.createElement('script');
+    s.src='opening_hours.min.js';
+    s.onload=()=>res(!!window.opening_hours);
+    s.onerror=()=>res(false);
+    document.head.appendChild(s);
+  });
+  return ohLibPromise;
+}
+// Liefert {cls:'open'|'closed'|'', text} für einen Eintrag. try/catch PRO Eintrag,
+// weil OSM-Öffnungszeiten nutzergepflegt sind und einzelne kaputte Strings
+// niemals die ganze Liste reißen dürfen.
+function gastroOpenState(item){
+  if(!item.hours)return{cls:'',text:'Öffnungszeiten nicht hinterlegt'};
+  if(window.opening_hours){
+    try{
+      const oh=new opening_hours(item.hours,OH_NOMINATIM,{locale:'de'});
+      const isOpen=oh.getState();
+      const next=oh.getNextChange();
+      const sameDay=next&&next.toDateString()===new Date().toDateString();
+      const hhmm=next?next.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}):null;
+      if(isOpen)return{cls:'open',text:(sameDay&&hhmm)?`Geöffnet · bis ${hhmm} Uhr`:'Geöffnet'};
+      return{cls:'closed',text:(sameDay&&hhmm)?`Geschlossen · öffnet ${hhmm} Uhr`:'Geschlossen'};
+    }catch(e){/* nicht parsebar → Rohtext unten */}
+  }
+  const raw=String(item.hours);
+  return{cls:'',text:raw.length>42?raw.slice(0,42)+'…':raw};
+}
+async function loadGastro(force){
+  const list=document.getElementById('gastro-list');
+  if(!list)return;
+  if(gastroItems&&!force){renderGastro();return;}
+  list.innerHTML='<div class="empty-state"><i class="ti ti-loader-2" style="font-size:28px"></i><p style="font-size:13px">Lade Läden…</p></div>';
+  try{
+    const ctrl=new AbortController();
+    const tid=setTimeout(()=>ctrl.abort(),12000);
+    let res;
+    try{ res=await fetch(GASTRO_WORKER+'/gastro',{signal:ctrl.signal}); }
+    finally{ clearTimeout(tid); }
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    const data=await res.json();
+    if(!data||!Array.isArray(data.items))throw new Error('Unerwartetes Datenformat');
+    gastroItems=data.items;
+    gastroUpdated=data.updated||null;
+    renderGastro();
+    // Öffnungsstatus nachrüsten, sobald die Lib da ist (einmaliger Re-Render)
+    loadOpeningHoursLib().then(ok=>{if(ok)renderGastro();});
+  }catch(e){
+    list.innerHTML=`<div style="margin:16px">
+      <div style="padding:14px 16px;border:1px solid rgba(140,59,46,0.3);border-radius:14px;font-size:13px;color:var(--bad);margin-bottom:8px">
+        <i class="ti ti-alert-circle" style="margin-right:6px"></i>${e.message}
+      </div>
+      <button class="btn-secondary" onclick="loadGastro(true)"><i class="ti ti-refresh"></i>Nochmal versuchen</button>
+    </div>`;
+  }
+}
+function refreshGastro(){
+  const icon=document.getElementById('gastro-refresh-icon');
+  if(icon){icon.style.transition='transform 0.6s';icon.style.transform='rotate(360deg)';setTimeout(()=>{icon.style.transition='';icon.style.transform='';},600);}
+  loadGastro(true);
+}
+function renderGastro(){
+  const list=document.getElementById('gastro-list');
+  if(!list||!gastroItems)return;
+  const loc=getGastroCoords();
+  const cats=gastroFilter==='alle'?null:GASTRO_CATS[gastroFilter];
+  let arr=gastroItems.map(it=>({...it,dist:haversineKm(loc.lat,loc.lng,it.lat,it.lon)}));
+  if(cats)arr=arr.filter(it=>cats.includes(it.type));
+  if(gastroRadiusKm>0)arr=arr.filter(it=>it.dist<=gastroRadiusKm);
+  arr.sort((a,b)=>a.dist-b.dist);
+  gastroRendered=arr;
+  const srcEl=document.getElementById('gastro-src');
+  if(srcEl){
+    const srcName=gastroGpsCoords?'Dein Standort':((goaAddress&&goaAddress.kommuneLabel)?goaAddress.kommuneLabel:'Mögglingen');
+    const stand=gastroUpdated?` · Stand ${new Date(gastroUpdated).toLocaleDateString('de-DE')}`:'';
+    srcEl.innerHTML=`<i class="ti ti-map-pin" style="font-size:11px;margin-right:3px;vertical-align:-1px"></i>${srcName} · ${arr.length} ${arr.length===1?'Eintrag':'Einträge'}${stand}`;
+  }
+  if(!arr.length){
+    list.innerHTML=`<div class="empty-state"><i class="ti ti-tools-kitchen-2"></i><p>Keine Läden ${gastroRadiusKm>0?`im Umkreis von ${gastroRadiusKm} km`:'gefunden'}.${gastroRadiusKm>0?'<br>Radius vergrößern oder Filter ändern.':''}</p></div>`;
+    return;
+  }
+  const shown=arr.slice(0,gastroShowLimit);
+  const rest=arr.length-shown.length;
+  list.innerHTML=`<div class="card" style="margin:0 16px;overflow:hidden">${shown.map((it,i)=>renderGastroRow(it,i)).join('')}</div>`+
+    (rest>0?`<div style="padding:10px 16px 0"><button class="btn-secondary" onclick="gastroShowMore()"><i class="ti ti-chevron-down"></i>Mehr anzeigen (${rest} weitere)</button></div>`:'');
+}
+function renderGastroRow(it,i){
+  const st=gastroOpenState(it);
+  const distStr=it.dist<1?Math.round(it.dist*1000)+' m':it.dist.toFixed(1).replace('.',',')+' km';
+  const sub=[GASTRO_TYPE_LABEL[it.type]||'',cuisineText(it.cuisine),distStr,escHtml(it.city||'')].filter(Boolean).join(' · ');
+  const stCls=st.cls==='open'?'wsh-status-open':st.cls==='closed'?'wsh-status-closed':'gastro-status-neutral';
+  const phoneBtn=it.phone?`<button class="gastro-action" onclick="callGastro(${i});event.stopPropagation()" aria-label="Anrufen" title="Anrufen"><i class="ti ti-phone"></i></button>`:'';
+  const delay=Math.min(i*25,300);
+  return `<div class="pickup-row" style="animation:cardIn 0.3s ease ${delay}ms both;padding-left:16px;cursor:pointer" onclick="openGastroMaps(${i})">
+    <div class="pickup-info">
+      <div class="pickup-type">${escHtml(it.name)}</div>
+      <div class="pickup-date">${sub}</div>
+      <div class="${stCls}" style="margin-top:2px">${escHtml(st.text)}</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+      ${phoneBtn}
+      <button class="gastro-action" onclick="openGastroMaps(${i});event.stopPropagation()" aria-label="Navigation" title="Navigation starten"><i class="ti ti-navigation"></i></button>
+    </div>
+  </div>`;
+}
+function gastroShowMore(){gastroShowLimit+=40;renderGastro();}
+function setGastroFilter(f){
+  gastroFilter=f;
+  gastroShowLimit=40;
+  ['alle','restaurant','cafe','imbiss','biergarten','kneipe','eis'].forEach(x=>{
+    const el=document.getElementById('gchip-'+x);if(el)el.classList.toggle('active',x===f);
+  });
+  renderGastro();
+}
+function setGastroRadius(km){
+  gastroRadiusKm=km;
+  gastroShowLimit=40;
+  [2,5,10,0].forEach(x=>{
+    const el=document.getElementById('grad-'+x);if(el)el.classList.toggle('active',x===km);
+  });
+  renderGastro();
+}
+function updateGastroGpsBtn(){
+  const b=document.getElementById('gastro-gps-btn');
+  if(b)b.classList.toggle('active',!!gastroGpsCoords);
+  const ic=document.getElementById('gastro-gps-icon');
+  if(ic)ic.className='ti ti-current-location';
+}
+function toggleGastroLocation(){
+  if(gastroGpsCoords){
+    gastroGpsCoords=null;
+    updateGastroGpsBtn();
+    gastroShowLimit=40;
+    renderGastro();
+    showToast('Zurück zu deinem Ort');
+    return;
+  }
+  if(!('geolocation' in navigator)){showToast('GPS auf diesem Gerät nicht verfügbar');return;}
+  const ic=document.getElementById('gastro-gps-icon');
+  if(ic)ic.className='ti ti-loader-2 spin';
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      // 5 Dezimalen ≈ ~1m Genauigkeit — reicht, bleibt lokal, wird nie gesendet
+      gastroGpsCoords={lat:+pos.coords.latitude.toFixed(5),lng:+pos.coords.longitude.toFixed(5)};
+      updateGastroGpsBtn();
+      gastroShowLimit=40;
+      renderGastro();
+      showToast('Läden an deinem Standort');
+    },
+    err=>{
+      updateGastroGpsBtn();
+      const msg=err.code===1?'Standort-Freigabe abgelehnt':err.code===3?'Standort-Abfrage zu langsam':'Standort nicht verfügbar';
+      showToast(msg);
+    },
+    {enableHighAccuracy:false,timeout:10000,maximumAge:300000}
+  );
+}
+function openGastroMaps(i){
+  const it=gastroRendered[i];
+  if(!it)return;
+  const dest=`${it.lat},${it.lon}`;
+  const url=isIOSDevice()
+    ? `https://maps.apple.com/?daddr=${dest}&dirflg=d`
+    : `https://www.google.com/maps/dir/?api=1&destination=${dest}`;
+  window.open(url,'_blank');
+}
+function callGastro(i){
+  const it=gastroRendered[i];
+  if(!it||!it.phone)return;
+  location.href='tel:'+String(it.phone).replace(/[^+\d]/g,'');
+}
+
 // ── WEB PUSH (echte Erinnerungen bei geschlossener App, via goa-abfall Worker) ──
 function urlB64ToUint8Array(base64){
   const pad='='.repeat((4-base64.length%4)%4);
@@ -2091,8 +2344,8 @@ async function testServerPush(){
     const r=await fetch(GOA_WORKER+'/push/test',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({endpoint:sub.endpoint})});
     let d={};try{d=await r.json();}catch(_){}
     if(d.ok){
-      const swWarn=(diag.version!=='v10')?'<br><b style="color:var(--warn)">⚠ SW ist '+diag.version+', erwartet v10 — App ganz schließen &amp; neu öffnen, dann erneut testen.</b>':'';
-      show('✓ Server hat den Push angenommen (HTTP '+(d.status||r.status)+').<br>Service Worker: <b>'+diag.version+'</b>'+swWarn+'<br>➡️ <b>App jetzt schließen.</b> Die Benachrichtigung sollte in Sekunden kommen.<br><span style="color:var(--text3)">Bleibt sie aus, obwohl SW = v9: liegt an iOS-Zustellung — dann sag mir das.</span>','var(--ok)');
+      const swWarn=(diag.version!=='v11')?'<br><b style="color:var(--warn)">⚠ SW ist '+diag.version+', erwartet v11 — App ganz schließen &amp; neu öffnen, dann erneut testen.</b>':'';
+      show('✓ Server hat den Push angenommen (HTTP '+(d.status||r.status)+').<br>Service Worker: <b>'+diag.version+'</b>'+swWarn+'<br>➡️ <b>App jetzt schließen.</b> Die Benachrichtigung sollte in Sekunden kommen.<br><span style="color:var(--text3)">Bleibt sie aus, obwohl SW = v11: liegt an iOS-Zustellung — dann sag mir das.</span>','var(--ok)');
     }else{
       show('✗ Worker meldet Fehler:<br><b>'+(d.error||('HTTP '+r.status))+'</b><br>Service Worker: <b>'+diag.version+'</b>','var(--bad)');
     }
