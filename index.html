@@ -274,8 +274,8 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
 .event-filter-bar::-webkit-scrollbar{display:none}
 /* ── Essen & Trinken (Gastro) ── */
 .gastro-action{width:34px;height:34px;border-radius:50%;border:1px solid var(--border2);background:transparent;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:15px;flex-shrink:0;transition:background 0.15s}
-.gastro-action:active{background:var(--bg3)}
-.gastro-status-neutral{font-size:12px;font-weight:500;color:var(--text3)}
+.gastro-action:active{background:var(--bg3)} .gastro-status-neutral{font-size:12px;font-weight:500;color:var(--text3)} /* Öffnungszeiten (volle Woche, DE) + Umkreis-Slider */ .gastro-hours{font-size:11px;color:var(--text3);margin-top:3px;line-height:1.5} .radius-slider{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:999px;background:var(--bg4);outline:none;margin:2px 0 0;padding:0;cursor:pointer} .radius-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:24px;height:24px;border-radius:50%;background:var(--accent);border:3px solid var(--bg2);box-shadow:0 1px 4px rgba(30,28,23,0.25);cursor:pointer;transition:transform 0.12s} .radius-slider::-webkit-slider-thumb:active{transform:scale(1.18)} .radius-slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--accent);border:3px solid var(--bg2);box-shadow:0 1px 4px rgba(30,28,23,0.25);cursor:pointer} .radius-slider::-moz-range-track{height:6px;border-radius:999px;background:var(--bg4)} [data-theme="dark"] .radius-slider::-webkit-slider-thumb{border-color:var(--bg)} [data-theme="dark"] .radius-slider::-moz-range-thumb{border-color:var(--bg)}
+
 </style>
 </head>
 <body>
@@ -534,11 +534,16 @@ select.sm{width:auto;padding:5px 10px;font-size:12px;border-radius:10px}
       <i class="ti ti-refresh" id="gastro-refresh-icon"></i>
     </button>
   </div>
-  <div class="chip-bar" style="padding:8px 16px">
-    <button class="chip" id="grad-2" onclick="setGastroRadius(2)">2 km</button>
-    <button class="chip active" id="grad-5" onclick="setGastroRadius(5)">5 km</button>
-    <button class="chip" id="grad-10" onclick="setGastroRadius(10)">10 km</button>
-    <button class="chip" id="grad-0" onclick="setGastroRadius(0)">Ganzer Kreis</button>
+  <div style="padding:10px 16px 6px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <span style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em">Umkreis</span>
+      <span id="gastro-radius-label" style="font-size:14px;font-weight:600;color:var(--accent)">5 km</span>
+    </div>
+    <input type="range" id="gastro-radius-slider" class="radius-slider" min="1" max="26" step="1" value="5" oninput="onGastroRadiusInput(this.value)" aria-label="Umkreis in Kilometern">
+    <div style="display:flex;justify-content:space-between;margin-top:5px">
+      <span style="font-size:10px;color:var(--text3)">1 km</span>
+      <span style="font-size:10px;color:var(--text3)">Ganzer Kreis</span>
+    </div>
   </div>
   <div id="gastro-src" style="font-size:11px;color:var(--text3);padding:0 20px 8px"></div>
   <div id="gastro-list"></div>
@@ -2037,9 +2042,22 @@ function loadOpeningHoursLib(){
   });
   return ohLibPromise;
 }
-// Liefert {cls:'open'|'closed'|'', text} für einen Eintrag. try/catch PRO Eintrag,
-// weil OSM-Öffnungszeiten nutzergepflegt sind und einzelne kaputte Strings
-// niemals die ganze Liste reißen dürfen.
+// OSM-Wochentagskürzel (Mo Tu We Th Fr Sa Su) + PH/SH → Deutsch. Rein kosmetisch.
+const OH_DAY_DE={Mo:'Mo',Tu:'Di',We:'Mi',Th:'Do',Fr:'Fr',Sa:'Sa',Su:'So',PH:'Feiertag',SH:'Ferien'};
+// Übersetzt einen rohen OSM-opening_hours-String in eine lesbare deutsche Fassung.
+// Bei kaputten/ungewöhnlichen OSM-Einträgen bleibt der Rest unverändert stehen.
+function germanizeHours(raw){
+  let s=String(raw||'').trim();
+  if(!s)return'';
+  s=s.replace(/\b(Mo|Tu|We|Th|Fr|Sa|Su|PH|SH)\b/g,m=>OH_DAY_DE[m]||m);
+  s=s.replace(/\boff\b/gi,'geschlossen').replace(/\bclosed\b/gi,'geschlossen');
+  s=s.replace(/\b24\/7\b/g,'täglich durchgehend');
+  s=s.replace(/;\s*/g,' · ').replace(/,\s*/g,', ');
+  s=s.replace(/-/g,'–');
+  return s.trim();
+}
+// Nur die Status-Zeile (Geöffnet/Geschlossen). try/catch PRO Eintrag — ein kaputter
+// OSM-String darf nie die ganze Liste reißen. Die vollen Zeiten rendert renderGastroRow separat.
 function gastroOpenState(item){
   if(!item.hours)return{cls:'',text:'Öffnungszeiten nicht hinterlegt'};
   if(window.opening_hours){
@@ -2051,10 +2069,9 @@ function gastroOpenState(item){
       const hhmm=next?next.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}):null;
       if(isOpen)return{cls:'open',text:(sameDay&&hhmm)?`Geöffnet · bis ${hhmm} Uhr`:'Geöffnet'};
       return{cls:'closed',text:(sameDay&&hhmm)?`Geschlossen · öffnet ${hhmm} Uhr`:'Geschlossen'};
-    }catch(e){/* nicht parsebar → Rohtext unten */}
+    }catch(e){/* nicht parsebar → nur volle Zeiten unten */}
   }
-  const raw=String(item.hours);
-  return{cls:'',text:raw.length>42?raw.slice(0,42)+'…':raw};
+  return{cls:'',text:''};
 }
 async function loadGastro(force){
   const list=document.getElementById('gastro-list');
@@ -2119,13 +2136,17 @@ function renderGastroRow(it,i){
   const distStr=it.dist<1?Math.round(it.dist*1000)+' m':it.dist.toFixed(1).replace('.',',')+' km';
   const sub=[GASTRO_TYPE_LABEL[it.type]||'',cuisineText(it.cuisine),distStr,escHtml(it.city||'')].filter(Boolean).join(' · ');
   const stCls=st.cls==='open'?'wsh-status-open':st.cls==='closed'?'wsh-status-closed':'gastro-status-neutral';
+  const statusLine=st.text?`<div class="${stCls}" style="margin-top:2px">${escHtml(st.text)}</div>`:'';
+  // Volle Öffnungszeiten, deutsche Wochentage, nicht abgeschnitten — bricht auf Mobil sauber um.
+  const hoursLine=it.hours?`<div class="gastro-hours">${escHtml(germanizeHours(it.hours))}</div>`:'';
   const phoneBtn=it.phone?`<button class="gastro-action" onclick="callGastro(${i});event.stopPropagation()" aria-label="Anrufen" title="Anrufen"><i class="ti ti-phone"></i></button>`:'';
   const delay=Math.min(i*25,300);
   return `<div class="pickup-row" style="animation:cardIn 0.3s ease ${delay}ms both;padding-left:16px;cursor:pointer" onclick="openGastroMaps(${i})">
     <div class="pickup-info">
       <div class="pickup-type">${escHtml(it.name)}</div>
       <div class="pickup-date">${sub}</div>
-      <div class="${stCls}" style="margin-top:2px">${escHtml(st.text)}</div>
+      ${statusLine}
+      ${hoursLine}
     </div>
     <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
       ${phoneBtn}
@@ -2142,13 +2163,26 @@ function setGastroFilter(f){
   });
   renderGastro();
 }
-function setGastroRadius(km){
-  gastroRadiusKm=km;
+// Umkreis-Slider: Position 1–25 = km, Position 26 = "Ganzer Kreis" (kein Distanzfilter).
+const GASTRO_RADIUS_MAX=26;
+let gastroRadiusTimer=null;
+function updateRadiusSliderFill(val){
+  const slider=document.getElementById('gastro-radius-slider');
+  if(!slider)return;
+  const min=+slider.min,max=+slider.max;
+  const pct=((val-min)/(max-min))*100;
+  slider.style.background=`linear-gradient(90deg,var(--accent) 0%,var(--accent) ${pct}%,var(--bg4) ${pct}%,var(--bg4) 100%)`;
+}
+function onGastroRadiusInput(val){
+  val=parseInt(val,10)||1;
+  gastroRadiusKm=(val>=GASTRO_RADIUS_MAX)?0:val;
   gastroShowLimit=40;
-  [2,5,10,0].forEach(x=>{
-    const el=document.getElementById('grad-'+x);if(el)el.classList.toggle('active',x===km);
-  });
-  renderGastro();
+  const lbl=document.getElementById('gastro-radius-label');
+  if(lbl)lbl.textContent=gastroRadiusKm===0?'Ganzer Kreis':gastroRadiusKm+' km';
+  updateRadiusSliderFill(val);
+  // Beim Ziehen leicht entprellen — sonst wird der ganze Datensatz pro Pixel neu sortiert.
+  clearTimeout(gastroRadiusTimer);
+  gastroRadiusTimer=setTimeout(renderGastro,90);
 }
 function updateGastroGpsBtn(){
   const b=document.getElementById('gastro-gps-btn');
@@ -2415,6 +2449,7 @@ function init(){
   applyTheme();
   updateLocationUI();
   applySpritSortUI();
+  updateRadiusSliderFill(5);
   if(isStandalone())hideAndroidInstallBanner(); // bereits installiert → Banner kann nie zutreffen
   checkNotifStatus();
   renderHome();
